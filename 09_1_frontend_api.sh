@@ -28,7 +28,7 @@ fi
 if ! command -v npx &> /dev/null
 then
     echo "npx no está instalado. Instalando npx..."
-    sudo npm install --loglevel=error --no-audit -g npx --force
+    sudo npm install --loglevel=error --no-audit -g npx --force --loglevel=error --no-audit
 fi
 
 # 📌 Eliminar versiones previas si existen

@@ -10,72 +10,49 @@ FRONTEND_DIR="/opt/shelly_monitoring/frontend"
 cd "$FRONTEND_DIR"
 
 # Crear el archivo src/components/RoomMatrix.tsx
-cat <<EOF > src/components/RoomMatrix.tsx
-import React, { useState, useEffect } from 'react';
-import { IconButton, Grid, Paper } from '@mui/material';
+cat <<'EOF' > src/components/RoomMatrix.tsx
+import React from 'react';
+import { Box, Paper, Typography, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getHabitaciones } from '../../services/api';
 
-const RoomMatrix = ({ tableroId }: { tableroId: number }) => {
-  const [rooms, setRooms] = useState<any[]>([]);
-  const [editMode, setEditMode] = useState<boolean>(false);
-
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const data = await getHabitaciones();
-        setRooms(data.filter((room: any) => room.tablero_id === tableroId));
-      } catch (error) {
-        console.error('Error fetching rooms:', error);
-      }
-    };
-
-    fetchRooms();
-  }, [tableroId]);
-
-  const handleEditClick = () => {
-    setEditMode(!editMode);
-  };
-
+const RoomMatrix = ({ habitaciones }: { habitaciones: any[] }) => {
   return (
-    <div>
-      <IconButton color="primary" onClick={handleEditClick} style={{ float: 'right' }}>
-        <EditIcon />
-      </IconButton>
-      <Grid container spacing={2}>
-        {rooms.map((room, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-            <Paper style={{ padding: 16, textAlign: 'center' }}>
-              {editMode ? (
-                <input type="text" value={room.nombre} onChange={(e) => { /* handle name change */ }} />
-              ) : (
-                <span>{room.nombre}</span>
-              )}
+    <Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h6" sx={{ color: 'white' }}>Habitaciones</Typography>
+        <IconButton color="inherit"><EditIcon /></IconButton>
+      </Box>
+      <Box display="flex" flexWrap="wrap">
+        {habitaciones.map((habitacion) => {
+          const consumo = habitacion.consumo < 1000 ? `${habitacion.consumo} W` : `${(habitacion.consumo / 1000).toFixed(2)} kW`;
+          return (
+            <Paper key={habitacion.id} sx={{ m: 1, p: 2, backgroundColor: '#333', color: 'white', flex: '0 1 calc(33.333% - 16px)', textAlign: 'center', borderRadius: '8px', height: '100px' }}>
+              <Typography variant="body2" sx={{ fontSize: '0.875rem', mb: 0.5 }}>{habitacion.nombre}</Typography>
+              <Typography variant="body1" sx={{ fontSize: '1rem', color: '#1976d2' }}>{consumo}</Typography>
             </Paper>
-          </Grid>
-        ))}
-      </Grid>
-    </div>
+          );
+        })}
+      </Box>
+    </Box>
   );
 };
 
 export default RoomMatrix;
 EOF
 
-
 # Crear el archivo src/components/DeviceList.tsx
-cat <<'EOL' > src/components/DeviceList.tsx
+cat <<EOL > src/components/DeviceList.tsx
 import React from 'react';
 import { Box, List, ListItem, Typography } from '@mui/material';
 
 const DeviceList = ({ dispositivos }: { dispositivos: any[] }) => {
   const totalConsumo = -12800; // Ejemplo en W (-12.8 kW)
   const consumoColor = totalConsumo >= 0 ? '#1976d2' : '#00ff00'; // Verde más intenso y brillante
-  const formattedConsumo = totalConsumo < 1000 && totalConsumo > -1000 ? `${totalConsumo} W` : `${(totalConsumo / 1000).toFixed(2)} kW`;
+  const formattedConsumo = totalConsumo < 1000 && totalConsumo > -1000 ? \`\${totalConsumo} W\` : \`\${(totalConsumo / 1000).toFixed(2)} kW\`;
   const consumoLabel = totalConsumo >= 0 ? 'Consumo Total' : 'Generación Total';
 
   return (
-    <Box sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', width: '300px', maxWidth: '300px', height: 'calc(100vh - 100px)', overflowY: 'auto', overflowX: 'hidden', padding: '8px' }}>
+    <Box sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', width: '300px', maxWidth: '300px',height: 'calc(100vh - 100px)', overflowY: 'auto', overflowX: 'hidden', padding: '8px', marginLeft: 'auto', scrollbarWidth: 'thin', scrollbarColor: '#1976d2 #333', '&::-webkit-scrollbar': { width: '8px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: '#1976d2', borderRadius: '4px' }, '&::-webkit-scrollbar-horizontal': { display: 'none' } }}>
       <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', mb: 1 }}>
         <Typography sx={{ color: consumoColor, fontSize: '1rem', fontWeight: 'bold' }}>{formattedConsumo}</Typography>
         <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{consumoLabel}</Typography>
@@ -92,7 +69,7 @@ const DeviceList = ({ dispositivos }: { dispositivos: any[] }) => {
       </Box>
       <List>
         {dispositivos.map((dispositivo) => {
-          const consumo = dispositivo.consumo < 1000 ? `${dispositivo.consumo} W` : `${(dispositivo.consumo / 1000).toFixed(2)} kW`;
+          const consumo = dispositivo.consumo < 1000 ? \`\${dispositivo.consumo} W\` : \`\${(dispositivo.consumo / 1000).toFixed(2)} kW\`;
           return (
             <ListItem key={dispositivo.id} sx={{ display: 'flex', justifyContent: 'space-between', py: 0.2, maxWidth: '100%', overflow: 'hidden' }}>
               <Typography sx={{ fontSize: '0.75rem', mr: 1, flexShrink: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{dispositivo.nombre}</Typography>
@@ -107,6 +84,7 @@ const DeviceList = ({ dispositivos }: { dispositivos: any[] }) => {
 
 export default DeviceList;
 EOL
+
 
 # Crear el archivo src/pages/Statistics.tsx
 cat <<EOF > src/pages/Statistics.tsx
