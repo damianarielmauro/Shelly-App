@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "*****************************************"
-echo "*        08_4_frontend_discovery        *"
+echo "*        09_4_frontend_discovery        *"
 echo "*****************************************"
 
 
@@ -10,6 +10,7 @@ echo "*****************************************"
 FRONTEND_DIR="/opt/shelly_monitoring/frontend"
 
 cd "$FRONTEND_DIR"
+
 
 # Crear el archivo src/pages/Settings.tsx
 cat <<EOL > src/pages/Settings.tsx
@@ -207,33 +208,16 @@ module.exports = function override(config, env) {
 EOL
 
 # Instalar react-app-rewired y ansi_up
-npm install react-app-rewired ansi_up --save
+CI=true npm install --loglevel=error --no-audit react-app-rewired ansi_up --save
 
 # Reemplazar scripts en package.json
-npx json -I -f package.json -e 'this.scripts.start="react-app-rewired start"'
-npx json -I -f package.json -e 'this.scripts.build="react-app-rewired build"'
-npx json -I -f package.json -e 'this.scripts.test="react-app-rewired test"'
+CI=true npx json -I -f package.json -e 'this.scripts.start="react-app-rewired start"'
+CI=true npx json -I -f package.json -e 'this.scripts.build="react-app-rewired build"'
+CI=true npx json -I -f package.json -e 'this.scripts.test="react-app-rewired test"'
 
 # Reinstalar dependencias para evitar errores de módulos faltantes
 echo "Reinstalando dependencias..."
 rm -rf node_modules package-lock.json
-npm install
+CI=true npm install  --loglevel=error --no-audit
 
-# Compilar el proyecto y moverlo a la carpeta dist
-npm run build
-mkdir -p "$FRONTEND_DIR/dist"
-cp -r build/* "$FRONTEND_DIR/dist"
 
-# ===========================
-# 📦 Configuración de permisos
-# ===========================
-
-echo "📦 Configurando permisos del frontend..."
-sudo chown -R www-data:www-data /opt/shelly_monitoring/frontend
-sudo chmod -R 775 /opt/shelly_monitoring/frontend
-
-# Cambiar permisos
-#chmod -R 755 .
-
-# Mensaje de finalización
-echo "El proyecto frontend ha sido configurado y compilado exitosamente."

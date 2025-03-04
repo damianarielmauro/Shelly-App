@@ -4,13 +4,18 @@ echo "*****************************************"
 echo "*        08_2_frontend_tableros         *"
 echo "*****************************************"
 
-cd /opt/shelly_monitoring/frontend
+
+# Nombre del directorio del frontend
+FRONTEND_DIR="/opt/shelly_monitoring/frontend"
+
+cd "$FRONTEND_DIR"
 
 # Crear la estructura de directorios si no existen
 mkdir -p src/components/Tabs src/components/Tableros src/components/RoomMatrix src/components/DeviceList src/pages src/styles
 
+
 # Crear el archivo src/components/Tabs/TabComponent.tsx
-cat <<'EOL' > src/components/Tabs/TabComponent.tsx
+cat <<EOL > src/components/Tabs/TabComponent.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppBar, Tabs, Tab, IconButton } from '@mui/material';
@@ -70,11 +75,11 @@ export default TabComponent;
 EOL
 
 # Crear el archivo src/components/Tableros/TablerosComponent.tsx
-cat <<'EOL' > src/components/Tableros/TablerosComponent.tsx
+cat <<EOL > src/components/Tableros/TablerosComponent.tsx
 import React, { useState, useEffect } from 'react';
 import { getTableros, createTablero, deleteTablero, updateOrdenTableros } from '../../services/api';
 import { TextField, List, ListItem, ListItemText, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material.Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 const TablerosComponent = () => {
@@ -134,7 +139,7 @@ export default TablerosComponent;
 EOL
 
 # Crear el archivo src/pages/Dashboard.tsx
-cat <<'EOL' > src/pages/Dashboard.tsx
+cat <<EOL > src/pages/Dashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppBar, Tabs, Tab, IconButton, Box, Typography } from '@mui/material';
@@ -238,3 +243,4 @@ const Dashboard = () => {
 
 export default Dashboard;
 EOL
+

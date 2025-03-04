@@ -1,11 +1,12 @@
 #!/bin/bash
 
 echo "*****************************************"
-echo "*        08_1_frontend_tableros         *"
+echo "*        09_1_frontend_tableros         *"
 echo "*****************************************"
 
 # Nombre del directorio del frontend
 FRONTEND_DIR="/opt/shelly_monitoring/frontend"
+
 
 # Verificar si Node.js está instalado
 if ! command -v node &> /dev/null
@@ -27,7 +28,7 @@ fi
 if ! command -v npx &> /dev/null
 then
     echo "npx no está instalado. Instalando npx..."
-    sudo npm install -g npx --force
+    sudo npm install --loglevel=error --no-audit -g npx --force
 fi
 
 # 📌 Eliminar versiones previas si existen
@@ -44,10 +45,11 @@ echo "🔧 Corrigiendo permisos en frontend..."
 sudo chown -R $(whoami):$(whoami) "$FRONTEND_DIR"
 sudo chmod -R 755 "$FRONTEND_DIR"
 
-cd /opt/shelly_monitoring/frontend
+cd "$FRONTEND_DIR"
+
 
 # Inicializar un nuevo proyecto React con TypeScript
-npx create-react-app . --template typescript
+CI=true npx --loglevel=error --no-audit create-react-app . --template typescript
 
 # Eliminar el directorio .git creado por create-react-app
 if [ -d ".git" ]; then
@@ -56,7 +58,7 @@ if [ -d ".git" ]; then
 fi
 
 # Instalar dependencias adicionales
-npm install @emotion/react @emotion/styled @mui/icons-material @mui/material axios react-router-dom@^6 ajv@^6.12.6 ajv-keywords@^3.5.2 crypto-browserify process buffer
+CI=true npm install --loglevel=error --no-audit @emotion/react @emotion/styled @mui/icons-material @mui/material axios react-router-dom@^6 ajv@^6.12.6 ajv-keywords@^3.5.2 crypto-browserify process buffer
 
 # Crear la estructura de directorios
 mkdir -p src/assets src/components/Tabs src/components/RoomMatrix src/components/DeviceList src/components/Tableros src/pages src/services src/store src/styles
@@ -250,3 +252,4 @@ export const getLogs = async () => {
 
 export default api;
 EOL
+

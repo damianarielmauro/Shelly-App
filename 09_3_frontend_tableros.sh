@@ -4,38 +4,64 @@ echo "*****************************************"
 echo "*        08_3_frontend_tableros         *"
 echo "*****************************************"
 
-cd /opt/shelly_monitoring/frontend
+# Nombre del directorio del frontend
+FRONTEND_DIR="/opt/shelly_monitoring/frontend"
+
+cd "$FRONTEND_DIR"
 
 # Crear el archivo src/components/RoomMatrix.tsx
-cat <<'EOL' > src/components/RoomMatrix.tsx
-import React from 'react';
-import { Box, Paper, Typography, IconButton } from '@mui/material';
+cat <<EOF > src/components/RoomMatrix.tsx
+import React, { useState, useEffect } from 'react';
+import { IconButton, Grid, Paper } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { getHabitaciones } from '../../services/api';
 
-const RoomMatrix = ({ habitaciones }: { habitaciones: any[] }) => {
+const RoomMatrix = ({ tableroId }: { tableroId: number }) => {
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [editMode, setEditMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const data = await getHabitaciones();
+        setRooms(data.filter((room: any) => room.tablero_id === tableroId));
+      } catch (error) {
+        console.error('Error fetching rooms:', error);
+      }
+    };
+
+    fetchRooms();
+  }, [tableroId]);
+
+  const handleEditClick = () => {
+    setEditMode(!editMode);
+  };
+
   return (
-    <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6" sx={{ color: 'white' }}>Habitaciones</Typography>
-        <IconButton color="inherit"><EditIcon /></IconButton>
-      </Box>
-      <Box display="flex" flexWrap="wrap">
-        {habitaciones.map((habitacion) => {
-          const consumo = habitacion.consumo < 1000 ? `${habitacion.consumo} W` : `${(habitacion.consumo / 1000).toFixed(2)} kW`;
-          return (
-            <Paper key={habitacion.id} sx={{ m: 1, p: 2, backgroundColor: '#333', color: 'white', flex: '0 1 calc(33.333% - 16px)', textAlign: 'center', borderRadius: '8px', height: '100px' }}>
-              <Typography variant="body2" sx={{ fontSize: '0.875rem', mb: 0.5 }}>{habitacion.nombre}</Typography>
-              <Typography variant="body1" sx={{ fontSize: '1rem', color: '#1976d2' }}>{consumo}</Typography>
+    <div>
+      <IconButton color="primary" onClick={handleEditClick} style={{ float: 'right' }}>
+        <EditIcon />
+      </IconButton>
+      <Grid container spacing={2}>
+        {rooms.map((room, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <Paper style={{ padding: 16, textAlign: 'center' }}>
+              {editMode ? (
+                <input type="text" value={room.nombre} onChange={(e) => { /* handle name change */ }} />
+              ) : (
+                <span>{room.nombre}</span>
+              )}
             </Paper>
-          );
-        })}
-      </Box>
-    </Box>
+          </Grid>
+        ))}
+      </Grid>
+    </div>
   );
 };
 
 export default RoomMatrix;
-EOL
+EOF
+
 
 # Crear el archivo src/components/DeviceList.tsx
 cat <<'EOL' > src/components/DeviceList.tsx
@@ -49,7 +75,7 @@ const DeviceList = ({ dispositivos }: { dispositivos: any[] }) => {
   const consumoLabel = totalConsumo >= 0 ? 'Consumo Total' : 'Generación Total';
 
   return (
-    <Box sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', width: '300px', maxWidth: '300px', height: 'calc(100vh - 100px)', overflowY: 'auto', overflowX: 'hidden', padding: '8px', marginLeft: 'auto', scrollbarWidth: 'thin', scrollbarColor: '#1976d2 #333', '&::-webkit-scrollbar': { width: '8px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: '#1976d2', borderRadius: '4px' }, '&::-webkit-scrollbar-horizontal': { display: 'none' } }}>
+    <Box sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', width: '300px', maxWidth: '300px', height: 'calc(100vh - 100px)', overflowY: 'auto', overflowX: 'hidden', padding: '8px' }}>
       <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', mb: 1 }}>
         <Typography sx={{ color: consumoColor, fontSize: '1rem', fontWeight: 'bold' }}>{formattedConsumo}</Typography>
         <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{consumoLabel}</Typography>
@@ -83,7 +109,7 @@ export default DeviceList;
 EOL
 
 # Crear el archivo src/pages/Statistics.tsx
-cat <<'EOL' > src/pages/Statistics.tsx
+cat <<EOF > src/pages/Statistics.tsx
 import React from 'react';
 
 const Statistics = () => {
@@ -96,10 +122,10 @@ const Statistics = () => {
 };
 
 export default Statistics;
-EOL
+EOF
 
 # Crear el archivo src/pages/Consumption.tsx
-cat <<'EOL' > src/pages/Consumption.tsx
+cat <<EOF > src/pages/Consumption.tsx
 import React from 'react';
 
 const Consumption = () => {
@@ -112,10 +138,10 @@ const Consumption = () => {
 };
 
 export default Consumption;
-EOL
+EOF
 
 # Crear el archivo src/pages/Settings.tsx
-cat <<'EOL' > src/pages/Settings.tsx
+cat <<EOF > src/pages/Settings.tsx
 import React from 'react';
 
 const Settings = () => {
@@ -128,10 +154,10 @@ const Settings = () => {
 };
 
 export default Settings;
-EOL
+EOF
 
 # Crear el archivo src/styles/custom.css
-cat <<'EOL' > src/styles/custom.css
+cat <<EOF > src/styles/custom.css
 .device-list {
   background-color: #333;
   border-radius: 8px; /* Vértices redondeados */
@@ -224,4 +250,4 @@ cat <<'EOL' > src/styles/custom.css
 .device-list::-webkit-scrollbar-horizontal {
   display: none; /* Ocultar el scroll horizontal */
 }
-EOL
+EOF

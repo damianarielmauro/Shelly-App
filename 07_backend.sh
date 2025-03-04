@@ -3,7 +3,7 @@
 set -e
 
 echo "*****************************************"
-echo "*              07_backend_v2            *"
+echo "*              07_backend               *"
 echo "*****************************************"
 
 echo "📦 Iniciando la instalación y configuración del backend..."

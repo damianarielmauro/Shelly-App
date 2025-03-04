@@ -3,7 +3,7 @@
 set -e
 
 echo "*****************************************"
-echo "*         08_frontend_base              *"
+echo "*         09_0_frontend_base            *"
 echo "*****************************************"
 
 # ===========================
@@ -21,7 +21,10 @@ echo "📦 Configurando permisos del frontend..."
 sudo chown -R $(whoami):$(whoami) /opt/shelly_monitoring/frontend
 sudo chmod -R 775 /opt/shelly_monitoring/frontend
 
-cd /opt/shelly_monitoring/frontend
+# Nombre del directorio del frontend
+FRONTEND_DIR="/opt/shelly_monitoring/frontend"
+
+cd "$FRONTEND_DIR"
 
 # ===========================
 # 🔧 Instalación de herramientas base
@@ -151,7 +154,7 @@ fi
 echo "📦 Verificando instalación de dependencias..."
 if [ ! -d "node_modules" ]; then
     echo "⚠️ No se encontraron dependencias. Ejecutando npm install..."
-    npm install --yes
+    npm install --yes --loglevel=error --no-audit
 fi
 
 echo "📦 Verificando versión de Vite..."

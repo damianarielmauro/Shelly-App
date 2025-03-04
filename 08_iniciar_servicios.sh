@@ -2,7 +2,7 @@
 set -e
 
 echo "*****************************************"
-echo "*        10_iniciar_servicios           *"
+echo "*        08_iniciar_servicios           *"
 echo "*****************************************"
 
 
