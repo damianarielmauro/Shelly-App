@@ -1,16 +1,13 @@
 #!/bin/bash
 
 echo "*****************************************"
-echo "*        09_4_frontend_discovery        *"
+echo "*        09_6_frontend_discovery        *"
 echo "*****************************************"
-
-
 
 # Nombre del directorio del frontend
 FRONTEND_DIR="/opt/shelly_monitoring/frontend"
 
 cd "$FRONTEND_DIR"
-
 
 # Crear el archivo src/pages/Settings.tsx
 cat <<EOL > src/pages/Settings.tsx
@@ -152,22 +149,6 @@ const Discovery = () => {
 export default Discovery;
 EOL
 
-# Crear el archivo src/components/UsersManagement.tsx
-cat <<EOL > src/components/UsersManagement.tsx
-import React from 'react';
-
-const UsersManagement = () => {
-  return (
-    <div>
-      <h1>Gestión de Usuarios y Perfiles</h1>
-      {/* Placeholder para la gestión de usuarios y perfiles */}
-    </div>
-  );
-};
-
-export default UsersManagement;
-EOL
-
 # Crear el archivo src/services/sse.ts
 cat <<EOL > src/services/sse.ts
 export const createSSEConnection = (url: string, onMessage: (data: any) => void) => {
@@ -186,38 +167,18 @@ export const createSSEConnection = (url: string, onMessage: (data: any) => void)
 };
 EOL
 
-# Crear el archivo config-overrides.js para configurar Webpack
-cat <<EOL > config-overrides.js
-const webpack = require('webpack');
+# Crear el archivo src/components/UsersManagement.tsx
+cat <<EOL > src/components/UsersManagement.tsx
+import React from 'react';
 
-module.exports = function override(config, env) {
-  config.resolve.fallback = {
-    crypto: require.resolve('crypto-browserify'),
-    process: require.resolve('process/browser.js'),
-    buffer: require.resolve('buffer/'),
-  };
-  config.plugins.push(
-    new webpack.ProvidePlugin({
-      process: 'process/browser.js',
-      Buffer: ['buffer', 'Buffer'],
-    }),
+const UsersManagement = () => {
+  return (
+    <div>
+      <h1>Gestión de Usuarios y Perfiles</h1>
+      {/* Placeholder para la gestión de usuarios y perfiles */}
+    </div>
   );
-
-  return config;
 };
+
+export default UsersManagement;
 EOL
-
-# Instalar react-app-rewired y ansi_up
-CI=true npm install --loglevel=error --no-audit react-app-rewired ansi_up --save
-
-# Reemplazar scripts en package.json
-CI=true npx json -I -f package.json -e 'this.scripts.start="react-app-rewired start"'
-CI=true npx json -I -f package.json -e 'this.scripts.build="react-app-rewired build"'
-CI=true npx json -I -f package.json -e 'this.scripts.test="react-app-rewired test"'
-
-# Reinstalar dependencias para evitar errores de módulos faltantes
-echo "Reinstalando dependencias..."
-rm -rf node_modules package-lock.json
-CI=true npm install  --loglevel=error --no-audit
-
-

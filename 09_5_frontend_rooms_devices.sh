@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "*****************************************"
-echo "*       08_3_frontend_rooms_devices     *"
+echo "*       09_5_frontend_rooms_devices     *"
 echo "*****************************************"
 
 # Nombre del directorio del frontend
@@ -42,20 +42,22 @@ import { Box, List, ListItem, Typography } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import { getDispositivos } from '../services/api';
 
-const DeviceList = ({ dispositivos }: { dispositivos: any[] }) => {
+const DeviceList = () => {
+  const [dispositivos, setDispositivos] = useState<any[]>([]);
   const [totalDispositivos, setTotalDispositivos] = useState(0);
 
   useEffect(() => {
-    const fetchTotalDispositivos = async () => {
+    const fetchDispositivos = async () => {
       try {
         const data = await getDispositivos();
+        setDispositivos(data);
         setTotalDispositivos(data.length);
       } catch (error) {
-        console.error('Error al obtener el total de dispositivos:', error);
+        console.error('Error al obtener los dispositivos:', error);
       }
     };
 
-    fetchTotalDispositivos();
+    fetchDispositivos();
   }, []);
 
   const totalConsumo = -12800; // Ejemplo en W (-12.8 kW)
@@ -105,53 +107,6 @@ export default DeviceList;
 EOF
 
 
-# Crear el archivo src/pages/Statistics.tsx
-cat <<EOF > src/pages/Statistics.tsx
-import React from 'react';
-
-const Statistics = () => {
-  return (
-    <div>
-      <h1>Statistics Page</h1>
-      {/* Contenido de la página de estadísticas */}
-    </div>
-  );
-};
-
-export default Statistics;
-EOF
-
-# Crear el archivo src/pages/Consumption.tsx
-cat <<EOF > src/pages/Consumption.tsx
-import React from 'react';
-
-const Consumption = () => {
-  return (
-    <div>
-      <h1>Consumption Page</h1>
-      {/* Contenido de la página de consumos */}
-    </div>
-  );
-};
-
-export default Consumption;
-EOF
-
-# Crear el archivo src/pages/Settings.tsx
-cat <<EOF > src/pages/Settings.tsx
-import React from 'react';
-
-const Settings = () => {
-  return (
-    <div>
-      <h1>Settings Page</h1>
-      {/* Contenido de la página de configuración */}
-    </div>
-  );
-};
-
-export default Settings;
-EOF
 
 # Crear el archivo src/styles/custom.css
 cat <<EOF > src/styles/custom.css

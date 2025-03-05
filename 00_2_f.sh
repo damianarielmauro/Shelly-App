@@ -11,8 +11,8 @@ echo "🚀 Iniciando instalación general de Shelly Monitoring..."
 SCRIPT_DIR="$(dirname "$0")"
 
 # Ejecutar los scripts en orden
-bash "$SCRIPT_DIR/09_0_frontend_base.sh"
-bash "$SCRIPT_DIR/09_1_frontend_files.sh"
+#bash "$SCRIPT_DIR/09_0_frontend_base.sh"
+#bash "$SCRIPT_DIR/09_1_frontend_files.sh"
 bash "$SCRIPT_DIR/09_2_frontend_api.sh"
 bash "$SCRIPT_DIR/09_3_frontend_tabmanager.sh"
 bash "$SCRIPT_DIR/09_4_frontend_dashboard.sh"

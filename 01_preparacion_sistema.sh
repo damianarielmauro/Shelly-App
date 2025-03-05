@@ -64,10 +64,6 @@ pip install flask flask-sqlalchemy flask-socketio redis requests pandas \
 # Desactivar entorno virtual
 deactivate
 
-# ===========================
-# 🌐 Instalación de Node.js y npm
-# ===========================
-
 echo "🚑 Eliminando versiones previas de Node.js y npm..."
 sudo apt remove -y nodejs npm || true
 sudo apt autoremove -y || true
@@ -76,80 +72,5 @@ sudo apt autoremove -y || true
 echo "🗑️ Eliminando manualmente archivos residuales de npm y nodejs..."
 sudo rm -rf /usr/lib/node_modules/ /usr/local/lib/node_modules/ ~/.npm ~/.cache/npm
 sudo rm -rf /opt/shelly_monitoring/frontend/node_modules || true
-
-# Instalación de Node.js
-echo "🌐 Instalando Node.js v20 desde NodeSource..."
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-
-echo "🔄 Verificando e instalando npm si falta..."
-if ! command -v npm &> /dev/null; then
-    sudo apt install -y npm
-fi
-
-# Verificar que Node.js y npm estén instalados correctamente
-echo "✅ Verificando instalación de Node.js y npm..."
-node -v
-npm -v
-
-# 📦 Instalar dependencias
-echo "📦 Instalando dependencias del frontend..."
-echo "📂 Creando directorio del frontend si no existe..."
-sudo mkdir -p /opt/shelly_monitoring/frontend
-sudo chown -R $(whoami):$(whoami) /opt/shelly_monitoring/frontend
-cd /opt/shelly_monitoring/frontend
-
-echo "📦 Verificando que package.json existe..."
-if [ ! -f "/opt/shelly_monitoring/frontend/package.json" ]; then
-    echo "⚠️ No se encontró package.json, generando uno automáticamente..."
-    cat > /opt/shelly_monitoring/frontend/package.json <<EOF
-{
-  "name": "shelly-monitoring",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.1",
-    "recoil": "^0.7.7",
-    "axios": "^1.6.7",
-    "clsx": "^2.0.0",
-    "lodash": "^4.17.21",
-    "socket.io-client": "^4.7.2"
-  },
-  "devDependencies": {
-    "vite": "^4.5.6",
-    "@vitejs/plugin-react": "^3.1.0",
-    "tailwindcss": "^3.4.1",
-    "postcss": "^8.4.35",
-    "autoprefixer": "^10.4.17"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  }
-}
-EOF
-fi
-
-echo "📦 Instalando dependencias del frontend..."
-npm install --yes
-
-# 🔍 Verificar y corregir vulnerabilidades en paquetes npm
-echo "🛠 Ejecutando npm audit fix..."
-npm audit fix || echo "⚠️ No se pudieron corregir todas las vulnerabilidades."
-
-# 🔍 Forzar la corrección si aún quedan problemas (opcional)
-echo "🛠 Intentando npm audit fix --force si aún hay vulnerabilidades..."
-npm audit fix --force || echo "⚠️ Se aplicaron correcciones forzadas, pero revisa si el frontend sigue funcionando correctamente."
-
-
-# 📂 Verificar que node_modules fue creada
-echo "📂 Verificando que node_modules fue creada..."
-if [ ! -d "node_modules" ]; then
-    echo "❌ Error: La instalación de dependencias falló. node_modules no existe."
-    exit 1
-fi
 
 echo "✅ Preparación del sistema completada con éxito."
