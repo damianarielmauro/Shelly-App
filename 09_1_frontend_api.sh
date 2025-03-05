@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "*****************************************"
-echo "*        09_1_frontend_tableros         *"
+echo "*        09_1_frontend_api              *"
 echo "*****************************************"
 
 # Nombre del directorio del frontend

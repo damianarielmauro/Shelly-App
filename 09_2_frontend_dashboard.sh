@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "*****************************************"
-echo "*        08_2_frontend_tableros         *"
+echo "*        08_2_frontend_dashboard        *"
 echo "*****************************************"
 
 
