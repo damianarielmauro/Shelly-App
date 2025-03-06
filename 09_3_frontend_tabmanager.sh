@@ -14,23 +14,35 @@ cd "$FRONTEND_DIR"
 # Crear el archivo src/components/TabManager.tsx
 cat <<'EOF' > src/components/TabManager.tsx
 import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, TextField, IconButton, Tooltip, Menu, MenuItem } from '@mui/material';
+import { Tabs, Tab, TextField, IconButton, Tooltip, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Checkbox, FormControlLabel } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getTableros, createTablero, updateTableroName, deleteTablero } from '../services/api';
+import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion, deleteHabitacion } from '../services/api';
+
+interface Tab {
+  id: number;
+  nombre: string;
+  habitaciones: { id: number; nombre: string }[];
+}
 
 interface TabManagerProps {
   selectedTab: number;
-  setSelectedTab: (tab: number) => void;
+  setSelectedTab: React.Dispatch<React.SetStateAction<number>>;
   editMode: boolean;
-  setEditMode: (mode: boolean) => void;
+  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  setHabitaciones: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode }) => {
-  const [tabs, setTabs] = useState<{ id: number, nombre: string }[]>([]);
+const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones }) => {
+  const [tabs, setTabs] = useState<Tab[]>([]);
   const [renamingTab, setRenamingTab] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [newTableroNombre, setNewTableroNombre] = useState<string>('');
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [dialogType, setDialogType] = useState<string>('');
+  const [newItemName, setNewItemName] = useState<string>('');
+  const [deleteMode, setDeleteMode] = useState<boolean>(false);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchTableros = async () => {
@@ -48,6 +60,21 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     fetchTableros();
   }, []);
 
+  useEffect(() => {
+    const fetchHabitaciones = async () => {
+      try {
+        const data = await getHabitaciones();
+        setHabitaciones(data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id));
+      } catch (error) {
+        console.error('Error fetching habitaciones:', error);
+      }
+    };
+
+    if (tabs.length > 0) {
+      fetchHabitaciones();
+    }
+  }, [selectedTab, tabs]);
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
@@ -59,8 +86,13 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     setSelectedTab(data.length - 1); // Seleccionar el nuevo tablero creado
   };
 
-  const handleCreateHabitacion = async (nombre: string) => {
-    // Implementa la lógica para crear una habitación
+  const handleCreateHabitacion = async (nombre: string, tableroId: number) => {
+    await createHabitacion(nombre, tableroId);
+    const data = await getHabitaciones();
+    setHabitaciones(data.filter((hab: any) => hab.tablero_id === tableroId));
+    // Actualizar los tableros para reflejar la nueva habitación
+    const updatedTableros = await getTableros();
+    setTabs(updatedTableros);
   };
 
   const handleRenameTablero = async (id: number, nombre: string) => {
@@ -79,6 +111,15 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     }
   };
 
+  const handleDeleteHabitacion = async (id: number) => {
+    await deleteHabitacion(id);
+    const data = await getHabitaciones();
+    setHabitaciones(data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id));
+    // Actualizar los tableros para reflejar la eliminación de la habitación
+    const updatedTableros = await getTableros();
+    setTabs(updatedTableros);
+  };
+
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -88,17 +129,43 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
   };
 
   const handleDialogOpen = (type: string) => {
-    if (type === 'Tablero') {
-      const nombre = prompt('Ingrese el nombre del nuevo tablero:');
-      if (nombre) {
-        handleCreateTablero(nombre);
-      }
-    } else if (type === 'Habitación') {
-      const nombre = prompt('Ingrese el nombre de la nueva habitación:');
-      if (nombre) {
-        handleCreateHabitacion(nombre);
-      }
+    setDialogType(type);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setNewItemName('');
+  };
+
+  const handleDialogSubmit = () => {
+    if (dialogType === 'Habitación') {
+      handleCreateHabitacion(newItemName, tabs[selectedTab].id);
+    } else if (dialogType === 'Tablero') {
+      handleCreateTablero(newItemName);
     }
+    handleDialogClose();
+  };
+
+  const handleDeleteModeToggle = () => {
+    setDeleteMode(!deleteMode);
+    setSelectedItems([]);
+  };
+
+  const handleDeleteSelectionChange = (id: number) => {
+    setSelectedItems((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((itemId) => itemId !== id)
+        : [...prevSelected, id]
+    );
+  };
+
+  const handleDeleteConfirmation = async () => {
+    for (const id of selectedItems) {
+      await handleDeleteHabitacion(id);
+    }
+    setDeleteMode(false);
+    setSelectedItems([]);
   };
 
   return (
@@ -184,6 +251,53 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
           </div>
         </div>
       )}
+
+      {deleteMode && (
+        <div>
+          {tabs[selectedTab].habitaciones.map((hab) => (
+            <FormControlLabel
+              key={hab.id}
+              control={
+                <Checkbox
+                  checked={selectedItems.includes(hab.id)}
+                  onChange={() => handleDeleteSelectionChange(hab.id)}
+                />
+              }
+              label={hab.nombre}
+            />
+          ))}
+          <Button onClick={handleDeleteConfirmation} color="primary">
+            Confirmar Eliminación
+          </Button>
+        </div>
+      )}
+
+      {/* Dialogo para agregar Habitación */}
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>Agregar {dialogType}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Por favor ingresa el nombre del {dialogType.toLowerCase()}.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label={`Nombre del ${dialogType}`}
+            type="text"
+            fullWidth
+            value={newItemName}
+            onChange={(e) => setNewItemName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleDialogSubmit} color="primary">
+            Agregar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
