@@ -14,7 +14,7 @@ cd "$FRONTEND_DIR"
 # Crear el archivo src/components/TabManager.tsx
 cat <<'EOF' > src/components/TabManager.tsx
 import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, TextField, IconButton, Tooltip, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Checkbox, FormControlLabel } from '@mui/material';
+import { Tabs, Tab, TextField, IconButton, Tooltip, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion, deleteHabitacion } from '../services/api';
@@ -22,7 +22,7 @@ import { getTableros, createTablero, updateTableroName, deleteTablero, getHabita
 interface Tab {
   id: number;
   nombre: string;
-  habitaciones: { id: number; nombre: string }[];
+  habitaciones: { id: number; nombre: string, consumo: number }[];
 }
 
 interface TabManagerProps {
@@ -31,10 +31,14 @@ interface TabManagerProps {
   editMode: boolean;
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
   setHabitaciones: React.Dispatch<React.SetStateAction<any[]>>;
+  deleteMode: boolean;
+  handleDeleteOptionSelect: (type: string) => void;
+  selectedItems: number[];  // Añadimos selectedItems aquí
 }
 
-const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones }) => {
+const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones, deleteMode, handleDeleteOptionSelect, selectedItems }) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
+  const [habitaciones, setHabitacionesState] = useState<any[]>([]);
   const [renamingTab, setRenamingTab] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -42,9 +46,7 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<string>('');
   const [newItemName, setNewItemName] = useState<string>('');
-  const [deleteMode, setDeleteMode] = useState<boolean>(false);
   const [deleteType, setDeleteType] = useState<string>('');
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchTableros = async () => {
@@ -67,7 +69,10 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
       if (tabs.length > 0 && tabs[selectedTab]) {
         try {
           const data = await getHabitaciones();
-          setHabitaciones(data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id));
+          console.log('Habitaciones obtenidas:', data);
+          const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id);
+          setHabitaciones(filteredHabitaciones);
+          setHabitacionesState(filteredHabitaciones);
         } catch (error) {
           console.error('Error fetching habitaciones:', error);
         }
@@ -85,14 +90,15 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     await createTablero(nombre);
     const data = await getTableros();
     setTabs(data);
-    setSelectedTab(data.length - 1); // Seleccionar el nuevo tablero creado
+    setSelectedTab(data.length - 1);
   };
 
   const handleCreateHabitacion = async (nombre: string, tableroId: number) => {
     await createHabitacion(nombre, tableroId);
     const data = await getHabitaciones();
-    setHabitaciones(data.filter((hab: any) => hab.tablero_id === tableroId));
-    // Actualizar los tableros para reflejar la nueva habitación
+    const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tableroId);
+    setHabitaciones(filteredHabitaciones);
+    setHabitacionesState(filteredHabitaciones);
     const updatedTableros = await getTableros();
     setTabs(updatedTableros);
   };
@@ -109,17 +115,8 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     const data = await getTableros();
     setTabs(data);
     if (selectedTab >= data.length) {
-      setSelectedTab(data.length - 1); // Ajustar el índice de la pestaña seleccionada si es necesario
+      setSelectedTab(data.length - 1);
     }
-  };
-
-  const handleDeleteHabitacion = async (id: number) => {
-    await deleteHabitacion(id);
-    const data = await getHabitaciones();
-    setHabitaciones(data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id));
-    // Actualizar los tableros para reflejar la eliminación de la habitación
-    const updatedTableros = await getTableros();
-    setTabs(updatedTableros);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -149,48 +146,10 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     handleDialogClose();
   };
 
-  const handleDeleteModeToggle = () => {
-    setDeleteMode(!deleteMode);
-    setSelectedItems([]);
-  };
-
-  const handleDeleteSelectionChange = (id: number) => {
-    setSelectedItems((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((itemId) => itemId !== id)
-        : [...prevSelected, id]
-    );
-  };
-
-  const handleDeleteConfirmation = async () => {
-    for (const id of selectedItems) {
-      await handleDeleteHabitacion(id);
-    }
-    setDeleteMode(false);
-    setSelectedItems([]);
-  };
-
-  const handleDeleteMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, type: string) => {
-    setMenuAnchorEl(event.currentTarget);
-    setDeleteType(type);
-  };
-
-  const handleDeleteMenuClose = () => {
-    setMenuAnchorEl(null);
-  };
-
-  const handleDeleteOptionSelect = (type: string) => {
-    setDeleteType(type);
-    setMenuAnchorEl(null);
-    setDeleteMode(true);
-  };
-
-  // Agregar logs de depuración
   console.log('deleteMode:', deleteMode);
-  console.log('deleteType:', deleteType);
   console.log('selectedTab:', selectedTab);
   console.log('tabs[selectedTab]:', tabs[selectedTab]);
-  console.log('habitaciones:', tabs[selectedTab]?.habitaciones);
+  console.log('habitaciones:', habitaciones);
 
   return (
     <>
@@ -234,7 +193,7 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
       {/* Pestaña 'General' alineada a la derecha */}
       <div style={{  marginLeft: 'auto', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
         <Tabs
-          value={selectedTab === tabs.length ? selectedTab : false} // Si es la última pestaña, seleccionamos 'General'
+          value={selectedTab === tabs.length ? selectedTab : false}
           onChange={handleTabChange}
           aria-label="general-tab"
           sx={{
@@ -268,40 +227,11 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
               <MenuItem onClick={() => handleDialogOpen('Habitación')}>Habitación</MenuItem>
             </Menu>
             <Tooltip title="Eliminar">
-              <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={(event) => handleDeleteMenuOpen(event, 'delete')}>
+              <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={() => handleDeleteOptionSelect('Habitación')}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-            <Menu
-              anchorEl={menuAnchorEl}
-              open={Boolean(menuAnchorEl)}
-              onClose={handleDeleteMenuClose}
-            >
-              <MenuItem onClick={() => handleDeleteOptionSelect('Tablero')}>Tablero</MenuItem>
-              <MenuItem onClick={() => handleDeleteOptionSelect('Habitación')}>Habitación</MenuItem>
-            </Menu>
           </div>
-        </div>
-      )}
-
-      {/* Mostrar cuadros de selección en modo eliminación */}
-      {deleteMode && deleteType === 'Habitación' && tabs[selectedTab] && (
-        <div>
-          {tabs[selectedTab]?.habitaciones?.map((hab) => (
-            <FormControlLabel
-              key={hab.id}
-              control={
-                <Checkbox
-                  checked={selectedItems.includes(hab.id)}
-                  onChange={() => handleDeleteSelectionChange(hab.id)}
-                />
-              }
-              label={hab.nombre}
-            />
-          ))}
-          <Button onClick={handleDeleteConfirmation} color={selectedItems.length > 0 ? "error" : "primary"}>
-            Confirmar Eliminación
-          </Button>
         </div>
       )}
 
