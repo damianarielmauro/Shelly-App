@@ -27,7 +27,17 @@ const Dashboard = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [deleteMode, setDeleteMode] = useState<boolean>(false);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const navigate = useNavigate();
+
+  const handleDeleteSelectionChange = (id: number) => {
+    setSelectedItems((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((itemId) => itemId !== id)
+        : [...prevSelected, id]
+    );
+  };
 
   return (
     <Box sx={{ backgroundColor: 'black', color: 'white', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -53,7 +63,7 @@ const Dashboard = () => {
       <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />
       <Box display="flex" sx={{ flexGrow: 1, overflow: 'hidden' }}>
         <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
-          <RoomMatrix habitaciones={habitaciones} />
+          <RoomMatrix habitaciones={habitaciones} deleteMode={deleteMode} selectedItems={selectedItems} handleDeleteSelectionChange={handleDeleteSelectionChange} />
         </Box>
         <Box sx={{ width: '300px', overflow: 'auto', p: 2 }}>
           <DeviceList />

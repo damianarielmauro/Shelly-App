@@ -12,16 +12,23 @@ cd "$FRONTEND_DIR"
 # Crear el archivo src/components/RoomMatrix.tsx
 cat <<'EOF' > src/components/RoomMatrix.tsx
 import React from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography, Checkbox } from '@mui/material';
 
-const RoomMatrix = ({ habitaciones }: { habitaciones: any[] }) => {
+const RoomMatrix = ({ habitaciones, deleteMode, selectedItems, handleDeleteSelectionChange }: { habitaciones: any[], deleteMode: boolean, selectedItems: number[], handleDeleteSelectionChange: (id: number) => void }) => {
   return (
     <Box>
       <Box display="flex" flexWrap="wrap">
         {habitaciones.map((habitacion) => {
           const consumo = habitacion.consumo < 1000 ? `${habitacion.consumo} W` : `${(habitacion.consumo / 1000).toFixed(2)} kW`;
           return (
-            <Paper key={habitacion.id} sx={{ m: 1, p: 2, backgroundColor: '#333', color: 'white', width: '100px', height: '100px', textAlign: 'center', borderRadius: '8px' }}>
+            <Paper key={habitacion.id} sx={{ m: 1, p: 2, backgroundColor: '#333', color: 'white', width: '100px', height: '100px', textAlign: 'center', borderRadius: '8px', position: 'relative' }}>
+              {deleteMode && (
+                <Checkbox
+                  checked={selectedItems.includes(habitacion.id)}
+                  onChange={() => handleDeleteSelectionChange(habitacion.id)}
+                  sx={{ position: 'absolute', top: 0, right: 0 }}
+                />
+              )}
               <Typography variant="body2" sx={{ fontSize: '0.875rem', mb: 0.5 }}>{habitacion.nombre}</Typography>
               <Typography variant="body1" sx={{ fontSize: '1rem', color: '#1976d2' }}>{consumo}</Typography>
             </Paper>

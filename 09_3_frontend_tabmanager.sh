@@ -37,11 +37,13 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [renamingTab, setRenamingTab] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [newTableroNombre, setNewTableroNombre] = useState<string>('');
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<string>('');
   const [newItemName, setNewItemName] = useState<string>('');
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
+  const [deleteType, setDeleteType] = useState<string>('');
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   useEffect(() => {
@@ -62,17 +64,17 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
 
   useEffect(() => {
     const fetchHabitaciones = async () => {
-      try {
-        const data = await getHabitaciones();
-        setHabitaciones(data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id));
-      } catch (error) {
-        console.error('Error fetching habitaciones:', error);
+      if (tabs.length > 0 && tabs[selectedTab]) {
+        try {
+          const data = await getHabitaciones();
+          setHabitaciones(data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id));
+        } catch (error) {
+          console.error('Error fetching habitaciones:', error);
+        }
       }
     };
 
-    if (tabs.length > 0) {
-      fetchHabitaciones();
-    }
+    fetchHabitaciones();
   }, [selectedTab, tabs]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -168,6 +170,28 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     setSelectedItems([]);
   };
 
+  const handleDeleteMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, type: string) => {
+    setMenuAnchorEl(event.currentTarget);
+    setDeleteType(type);
+  };
+
+  const handleDeleteMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
+
+  const handleDeleteOptionSelect = (type: string) => {
+    setDeleteType(type);
+    setMenuAnchorEl(null);
+    setDeleteMode(true);
+  };
+
+  // Agregar logs de depuración
+  console.log('deleteMode:', deleteMode);
+  console.log('deleteType:', deleteType);
+  console.log('selectedTab:', selectedTab);
+  console.log('tabs[selectedTab]:', tabs[selectedTab]);
+  console.log('habitaciones:', tabs[selectedTab]?.habitaciones);
+
   return (
     <>
       {/* Pestañas principales */}
@@ -244,17 +268,26 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
               <MenuItem onClick={() => handleDialogOpen('Habitación')}>Habitación</MenuItem>
             </Menu>
             <Tooltip title="Eliminar">
-              <IconButton color="inherit" onClick={() => handleDeleteTablero(tabs[selectedTab].id)}>
+              <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={(event) => handleDeleteMenuOpen(event, 'delete')}>
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
+            <Menu
+              anchorEl={menuAnchorEl}
+              open={Boolean(menuAnchorEl)}
+              onClose={handleDeleteMenuClose}
+            >
+              <MenuItem onClick={() => handleDeleteOptionSelect('Tablero')}>Tablero</MenuItem>
+              <MenuItem onClick={() => handleDeleteOptionSelect('Habitación')}>Habitación</MenuItem>
+            </Menu>
           </div>
         </div>
       )}
 
-      {deleteMode && (
+      {/* Mostrar cuadros de selección en modo eliminación */}
+      {deleteMode && deleteType === 'Habitación' && tabs[selectedTab] && (
         <div>
-          {tabs[selectedTab].habitaciones.map((hab) => (
+          {tabs[selectedTab]?.habitaciones?.map((hab) => (
             <FormControlLabel
               key={hab.id}
               control={
@@ -266,7 +299,7 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
               label={hab.nombre}
             />
           ))}
-          <Button onClick={handleDeleteConfirmation} color="primary">
+          <Button onClick={handleDeleteConfirmation} color={selectedItems.length > 0 ? "error" : "primary"}>
             Confirmar Eliminación
           </Button>
         </div>
