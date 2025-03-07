@@ -87,7 +87,6 @@ sudo chown www-data:www-data /var/log/shelly_discovery.log
 
 echo "🔧 Configurando la API de Flask en app.py..."
 cat > "$BACKEND_DIR/app.py" <<EOF
-#!/usr/bin/env python3
 from flask import Flask, jsonify, request, Response, stream_with_context
 from flask_cors import CORS
 from flask_socketio import SocketIO
@@ -112,7 +111,6 @@ db = SQLAlchemy(app)
 LOG_PATH = "/opt/shelly_monitoring/backend.log"
 logging.basicConfig(filename=LOG_PATH, level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logging.info("🔧 Backend Flask iniciado.")
-
 
 # Definición de modelos
 class User(db.Model):
@@ -179,6 +177,112 @@ def get_habitaciones():
     habitaciones = Habitaciones.query.all()
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
+# API: Eliminar una habitación
+@app.route('/api/habitaciones/<int:habitacion_id>', methods=['DELETE'])
+def eliminar_habitacion(habitacion_id):
+    habitacion = Habitaciones.query.get(habitacion_id)
+    if habitacion:
+        db.session.delete(habitacion)
+        db.session.commit()
+        return jsonify({"message": "Habitación eliminada correctamente"}), 200
+    return jsonify({"error": "Habitación no encontrada"}), 404
+
+# API: Crear una nueva habitación dentro de un tablero
+@app.route('/api/habitaciones', methods=['POST'])
+def crear_habitacion():
+    data = request.get_json()
+    nombre = data.get("nombre", "").strip()
+    tablero_id = data.get("tablero_id")
+
+    if not nombre:
+        return jsonify({"error": "El nombre de la habitación no puede estar vacío"}), 400
+
+    if not tablero_id:
+        return jsonify({"error": "El ID del tablero es requerido"}), 400
+
+    if Habitaciones.query.filter_by(nombre=nombre, tablero_id=tablero_id).first():
+        return jsonify({"error": "Ya existe una habitación con este nombre en este tablero"}), 400
+
+    nueva_habitacion = Habitaciones(nombre=nombre, tablero_id=tablero_id)
+    db.session.add(nueva_habitacion)
+    db.session.commit()
+
+    return jsonify({
+        "id": nueva_habitacion.id,
+        "nombre": nueva_habitacion.nombre,
+        "tablero_id": nueva_habitacion.tablero_id
+    }), 201
+
+# API: Obtener lista de tableros
+@app.route('/api/tableros', methods=['GET'])
+def get_tableros():
+    tableros = Tableros.query.all()
+    return jsonify([{ "id": t.id, "nombre": t.nombre } for t in tableros])
+
+# API: Crear un nuevo tablero
+@app.route('/api/tableros', methods=['POST'])
+def crear_tablero():
+    data = request.get_json()
+    nombre = data.get("nombre", "").strip()
+
+    if not nombre:
+        return jsonify({"error": "El nombre del tablero no puede estar vacío"}), 400
+
+    if Tableros.query.filter_by(nombre=nombre).first():
+        return jsonify({"error": "Ya existe un tablero con este nombre"}), 400
+
+    nuevo_tablero = Tableros(nombre=nombre)
+    db.session.add(nuevo_tablero)
+    db.session.commit()
+    
+    return jsonify({"id": nuevo_tablero.id, "nombre": nuevo_tablero.nombre}), 201
+
+# API: Eliminar un tablero (solo si no tiene habitaciones dentro)
+@app.route("/api/tableros/<int:tablero_id>", methods=["DELETE"])
+def eliminar_tablero(tablero_id):
+    """ Elimina un tablero si no tiene habitaciones dentro """
+    tablero = Tableros.query.get(tablero_id)
+
+    if not tablero:
+        return jsonify({"error": "Tablero no encontrado"}), 404
+
+    # Verificar si hay habitaciones dentro del tablero
+    habitaciones_en_tablero = Habitaciones.query.filter_by(tablero_id=tablero_id).count()
+    
+    if habitaciones_en_tablero > 0:
+        return jsonify({"error": "No se puede eliminar un tablero con habitaciones dentro"}), 400
+
+    db.session.delete(tablero)
+    db.session.commit()
+    return jsonify({"message": "Tablero eliminado correctamente"}), 200
+
+# API: Actualizar orden de tableros
+@app.route('/api/tableros/orden', methods=['PUT'])
+def actualizar_orden_tableros():
+    try:
+        data = request.get_json()
+        for item in data:
+            tablero = Tableros.query.get(item['id'])
+            if tablero:
+                tablero.orden = item['orden']
+        db.session.commit()
+        return jsonify({"message": "Orden actualizado"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# API: Actualizar orden de habitaciones dentro de un tablero
+@app.route('/api/habitaciones/orden', methods=['PUT'])
+def actualizar_orden_habitaciones():
+    try:
+        data = request.get_json()
+        for item in data:
+            habitacion = Habitaciones.query.get(item['id'])
+            if habitacion:
+                habitacion.orden = item['orden']
+        db.session.commit()
+        return jsonify({"message": "Orden actualizado"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # ===========================
 # 🔹 API para iniciar descubrimiento
@@ -238,108 +342,6 @@ def stream_logs():
                     time.sleep(1)  # Evita sobrecargar el sistema
     return Response(stream_with_context(generate()), content_type='text/event-stream')
 
-
-# API: Obtener lista de tableros
-@app.route('/api/tableros', methods=['GET'])
-def get_tableros():
-    tableros = Tableros.query.all()
-    return jsonify([{ "id": t.id, "nombre": t.nombre } for t in tableros])
-
-# API: Crear un nuevo tablero
-@app.route('/api/tableros', methods=['POST'])
-def crear_tablero():
-    data = request.get_json()
-    nombre = data.get("nombre", "").strip()
-
-    if not nombre:
-        return jsonify({"error": "El nombre del tablero no puede estar vacío"}), 400
-
-    if Tableros.query.filter_by(nombre=nombre).first():
-        return jsonify({"error": "Ya existe un tablero con este nombre"}), 400
-
-    nuevo_tablero = Tableros(nombre=nombre)
-    db.session.add(nuevo_tablero)
-    db.session.commit()
-    
-    return jsonify({"id": nuevo_tablero.id, "nombre": nuevo_tablero.nombre}), 201
-
-# API: Eliminar un tablero (solo si no tiene habitaciones dentro)
-@app.route("/api/tableros/<int:tablero_id>", methods=["DELETE"])
-def eliminar_tablero(tablero_id):
-    """ Elimina un tablero si no tiene habitaciones dentro """
-    tablero = Tableros.query.get(tablero_id)
-
-    if not tablero:
-        return jsonify({"error": "Tablero no encontrado"}), 404
-
-    # Verificar si hay habitaciones dentro del tablero
-    habitaciones_en_tablero = Habitaciones.query.filter_by(tablero_id=tablero_id).count()
-    
-    if habitaciones_en_tablero > 0:
-        return jsonify({"error": "No se puede eliminar un tablero con habitaciones dentro"}), 400
-
-    db.session.delete(tablero)
-    db.session.commit()
-    return jsonify({"message": "Tablero eliminado correctamente"}), 200
-
-
-
-# API: Actualizar orden de tableros
-@app.route('/api/tableros/orden', methods=['PUT'])
-def actualizar_orden_tableros():
-    try:
-        data = request.get_json()
-        for item in data:
-            tablero = Tableros.query.get(item['id'])
-            if tablero:
-                tablero.orden = item['orden']
-        db.session.commit()
-        return jsonify({"message": "Orden actualizado"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# API: Crear una nueva habitación dentro de un tablero
-@app.route('/api/habitaciones', methods=['POST'])
-def crear_habitacion():
-    data = request.get_json()
-    nombre = data.get("nombre", "").strip()
-    tablero_id = data.get("tablero_id")
-
-    if not nombre:
-        return jsonify({"error": "El nombre de la habitación no puede estar vacío"}), 400
-
-    if not tablero_id:
-        return jsonify({"error": "El ID del tablero es requerido"}), 400
-
-    if Habitaciones.query.filter_by(nombre=nombre, tablero_id=tablero_id).first():
-        return jsonify({"error": "Ya existe una habitación con este nombre en este tablero"}), 400
-
-    nueva_habitacion = Habitaciones(nombre=nombre, tablero_id=tablero_id)
-    db.session.add(nueva_habitacion)
-    db.session.commit()
-
-    return jsonify({
-        "id": nueva_habitacion.id,
-        "nombre": nueva_habitacion.nombre,
-        "tablero_id": nueva_habitacion.tablero_id
-    }), 201
-
-
-# API: Actualizar orden de habitaciones dentro de un tablero
-@app.route('/api/habitaciones/orden', methods=['PUT'])
-def actualizar_orden_habitaciones():
-    try:
-        data = request.get_json()
-        for item in data:
-            habitacion = Habitaciones.query.get(item['id'])
-            if habitacion:
-                habitacion.orden = item['orden']
-        db.session.commit()
-        return jsonify({"message": "Orden actualizado"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
 # ===========================
 # 🔹 Iniciar backend con HTTPS
 # ===========================
@@ -352,7 +354,7 @@ if __name__ == '__main__':
         exit(1)
 
     logging.info(f"📢 Iniciando servidor en 0.0.0.0:8000 con Gunicorn y SSL habilitado.")
-
+    socketio.run(app, host="0.0.0.0", port=8000, certfile=ssl_cert, keyfile=ssl_key)
 EOF
 
 # ===========================

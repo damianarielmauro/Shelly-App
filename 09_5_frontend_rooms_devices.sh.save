@@ -13,7 +13,7 @@ cd "$FRONTEND_DIR"
 cat <<'EOF' > src/components/RoomMatrix.tsx
 import React from 'react';
 import { Checkbox, Box, Typography, Card, CardContent } from '@mui/material';
-import BoltIcon from '@mui/icons-material/Bolt'; // Importamos el ícono Bolt
+import FlashOnIcon from '@mui/icons-material/FlashOn'; // Este es el relámpago más inclinado (como mencionaste)
 
 interface RoomMatrixProps {
   habitaciones: any[];
@@ -24,7 +24,7 @@ interface RoomMatrixProps {
 
 const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selectedItems, handleDeleteSelectionChange }) => {
   return (
-    <Box display="flex" flexWrap="wrap" gap={0}> {/* Gap reducido */}
+    <Box display="flex" flexWrap="wrap" gap={0.1}> {/* Gap reducido */}
       {habitaciones.map((habitacion) => {
         // Formatear el consumo como W o kW
         const consumo =
@@ -40,7 +40,7 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selec
               p: 2,
               backgroundColor: '#333',
               color: 'white',
-              width: '120px', // Cambiar el tamaño de los mosaicos
+              width: '100px',
               height: '100px',
               textAlign: 'center',
               borderRadius: '8px',
@@ -53,14 +53,18 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selec
                 onChange={() => handleDeleteSelectionChange(habitacion.id)}
                 sx={{
                   position: 'absolute',
-                  bottom: '-5px',
-                  right: '-5px',
-                  color: 'red', // Color recuadro
+                  bottom: 0,
+                  right: 0,
+                  color: 'red', // Color del tilde
                   '& .MuiSvgIcon-root': {
-                    color: selectedItems.includes(habitacion.id) ? 'red' : 'red', // Tilde blanco cuando seleccionado
+                    color: selectedItems.includes(habitacion.id) ? 'white' : 'red', // Tilde blanco cuando seleccionado
                   },
                   '&.Mui-checked': {
-                    backgroundColor: 'none', // Cuadrado rojo cuando está seleccionado
+                    backgroundColor: 'red', // Cuadrado rojo cuando está seleccionado
+                    border: 'none', // Elimina el borde alrededor
+                  },
+                  '&:hover': {
+                    backgroundColor: 'red', // Sin animación y aseguramos que el cuadrado sea rojo
                   },
                 }}
               />
@@ -68,7 +72,7 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selec
             <Typography
               variant="body2"
               sx={{
-                fontSize: '0.8rem', // Tamaño de letra más pequeño
+                fontSize: '0.75rem', // Tamaño de letra más pequeño
                 fontWeight: 'bold', // Negrita
                 display: 'flex',
                 justifyContent: 'center',
@@ -80,11 +84,11 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selec
               {habitacion.nombre}
             </Typography>
             <Box display="flex" alignItems="center" justifyContent="center">
-              <BoltIcon sx={{ fontSize: '1rem', color: '#1976d2', mr: 0.5 }} /> {/* Relámpago (Bolt) más grande */}
+              <BoltIcon sx={{ fontSize: '0.75rem', color: '#1976d2', mr: 0.5 }} /> {/* Relámpago azul */}
               <Typography
                 variant="body2"
                 sx={{
-                  fontSize: '0.8rem', // Tamaño de letra más pequeño
+                  fontSize: '0.75rem', // Tamaño de letra más pequeño
                   fontWeight: 'bold', // Negrita
                   color: '#1976d2', // Azul para el valor y unidad
                 }}

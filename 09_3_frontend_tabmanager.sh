@@ -16,8 +16,7 @@ cat <<'EOF' > src/components/TabManager.tsx
 import React, { useState, useEffect } from 'react';
 import { Tabs, Tab, TextField, IconButton, Tooltip, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion, deleteHabitacion } from '../services/api';
+import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion } from '../services/api';
 
 interface Tab {
   id: number;
@@ -226,11 +225,6 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
               <MenuItem onClick={() => handleDialogOpen('Tablero')}>Tablero</MenuItem>
               <MenuItem onClick={() => handleDialogOpen('Habitación')}>Habitación</MenuItem>
             </Menu>
-            <Tooltip title="Eliminar">
-              <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={() => handleDeleteOptionSelect('Habitación')}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
           </div>
         </div>
       )}
