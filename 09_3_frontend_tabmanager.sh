@@ -83,10 +83,8 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
 
   const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
     setSelectedTab(newValue);
-    if (tabs[newValue]?.nombre === 'General') {
-      setHabitaciones([]);
-      setHabitacionesState([]);
-    }
+    setHabitaciones([]); // Clear habitaciones when changing tabs
+    setHabitacionesState([]); // Clear habitacionesState when changing tabs
   };
 
   const handleCreateTablero = async (nombre: string) => {
