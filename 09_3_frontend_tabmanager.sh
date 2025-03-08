@@ -14,9 +14,8 @@ cd "$FRONTEND_DIR"
 # Crear el archivo src/components/TabManager.tsx
 cat <<'EOF' > src/components/TabManager.tsx
 import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, TextField, IconButton, Tooltip, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion } from '../services/api';
+import { Tabs, Tab, TextField, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Checkbox, Box } from '@mui/material';
+import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion, getHabitacionesByTablero } from '../services/api';
 
 interface Tab {
   id: number;
@@ -30,22 +29,24 @@ interface TabManagerProps {
   editMode: boolean;
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
   setHabitaciones: React.Dispatch<React.SetStateAction<any[]>>;
+  setTableros: React.Dispatch<React.SetStateAction<any[]>>;
   deleteMode: boolean;
+  setDeleteMode: React.Dispatch<React.SetStateAction<boolean>>; 
   handleDeleteOptionSelect: (type: string) => void;
-  selectedItems: number[];  // Añadimos selectedItems aquí
+  selectedItems: number[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<number[]>>; 
+  deleteType: string; 
 }
 
-const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones, deleteMode, handleDeleteOptionSelect, selectedItems }) => {
+const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones, setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect, selectedItems, setSelectedItems, deleteType }) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [habitaciones, setHabitacionesState] = useState<any[]>([]);
   const [renamingTab, setRenamingTab] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [newTableroNombre, setNewTableroNombre] = useState<string>('');
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<string>('');
   const [newItemName, setNewItemName] = useState<string>('');
-  const [deleteType, setDeleteType] = useState<string>('');
 
   useEffect(() => {
     const fetchTableros = async () => {
@@ -68,7 +69,6 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
       if (tabs.length > 0 && tabs[selectedTab]) {
         try {
           const data = await getHabitaciones();
-          console.log('Habitaciones obtenidas:', data);
           const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id);
           setHabitaciones(filteredHabitaciones);
           setHabitacionesState(filteredHabitaciones);
@@ -81,8 +81,12 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     fetchHabitaciones();
   }, [selectedTab, tabs]);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
     setSelectedTab(newValue);
+    if (tabs[newValue]?.nombre === 'General') {
+      setHabitaciones([]);
+      setHabitacionesState([]);
+    }
   };
 
   const handleCreateTablero = async (nombre: string) => {
@@ -110,6 +114,11 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
   };
 
   const handleDeleteTablero = async (id: number) => {
+    const habitacionesAsignadas = await getHabitacionesByTablero(id);
+    if (habitacionesAsignadas.length > 0) {
+      alert('El tablero ' + id + ' tiene habitaciones asignadas y no se puede borrar.');
+      return;
+    }
     await deleteTablero(id);
     const data = await getTableros();
     setTabs(data);
@@ -145,15 +154,9 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     handleDialogClose();
   };
 
-  console.log('deleteMode:', deleteMode);
-  console.log('selectedTab:', selectedTab);
-  console.log('tabs[selectedTab]:', tabs[selectedTab]);
-  console.log('habitaciones:', habitaciones);
-
   return (
     <>
-      {/* Pestañas principales */}
-      <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', flex: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}
@@ -161,75 +164,74 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
           sx={{
             '& .MuiTab-root': {
               color: 'white',
+              display: 'flex',
+              alignItems: 'center',
             },
             '& .Mui-selected': {
               color: 'blue',
               fontWeight: 'bold',
             },
+            flexGrow: 1 // Ensure the tabs take up all available space
           }}
+          variant="scrollable"
+          scrollButtons="auto"
         >
           {tabs.filter(tab => tab.nombre !== 'General').map((tab, index) => (
             <Tab
               key={tab.id}
               label={
-                renamingTab === tab.id ? (
-                  <TextField
-                    value={tab.nombre}
-                    onChange={(e) => setTabs(tabs.map(t => t.id === tab.id ? { ...t, nombre: e.target.value } : t))}
-                    onBlur={() => handleRenameTablero(tab.id, tab.nombre)}
-                    onKeyPress={(e) => { if (e.key === 'Enter') handleRenameTablero(tab.id, tab.nombre); }}
-                    autoFocus
-                  />
-                ) : (
-                  <span onDoubleClick={() => setRenamingTab(tab.id)}>{tab.nombre}</span>
-                )
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {renamingTab === tab.id ? (
+                    <TextField
+                      value={tab.nombre}
+                      onChange={(e) => setTabs(tabs.map(t => t.id === tab.id ? { ...t, nombre: e.target.value } : t))}
+                      onBlur={() => handleRenameTablero(tab.id, tab.nombre)}
+                      onKeyPress={(e) => { if (e.key === 'Enter') handleRenameTablero(tab.id, tab.nombre); }}
+                      autoFocus
+                    />
+                  ) : (
+                    <span onDoubleClick={() => setRenamingTab(tab.id)}>{tab.nombre}</span>
+                  )}
+                  {deleteMode && deleteType === 'Tablero' && (
+                    <Checkbox
+                      checked={selectedItems.includes(tab.id)}
+                      onChange={() => setSelectedItems(
+                        selectedItems.includes(tab.id)
+                          ? selectedItems.filter(item => item !== tab.id)
+                          : [...selectedItems, tab.id]
+                      )}
+                      sx={{
+                        color: 'red',
+                        '& .MuiSvgIcon-root': {
+                          color: selectedItems.includes(tab.id) ? 'red' : 'red',
+                        },
+                        '&.Mui-checked': {
+                          backgroundColor: 'none',
+                        },
+                      }}
+                    />
+                  )}
+                </div>
               }
+              value={index}
             />
           ))}
+          <Tab 
+            label="General" 
+            value={tabs.length} 
+            key="general-tab" 
+            sx={{ marginLeft: 'auto' }}
+          />
         </Tabs>
-      </div>
-
-      {/* Pestaña 'General' alineada a la derecha */}
-      <div style={{  marginLeft: 'auto', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <Tabs
-          value={selectedTab === tabs.length ? selectedTab : false}
-          onChange={handleTabChange}
-          aria-label="general-tab"
-          sx={{
-            '& .MuiTab-root': {
-              color: 'white',
-            },
-            '& .Mui-selected': {
-              color: 'blue',
-              fontWeight: 'bold',
-            },
-          }}
-        >
-          <Tab label="General" value={tabs.length} />
-        </Tabs>
-      </div>
-
-      {editMode && (
-        <div style={{ marginLeft: 'auto', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <Tooltip title="Agregar">
-              <IconButton color="inherit" onClick={handleMenuClick}>
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={() => handleDialogOpen('Tablero')}>Tablero</MenuItem>
-              <MenuItem onClick={() => handleDialogOpen('Habitación')}>Habitación</MenuItem>
-            </Menu>
-          </div>
-        </div>
-      )}
-
-      {/* Dialogo para agregar Habitación */}
+      </Box>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={() => handleDialogOpen('Tablero')}>Tablero</MenuItem>
+        <MenuItem onClick={() => handleDialogOpen('Habitación')}>Habitación</MenuItem>
+      </Menu>
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>Agregar {dialogType}</DialogTitle>
         <DialogContent>

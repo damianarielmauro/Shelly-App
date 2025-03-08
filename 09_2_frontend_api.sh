@@ -78,6 +78,11 @@ export const updateOrdenTableros = async (tableros: { id: number; orden: number 
   return response.data;
 };
 
+export const getHabitacionesByTablero = async (tableroId: number) => {
+  const response = await api.get(`/tableros/${tableroId}/habitaciones`);
+  return response.data;
+};
+
 // Descubrimiento
 export const startDiscovery = async (subredes: string[]) => {
   const response = await api.post('/start_discovery', { subredes });

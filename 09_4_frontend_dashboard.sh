@@ -12,28 +12,39 @@ cd "$FRONTEND_DIR"
 
 # Crear el archivo src/pages/Dashboard.tsx
 cat <<'EOF' > src/pages/Dashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppBar, IconButton, Box, Tooltip, Button, Menu, MenuItem } from '@mui/material';
+import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add'; // Asegúrate de importar AddIcon
 import RoomMatrix from '../components/RoomMatrix';
-import DeviceList from '../components/DeviceList';
 import TabManager from '../components/TabManager';
-import { deleteHabitacion } from '../services/api';
+import DeviceList from '../components/DeviceList';
+import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros } from '../services/api';
 
 const Dashboard = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
+  const [tableros, setTableros] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteType, setDeleteType] = useState<string>('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTableros = async () => {
+      const data = await getTableros();
+      setTableros(data);
+    };
+
+    fetchTableros();
+  }, []);
 
   const handleDeleteSelectionChange = (id: number) => {
     setSelectedItems((prevSelected) =>
@@ -47,18 +58,6 @@ const Dashboard = () => {
     setDeleteType(type);
     setDeleteMode(true);
     setAnchorEl(null);
-  };
-
-  const handleDeleteHabitacion = async () => {
-    // Llamada a la API para eliminar las habitaciones seleccionadas
-    for (const id of selectedItems) {
-      await deleteHabitacion(id);
-    }
-    // Actualizar el estado de las habitaciones
-    const newHabitaciones = habitaciones.filter(hab => !selectedItems.includes(hab.id));
-    setHabitaciones(newHabitaciones);
-    setSelectedItems([]);
-    setDeleteMode(false);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -77,6 +76,43 @@ const Dashboard = () => {
     setEditMode(!editMode);
   };
 
+  const handleDeleteAction = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (deleteMode) {
+      if (deleteType === 'Habitación') {
+        for (const id of selectedItems) {
+          await deleteHabitacion(id);
+        }
+        const newHabitaciones = habitaciones.filter(hab => !selectedItems.includes(hab.id));
+        setHabitaciones(newHabitaciones);
+        setSelectedItems([]);
+        setDeleteMode(false);
+      } else if (deleteType === 'Tablero') {
+        const tablerosConHabitaciones = await Promise.all(selectedItems.map(async (id) => {
+          const habitacionesAsignadas = await getHabitacionesByTablero(id);
+          return habitacionesAsignadas.length > 0 ? id : null;
+        }));
+
+        const tablerosSinHabitaciones = selectedItems.filter(id => !tablerosConHabitaciones.includes(id));
+        if (tablerosConHabitaciones.filter(Boolean).length > 0) {
+          alert(`Algunos tableros tienen habitaciones asignadas y no se pueden borrar.`);
+          setSelectedItems([]);
+          setDeleteMode(false);
+          return;
+        }
+
+        for (const id of tablerosSinHabitaciones) {
+          await deleteTablero(id);
+        }
+        const data = await getTableros(); // Refetch tableros
+        setTableros(data); // Update tableros in the UI
+        setSelectedItems([]);
+        setDeleteMode(false);
+      }
+    } else {
+      setAnchorEl(event.currentTarget);
+    }
+  };
+
   return (
     <Box sx={{ backgroundColor: 'black', color: 'white', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0 }}>
@@ -86,17 +122,36 @@ const Dashboard = () => {
           editMode={editMode} 
           setEditMode={setEditMode} 
           setHabitaciones={setHabitaciones} 
+          setTableros={setTableros}
           deleteMode={deleteMode}
+          setDeleteMode={setDeleteMode} 
           handleDeleteOptionSelect={handleDeleteOptionSelect}
-          selectedItems={selectedItems}  // Pasamos selectedItems como prop
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems} 
+          deleteType={deleteType} 
         />
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" sx={{ marginLeft: 'auto', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           {editMode && (
-            <Tooltip title="Eliminar">
-              <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={deleteMode && selectedItems.length > 0 ? handleDeleteHabitacion : handleMenuClick}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+            <>
+              <Tooltip title="Agregar">
+                <IconButton color="inherit" onClick={handleMenuClick}>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Eliminar">
+                <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={handleDeleteAction}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={() => handleDeleteOptionSelect('Tablero')}>Tablero</MenuItem>
+                <MenuItem onClick={() => handleDeleteOptionSelect('Habitación')}>Habitación</MenuItem>
+              </Menu>
+            </>
           )}
           <Tooltip title="Editar">
             <IconButton color={editMode ? "primary" : "inherit"} onClick={toggleEditMode}>
@@ -114,20 +169,12 @@ const Dashboard = () => {
           </IconButton>
         </Box>
       </Box>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem onClick={() => handleDeleteOptionSelect('Tablero')}>Tablero</MenuItem>
-        <MenuItem onClick={() => handleDeleteOptionSelect('Habitación')}>Habitación</MenuItem>
-      </Menu>
       <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />
       <Box display="flex" sx={{ flexGrow: 1, overflow: 'hidden' }}>
         <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
           <RoomMatrix 
             habitaciones={habitaciones} 
-            deleteMode={deleteMode} 
+            deleteMode={deleteMode && deleteType === 'Habitación'} 
             selectedItems={selectedItems} 
             handleDeleteSelectionChange={handleDeleteSelectionChange} 
           />

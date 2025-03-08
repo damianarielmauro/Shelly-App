@@ -177,6 +177,12 @@ def get_habitaciones():
     habitaciones = Habitaciones.query.all()
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
+# API: Obtener habitaciones por tablero
+@app.route('/api/tableros/<int:tablero_id>/habitaciones', methods=['GET'])
+def get_habitaciones_by_tablero(tablero_id):
+    habitaciones = Habitaciones.query.filter_by(tablero_id=tablero_id).all()
+    return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
+
 # API: Eliminar una habitación
 @app.route('/api/habitaciones/<int:habitacion_id>', methods=['DELETE'])
 def eliminar_habitacion(habitacion_id):
