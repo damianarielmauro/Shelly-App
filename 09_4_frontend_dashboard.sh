@@ -130,14 +130,9 @@ const Dashboard = () => {
           setSelectedItems={setSelectedItems} 
           deleteType={deleteType} 
         />
-        <Box display="flex" alignItems="center" sx={{ marginLeft: 'auto', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <Box display="flex" alignItems="center" sx={{ marginLeft: 'auto', justifyContent: 'flex-end', alignItems: 'center' }}>
           {editMode && (
             <>
-              <Tooltip title="Agregar">
-                <IconButton color="inherit" onClick={handleMenuClick}>
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
               <Tooltip title="Eliminar">
                 <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={handleDeleteAction}>
                   <DeleteIcon />

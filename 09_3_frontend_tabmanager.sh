@@ -14,7 +14,9 @@ cd "$FRONTEND_DIR"
 # Crear el archivo src/components/TabManager.tsx
 cat <<'EOF' > src/components/TabManager.tsx
 import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, TextField, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Checkbox, Box } from '@mui/material';
+import { Tabs, Tab, TextField, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, 
+Button, Checkbox, Box, IconButton, Tooltip } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion, getHabitacionesByTablero } from '../services/api';
 
 interface Tab {
@@ -38,7 +40,9 @@ interface TabManagerProps {
   deleteType: string; 
 }
 
-const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones, setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect, selectedItems, setSelectedItems, deleteType }) => {
+const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones,
+ setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect, selectedItems, setSelectedItems, deleteType }) => 
+{
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [habitaciones, setHabitacionesState] = useState<any[]>([]);
   const [renamingTab, setRenamingTab] = useState<number | null>(null);
@@ -83,8 +87,10 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
 
   const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
     setSelectedTab(newValue);
-    setHabitaciones([]); // Clear habitaciones when changing tabs
-    setHabitacionesState([]); // Clear habitacionesState when changing tabs
+    if (tabs[newValue]?.nombre === 'General') {
+      setHabitaciones([]);
+      setHabitacionesState([]);
+    }
   };
 
   const handleCreateTablero = async (nombre: string) => {
@@ -182,7 +188,8 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
                   {renamingTab === tab.id ? (
                     <TextField
                       value={tab.nombre}
-                      onChange={(e) => setTabs(tabs.map(t => t.id === tab.id ? { ...t, nombre: e.target.value } : t))}
+                      onChange={(e) => setTabs(tabs.map(t => t.id === tab.id ? { ...t, nombre: e.target.value } : t))
+}
                       onBlur={() => handleRenameTablero(tab.id, tab.nombre)}
                       onKeyPress={(e) => { if (e.key === 'Enter') handleRenameTablero(tab.id, tab.nombre); }}
                       autoFocus
@@ -221,6 +228,13 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
             sx={{ marginLeft: 'auto' }}
           />
         </Tabs>
+        {editMode && (
+          <Tooltip title="Agregar" sx={{ marginLeft: 'auto' }}>
+            <IconButton color="inherit" onClick={handleMenuClick}>
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
       <Menu
         anchorEl={anchorEl}
