@@ -21,13 +21,14 @@ bash "$SCRIPT_DIR/06_configuracion_firewall.sh"
 bash "$SCRIPT_DIR/07_backend.sh"
 bash "$SCRIPT_DIR/08_iniciar_servicios.sh"
 
-#bash "$SCRIPT_DIR/09_0_frontend_base.sh"
-#bash "$SCRIPT_DIR/09_1_frontend_api.sh"
-#bash "$SCRIPT_DIR/09_2_frontend_tabmanager.sh"
-#bash "$SCRIPT_DIR/09_3_frontend_dashboard.sh"
-#bash "$SCRIPT_DIR/09_4_frontend_rooms_devices.sh"
-#bash "$SCRIPT_DIR/09_5_frontend_discovery.sh"
-#bash "$SCRIPT_DIR/09_6_frontend_build.sh"
+bash "$SCRIPT_DIR/09_0_frontend_base.sh"
+bash "$SCRIPT_DIR/09_1_frontend_files.sh"
+bash "$SCRIPT_DIR/09_2_frontend_api.sh"
+bash "$SCRIPT_DIR/09_3_frontend_tabmanager.sh"
+bash "$SCRIPT_DIR/09_4_frontend_dashboard.sh"
+bash "$SCRIPT_DIR/09_5_frontend_rooms_devices.sh"
+bash "$SCRIPT_DIR/09_6_frontend_discovery.sh"
+bash "$SCRIPT_DIR/09_7_frontend_build.sh"
 
 # ===========================
 # ✅ Instalación completada

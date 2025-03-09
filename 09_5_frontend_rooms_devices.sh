@@ -13,7 +13,7 @@ cd "$FRONTEND_DIR"
 cat <<'EOF' > src/components/RoomMatrix.tsx
 import React from 'react';
 import { Checkbox, Box, Typography, Card, CardContent } from '@mui/material';
-import BoltIcon from '@mui/icons-material/Bolt'; // Importamos el ícono Bolt
+import BoltIcon from '@mui/icons-material/Bolt';
 
 interface RoomMatrixProps {
   habitaciones: any[];
@@ -22,11 +22,15 @@ interface RoomMatrixProps {
   handleDeleteSelectionChange: (id: number) => void;
 }
 
-const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selectedItems, handleDeleteSelectionChange }) => {
+const RoomMatrix: React.FC<RoomMatrixProps> = ({
+  habitaciones,
+  deleteMode,
+  selectedItems,
+  handleDeleteSelectionChange,
+}) => {
   return (
-    <Box display="flex" flexWrap="wrap" gap={0}> {/* Gap reducido */}
+    <Box display="flex" flexWrap="wrap" gap={0}>
       {habitaciones.map((habitacion) => {
-        // Formatear el consumo como W o kW
         const consumo =
           habitacion.consumo < 1000
             ? `${habitacion.consumo} W`
@@ -40,7 +44,7 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selec
               p: 2,
               backgroundColor: '#333',
               color: 'white',
-              width: '120px', // Cambiar el tamaño de los mosaicos
+              width: '120px',
               height: '100px',
               textAlign: 'center',
               borderRadius: '8px',
@@ -55,12 +59,12 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selec
                   position: 'absolute',
                   bottom: '-5px',
                   right: '-5px',
-                  color: 'red', // Color recuadro
+                  color: 'red',
                   '& .MuiSvgIcon-root': {
-                    color: selectedItems.includes(habitacion.id) ? 'red' : 'red', // Tilde blanco cuando seleccionado
+                    color: selectedItems.includes(habitacion.id) ? 'red' : 'red',
                   },
                   '&.Mui-checked': {
-                    backgroundColor: 'none', // Cuadrado rojo cuando está seleccionado
+                    backgroundColor: 'none',
                   },
                 }}
               />
@@ -68,25 +72,25 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({ habitaciones, deleteMode, selec
             <Typography
               variant="body2"
               sx={{
-                fontSize: '0.8rem', // Tamaño de letra más pequeño
-                fontWeight: 'bold', // Negrita
+                fontSize: '0.8rem',
+                fontWeight: 'bold',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '50%', // Centrado vertical
-                mb: 0.5, // Margen inferior
+                height: '50%',
+                mb: 0.5,
               }}
             >
               {habitacion.nombre}
             </Typography>
             <Box display="flex" alignItems="center" justifyContent="center">
-              <BoltIcon sx={{ fontSize: '1rem', color: '#1976d2', mr: 0.5 }} /> {/* Relámpago (Bolt) más grande */}
+              <BoltIcon sx={{ fontSize: '1rem', color: '#1976d2', mr: 0.5 }} />
               <Typography
                 variant="body2"
                 sx={{
-                  fontSize: '0.8rem', // Tamaño de letra más pequeño
-                  fontWeight: 'bold', // Negrita
-                  color: '#1976d2', // Azul para el valor y unidad
+                  fontSize: '0.8rem',
+                  fontWeight: 'bold',
+                  color: '#1976d2',
                 }}
               >
                 {consumo}

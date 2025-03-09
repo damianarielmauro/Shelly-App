@@ -12,15 +12,15 @@ cd "$FRONTEND_DIR"
 
 # Crear el archivo src/pages/Dashboard.tsx
 cat <<'EOF' > src/pages/Dashboard.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem } from '@mui/material';
+import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add'; // Asegúrate de importar AddIcon
+import AddIcon from '@mui/icons-material/Add';
 import RoomMatrix from '../components/RoomMatrix';
 import TabManager from '../components/TabManager';
 import DeviceList from '../components/DeviceList';
@@ -35,16 +35,42 @@ const Dashboard = () => {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteType, setDeleteType] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchTableros = async () => {
+  const fetchTableros = useCallback(async () => {
+    try {
       const data = await getTableros();
       setTableros(data);
+    } catch (error) {
+      console.error('Error fetching tableros:', error);
+    }
+  }, []);
+
+  const fetchHabitaciones = useCallback(async (tableroId: number) => {
+    try {
+      const data = await getHabitacionesByTablero(tableroId);
+      setHabitaciones(data);
+    } catch (error) {
+      console.error('Error fetching habitaciones:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const initialize = async () => {
+      setLoading(true);
+      await fetchTableros();
+      setLoading(false);
     };
 
-    fetchTableros();
-  }, []);
+    initialize();
+  }, [fetchTableros]);
+
+  useEffect(() => {
+    if (tableros.length > 0 && tableros[selectedTab]) {
+      fetchHabitaciones(tableros[selectedTab]?.id);
+    }
+  }, [selectedTab, tableros, fetchHabitaciones]);
 
   const handleDeleteSelectionChange = (id: number) => {
     setSelectedItems((prevSelected) =>
@@ -78,6 +104,7 @@ const Dashboard = () => {
 
   const handleDeleteAction = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (deleteMode) {
+      setLoading(true);
       if (deleteType === 'Habitación') {
         for (const id of selectedItems) {
           await deleteHabitacion(id);
@@ -97,17 +124,18 @@ const Dashboard = () => {
           alert(`Algunos tableros tienen habitaciones asignadas y no se pueden borrar.`);
           setSelectedItems([]);
           setDeleteMode(false);
+          setLoading(false);
           return;
         }
 
         for (const id of tablerosSinHabitaciones) {
           await deleteTablero(id);
         }
-        const data = await getTableros(); // Refetch tableros
-        setTableros(data); // Update tableros in the UI
+        await fetchTableros(); // Refetch tableros
         setSelectedItems([]);
         setDeleteMode(false);
       }
+      setLoading(false);
     } else {
       setAnchorEl(event.currentTarget);
     }
@@ -167,12 +195,16 @@ const Dashboard = () => {
       <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />
       <Box display="flex" sx={{ flexGrow: 1, overflow: 'hidden' }}>
         <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
-          <RoomMatrix 
-            habitaciones={habitaciones} 
-            deleteMode={deleteMode && deleteType === 'Habitación'} 
-            selectedItems={selectedItems} 
-            handleDeleteSelectionChange={handleDeleteSelectionChange} 
-          />
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <RoomMatrix 
+              habitaciones={habitaciones} 
+              deleteMode={deleteMode && deleteType === 'Habitación'} 
+              selectedItems={selectedItems} 
+              handleDeleteSelectionChange={handleDeleteSelectionChange} 
+            />
+          )}
         </Box>
         <Box sx={{ width: '300px', overflow: 'auto', p: 2 }}>
           <DeviceList />
