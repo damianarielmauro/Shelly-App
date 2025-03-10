@@ -16,7 +16,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import FlashOnIcon from '@mui/icons-material/FlashOn';
+import BoltIcon from '@mui/icons-material/Bolt';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -168,7 +168,7 @@ const Dashboard = () => {
             </IconButton>
           </Tooltip>
           <IconButton color="inherit" onClick={() => navigate('/consumption')}>
-            <FlashOnIcon />
+            <BoltIcon />
           </IconButton>
           <IconButton color="inherit" onClick={() => navigate('/statistics')}>
             <BarChartIcon />

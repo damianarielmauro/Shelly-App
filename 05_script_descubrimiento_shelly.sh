@@ -292,7 +292,7 @@ if __name__ == "__main__":
     sys.stdout = dual_logger  # Redirige stdout a la terminal y al log
     sys.stderr = dual_logger  # Redirige stderr a la terminal y al log
 
-    print("\n=== Inicio de ejecución del script de descubrimiento ===\n")
+    print("\n=== Inicio del descubrimiento ===\n")
 
     dispositivos_totales = {}
     ips_analizadas_total = []
@@ -304,7 +304,7 @@ if __name__ == "__main__":
 
     generar_resumen(dispositivos_totales, ips_analizadas_total)
 
-    print("\n=== Fin de ejecución del script de descubrimiento ===\n")
+    print("\n=== Fin del descubrimiento ===\n")
 EOF
 
 # 📌 Asignar permisos de ejecución

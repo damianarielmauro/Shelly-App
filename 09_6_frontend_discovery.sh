@@ -34,10 +34,10 @@ const Settings = () => {
     <Box sx={{ backgroundColor: 'black', color: 'white', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0 }}>
         <Tabs value={selectedTab} onChange={handleTabChange} aria-label="settings-tabs" sx={{ color: 'white', fontSize: '1.25rem' }}>
-          <Tab label="Descubrimiento de Dispositivos" sx={{ color: 'white', fontWeight: selectedTab === 0 ? 'bold' : 'normal' }} />
-          <Tab label="Gestión de Usuarios y Perfiles" sx={{ color: 'white', fontWeight: selectedTab === 1 ? 'bold' : 'normal' }} />
+          <Tab label="Descubrir Dispositivos" sx={{ color: 'white', fontWeight: selectedTab === 0 ? 'bold' : 'normal' }} />
+          <Tab label="Usuarios y Perfiles" sx={{ color: 'white', fontWeight: selectedTab === 1 ? 'bold' : 'normal' }} />
         </Tabs>
-        <HomeIcon sx={{ color: 'white', cursor: 'pointer', marginRight: '16px' }} onClick={handleHomeClick} />
+        <HomeIcon sx={{ color: 'white', cursor: 'pointer', marginRight: '18px' }} onClick={handleHomeClick} />
       </Box>
       <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />
       <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
@@ -57,29 +57,51 @@ import React, { useState, useEffect, useRef } from 'react';
 import { startDiscovery } from '../services/api';
 import { createSSEConnection } from '../services/sse';
 import { TextField, Button, Box, Typography, LinearProgress } from '@mui/material';
-import { AnsiUp } from 'ansi_up';
+import { Terminal } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
+import 'xterm/css/xterm.css';
 
 const Discovery = () => {
-  const [logs, setLogs] = useState<string[]>([]);
   const [subnets, setSubnets] = useState<string>('');
   const [isDiscovering, setIsDiscovering] = useState<boolean>(false);
-  const [lastDiscoveryTime, setLastDiscoveryTime] = useState<string | null>(null);
-  const logsEndRef = useRef<HTMLDivElement>(null);
+  const [lastDiscoveryTime, setLastDiscoveryTime] = useState<string | null>(
+    localStorage.getItem('lastDiscoveryTime')
+  );
+  const terminalRef = useRef<HTMLDivElement>(null);
+  const terminal = useRef<Terminal | null>(null);
+  const fitAddon = useRef<FitAddon | null>(null);
+
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminal.current = new Terminal({
+        theme: {
+          background: '#333',
+          foreground: '#FFF', // Set the foreground color to ensure text is visible
+        },
+        convertEol: true,
+      });
+      fitAddon.current = new FitAddon();
+      terminal.current.loadAddon(fitAddon.current);
+      terminal.current.open(terminalRef.current);
+      fitAddon.current.fit();
+    }
+
+    return () => {
+      terminal.current?.dispose();
+    };
+  }, []);
 
   useEffect(() => {
     if (isDiscovering) {
       const eventSource = createSSEConnection('https://172.16.10.222:8000/api/logs', (data) => {
-        setLogs((prevLogs) => {
-          if (data.includes("=== Fin de ejecución del script de descubrimiento ===")) {
-            setIsDiscovering(false);
-            setLastDiscoveryTime(new Date().toLocaleString());
-            eventSource.close();
-          }
-          if (!prevLogs.includes(data)) {
-            return [...prevLogs, data];
-          }
-          return prevLogs;
-        });
+        terminal.current?.writeln(data);
+        if (data.includes("=== Fin del descubrimiento ===")) {
+          setIsDiscovering(false);
+          const discoveryTime = new Date().toLocaleString();
+          setLastDiscoveryTime(discoveryTime);
+          localStorage.setItem('lastDiscoveryTime', discoveryTime);
+          eventSource.close();
+        }
       });
 
       return () => {
@@ -88,56 +110,75 @@ const Discovery = () => {
     }
   }, [isDiscovering]);
 
-  useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [logs]);
-
   const handleDiscovery = async () => {
     if (!subnets.trim()) {
       alert('Por favor, ingrese las subredes (ejemplo: 192.168.1.0/24, 10.1.100.0/24)');
       return;
     }
     setIsDiscovering(true);
-    setLogs(['Iniciando descubrimiento...']);
+    terminal.current?.clear();
+    terminal.current?.writeln('Iniciando descubrimiento...');
     try {
       await startDiscovery(subnets.split(','));
     } catch (error) {
-      setLogs((prevLogs) => [...prevLogs, 'Error al iniciar el descubrimiento']);
+      terminal.current?.writeln('Error al iniciar el descubrimiento');
       setIsDiscovering(false);
     }
   };
 
-  const ansiUp = new AnsiUp();
-
   return (
     <Box p={3} sx={{ backgroundColor: 'black', color: 'white', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0 }}>
-        <Typography variant="body1" sx={{ color: 'white' }}>Descubrimiento de Dispositivos</Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0, mb: 2 }}>
+        <TextField
+          fullWidth
+          placeholder="Ingrese las subredes, ej: 192.168.1.0/24, 10.1.100.0/24"
+          value={subnets}
+          onChange={(e) => setSubnets(e.target.value)}
+          margin="normal"
+          sx={{
+            backgroundColor: '#333',
+            borderRadius: '4px',
+            color: 'white',
+            flexGrow: 1,
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': { borderColor: 'none' },
+              '&:hover fieldset': { borderColor: 'none' },
+              '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1976d2' },
+            },
+            '& input': {
+              color: 'white',
+              padding: '10px 12px',
+              height: '40px', // Asegura que el cuadro de texto tenga una altura consistente
+              boxSizing: 'border-box',
+            },
+            '& .MuiInputBase-input::placeholder': {
+              color: 'rgba(255, 255, 255, 0.7)',
+            }
+          }}
+        />
         <Button
           variant="contained"
           color="primary"
           onClick={handleDiscovery}
           disabled={isDiscovering}
-          sx={{ backgroundColor: '#1976d2', height: '40px', marginLeft: '16px' }}
+          sx={{
+            backgroundColor: '#1976d2',
+            fontSize: '10px',
+            height: '40px',  // Asegura que el botón tenga la misma altura que el campo de texto
+            marginLeft: '18px',
+            lineHeight: '1.5',  // Asegura que el contenido del botón esté centrado verticalmente
+            padding: '0 16px',  // Ajusta el padding para que coincida con el del cuadro de texto
+            boxSizing: 'border-box',
+            display: 'flex',
+            alignItems: 'center',  // Centra el contenido del botón verticalmente
+          }}
         >
-          Iniciar Descubrimiento
+          Iniciar
         </Button>
       </Box>
-      <TextField
-        fullWidth
-        label="Subredes"
-        placeholder="Ingrese las subredes, ej: 192.168.1.0/24, 10.1.100.0/24"
-        value={subnets}
-        onChange={(e) => setSubnets(e.target.value)}
-        margin="normal"
-        sx={{ backgroundColor: '#333', borderRadius: '4px', height: '40px', color: 'white' }}
-        InputLabelProps={{ style: { color: 'white' } }}
-        InputProps={{ style: { color: 'white' } }}
-      />
       {isDiscovering && <LinearProgress />}
-      <Box mt={2} p={2} bgcolor="#333" borderRadius={4} overflow="auto" sx={{ flexGrow: 1 }}>
-        <pre style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: ansiUp.ansi_to_html(logs.join('\n')) }} />
-        <div ref={logsEndRef} />
+      <Box mt={2} p={2} bgcolor="#333" borderRadius={4} overflow="auto" sx={{ flexGrow: 1, scrollbarWidth: 'thin', scrollbarColor: '#1976d2 #333' }}>
+        <div ref={terminalRef} style={{ height: '100%', width: '100%' }} />
       </Box>
       <Typography variant="body2" sx={{ color: 'white', mt: 2, flexShrink: 0 }}>
         Último descubrimiento: {lastDiscoveryTime || 'N/A'}
@@ -174,7 +215,7 @@ import React from 'react';
 const UsersManagement = () => {
   return (
     <div>
-      <h1>Gestión de Usuarios y Perfiles</h1>
+      <h1>Usuarios y Perfiles</h1>
       {/* Placeholder para la gestión de usuarios y perfiles */}
     </div>
   );
