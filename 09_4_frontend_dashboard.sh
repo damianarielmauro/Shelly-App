@@ -12,9 +12,9 @@ cd "$FRONTEND_DIR"
 
 # Crear el archivo src/pages/Dashboard.tsx
 cat <<'EOF' > src/pages/Dashboard.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem, CircularProgress } from '@mui/material';
+import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -27,7 +27,7 @@ import DeviceList from '../components/DeviceList';
 import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros } from '../services/api';
 
 const Dashboard = () => {
-  const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [selectedTab, setSelectedTab] = useState<number>(1); // Set initial tab to 1 for "Planta ALTA"
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
   const [tableros, setTableros] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -35,42 +35,17 @@ const Dashboard = () => {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteType, setDeleteType] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  const fetchTableros = useCallback(async () => {
-    try {
-      const data = await getTableros();
-      setTableros(data);
-    } catch (error) {
-      console.error('Error fetching tableros:', error);
-    }
-  }, []);
-
-  const fetchHabitaciones = useCallback(async (tableroId: number) => {
-    try {
-      const data = await getHabitacionesByTablero(tableroId);
-      setHabitaciones(data);
-    } catch (error) {
-      console.error('Error fetching habitaciones:', error);
-    }
-  }, []);
-
   useEffect(() => {
-    const initialize = async () => {
-      setLoading(true);
-      await fetchTableros();
-      setLoading(false);
+    const fetchTableros = async () => {
+      const data = await getTableros();
+      console.log("Tableros fetched in Dashboard:", data);
+      setTableros(data);
     };
 
-    initialize();
-  }, [fetchTableros]);
-
-  useEffect(() => {
-    if (tableros.length > 0 && tableros[selectedTab]) {
-      fetchHabitaciones(tableros[selectedTab]?.id);
-    }
-  }, [selectedTab, tableros, fetchHabitaciones]);
+    fetchTableros();
+  }, []);
 
   const handleDeleteSelectionChange = (id: number) => {
     setSelectedItems((prevSelected) =>
@@ -104,7 +79,6 @@ const Dashboard = () => {
 
   const handleDeleteAction = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (deleteMode) {
-      setLoading(true);
       if (deleteType === 'Habitación') {
         for (const id of selectedItems) {
           await deleteHabitacion(id);
@@ -124,22 +98,34 @@ const Dashboard = () => {
           alert(`Algunos tableros tienen habitaciones asignadas y no se pueden borrar.`);
           setSelectedItems([]);
           setDeleteMode(false);
-          setLoading(false);
           return;
         }
 
         for (const id of tablerosSinHabitaciones) {
           await deleteTablero(id);
         }
-        await fetchTableros(); // Refetch tableros
+        const data = await getTableros(); // Refetch tableros
+        setTableros(data); // Update tableros in the UI
         setSelectedItems([]);
         setDeleteMode(false);
       }
-      setLoading(false);
     } else {
       setAnchorEl(event.currentTarget);
     }
   };
+
+  useEffect(() => {
+    if (tableros.length > 0 && tableros[selectedTab]) {
+      const fetchHabitaciones = async () => {
+        const tableroId = tableros[selectedTab].id;
+        console.log(`Fetching habitaciones for tablero ID: ${tableroId}`);
+        const data = await getHabitacionesByTablero(tableroId);
+        console.log(`Habitaciones fetched for tablero ID ${tableroId}:`, data);
+        setHabitaciones(data);
+      };
+      fetchHabitaciones();
+    }
+  }, [selectedTab, tableros]);
 
   return (
     <Box sx={{ backgroundColor: 'black', color: 'white', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -195,16 +181,12 @@ const Dashboard = () => {
       <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />
       <Box display="flex" sx={{ flexGrow: 1, overflow: 'hidden' }}>
         <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            <RoomMatrix 
-              habitaciones={habitaciones} 
-              deleteMode={deleteMode && deleteType === 'Habitación'} 
-              selectedItems={selectedItems} 
-              handleDeleteSelectionChange={handleDeleteSelectionChange} 
-            />
-          )}
+          <RoomMatrix 
+            habitaciones={habitaciones} 
+            deleteMode={deleteMode && deleteType === 'Habitación'} 
+            selectedItems={selectedItems} 
+            handleDeleteSelectionChange={handleDeleteSelectionChange} 
+          />
         </Box>
         <Box sx={{ width: '300px', overflow: 'auto', p: 2 }}>
           <DeviceList />

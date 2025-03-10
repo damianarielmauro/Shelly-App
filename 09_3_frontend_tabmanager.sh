@@ -13,9 +13,9 @@ cd "$FRONTEND_DIR"
 
 # Crear el archivo src/components/TabManager.tsx
 cat <<'EOF' > src/components/TabManager.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, Tab, TextField, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, 
-Button, Checkbox, Box, IconButton, Tooltip, CircularProgress } from '@mui/material';
+Button, Checkbox, Box, IconButton, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion, getHabitacionesByTablero } from '../services/api';
 
@@ -45,7 +45,6 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
 {
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [habitaciones, setHabitacionesState] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [renamingTab, setRenamingTab] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [newTableroNombre, setNewTableroNombre] = useState<string>('');
@@ -53,76 +52,75 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
   const [dialogType, setDialogType] = useState<string>('');
   const [newItemName, setNewItemName] = useState<string>('');
 
-  const fetchTableros = useCallback(async () => {
-    try {
-      const data = await getTableros();
-      if (!data.find((tab: any) => tab.nombre === 'General')) {
-        await createTablero('General');
-      }
-      setTabs(data);
-    } catch (error) {
-      console.error('Error fetching tableros:', error);
-    }
-  }, []);
-
-  const fetchHabitaciones = useCallback(async (tableroId: number) => {
-    try {
-      const data = await getHabitaciones();
-      const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tableroId);
-      setHabitaciones(filteredHabitaciones);
-      setHabitacionesState(filteredHabitaciones);
-    } catch (error) {
-      console.error('Error fetching habitaciones:', error);
-    }
-  }, []);
-
   useEffect(() => {
-    const initialize = async () => {
-      setLoading(true);
-      await fetchTableros();
-      setLoading(false);
+    const fetchTableros = async () => {
+      try {
+        const data = await getTableros();
+        if (!data.find((tab: any) => tab.nombre === 'General')) {
+          await createTablero('General');
+        }
+        console.log("Tableros fetched:", data);
+        setTabs(data);
+      } catch (error) {
+        console.error('Error fetching tableros:', error);
+      }
     };
 
-    initialize();
-  }, [fetchTableros]);
+    fetchTableros();
+  }, []);
 
   useEffect(() => {
-    if (tabs.length > 0 && tabs[selectedTab]) {
-      fetchHabitaciones(tabs[selectedTab]?.id);
-    }
-  }, [selectedTab, tabs, fetchHabitaciones]);
+    const fetchHabitaciones = async () => {
+      if (tabs.length > 0 && tabs[selectedTab]) {
+        try {
+          const data = await getHabitaciones();
+          const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id);
+          console.log(`Habitaciones fetched for tablero ID ${tabs[selectedTab]?.id}:`, filteredHabitaciones);
+          setHabitaciones(filteredHabitaciones);
+          setHabitacionesState(filteredHabitaciones);
+        } catch (error) {
+          console.error('Error fetching habitaciones:', error);
+        }
+      }
+    };
+
+    fetchHabitaciones();
+  }, [selectedTab, tabs]);
 
   const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
+    console.log(`Tab changed to index: ${newValue}, Tab ID: ${tabs[newValue]?.id}`);
     setSelectedTab(newValue);
     if (tabs[newValue]?.nombre === 'General') {
       setHabitaciones([]);
       setHabitacionesState([]);
-    } else {
-      fetchHabitaciones(tabs[newValue]?.id);
     }
   };
 
   const handleCreateTablero = async (nombre: string) => {
-    setLoading(true);
     await createTablero(nombre);
-    await fetchTableros();
-    const newTabIndex = tabs.length;
-    setSelectedTab(newTabIndex); // Seleccionar el nuevo tablero automáticamente
-    setLoading(false);
+    const data = await getTableros();
+    setTabs(data);
+    setSelectedTab(data.length - 1);
+    console.log("New Tablero created and selected:", data[data.length - 1]);
   };
 
   const handleCreateHabitacion = async (nombre: string, tableroId: number) => {
-    setLoading(true);
     await createHabitacion(nombre, tableroId);
-    await fetchHabitaciones(tableroId);
-    await fetchTableros();
-    setLoading(false);
+    const data = await getHabitaciones();
+    const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tableroId);
+    setHabitaciones(filteredHabitaciones);
+    setHabitacionesState(filteredHabitaciones);
+    const updatedTableros = await getTableros();
+    setTabs(updatedTableros);
+    console.log(`New Habitacion created in Tablero ID ${tableroId}:`, filteredHabitaciones);
   };
 
   const handleRenameTablero = async (id: number, nombre: string) => {
     await updateTableroName(id, nombre);
-    await fetchTableros();
+    const data = await getTableros();
+    setTabs(data);
     setRenamingTab(null);
+    console.log(`Tablero ID ${id} renamed to ${nombre}`);
   };
 
   const handleDeleteTablero = async (id: number) => {
@@ -131,13 +129,13 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
       alert('El tablero ' + id + ' tiene habitaciones asignadas y no se puede borrar.');
       return;
     }
-    setLoading(true);
     await deleteTablero(id);
-    await fetchTableros();
-    if (selectedTab >= tabs.length) {
-      setSelectedTab(tabs.length - 1);
+    const data = await getTableros();
+    setTabs(data);
+    if (selectedTab >= data.length) {
+      setSelectedTab(data.length - 1);
     }
-    setLoading(false);
+    console.log(`Tablero ID ${id} deleted`);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -160,10 +158,6 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
 
   const handleDialogSubmit = () => {
     if (dialogType === 'Habitación') {
-      if (selectedTab === undefined || selectedTab === null) {
-        alert('Debe seleccionar un tablero antes de agregar una habitación.');
-        return;
-      }
       handleCreateHabitacion(newItemName, tabs[selectedTab].id);
     } else if (dialogType === 'Tablero') {
       handleCreateTablero(newItemName);
@@ -193,7 +187,7 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
           variant="scrollable"
           scrollButtons="auto"
         >
-          {tabs.filter(tab => tab.nombre !== 'General').map((tab, index) => (
+          {tabs.map((tab, index) => (
             <Tab
               key={tab.id}
               label={
@@ -233,12 +227,6 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
               value={index}
             />
           ))}
-          <Tab 
-            label="General" 
-            value={tabs.length} 
-            key="general-tab" 
-            sx={{ marginLeft: 'auto' }}
-          />
         </Tabs>
         {editMode && (
           <Tooltip title="Agregar" sx={{ marginLeft: 'auto' }}>
@@ -281,7 +269,6 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
           </Button>
         </DialogActions>
       </Dialog>
-      {loading && <CircularProgress />}
     </>
   );
 };
