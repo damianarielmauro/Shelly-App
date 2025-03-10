@@ -40,9 +40,11 @@ interface TabManagerProps {
   deleteType: string; 
 }
 
-const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones,
- setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect, selectedItems, setSelectedItems, deleteType }) => 
-{
+const TabManager: React.FC<TabManagerProps> = ({
+  selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones,
+  setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect, 
+  selectedItems, setSelectedItems, deleteType 
+}) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [habitaciones, setHabitacionesState] = useState<any[]>([]);
   const [renamingTab, setRenamingTab] = useState<number | null>(null);
@@ -56,9 +58,6 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
     const fetchTableros = async () => {
       try {
         const data = await getTableros();
-        if (!data.find((tab: any) => tab.nombre === 'General')) {
-          await createTablero('General');
-        }
         console.log("Tableros fetched:", data);
         setTabs(data);
       } catch (error) {
@@ -90,10 +89,6 @@ const TabManager: React.FC<TabManagerProps> = ({ selectedTab, setSelectedTab, ed
   const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
     console.log(`Tab changed to index: ${newValue}, Tab ID: ${tabs[newValue]?.id}`);
     setSelectedTab(newValue);
-    if (tabs[newValue]?.nombre === 'General') {
-      setHabitaciones([]);
-      setHabitacionesState([]);
-    }
   };
 
   const handleCreateTablero = async (nombre: string) => {

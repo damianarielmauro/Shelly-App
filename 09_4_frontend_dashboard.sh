@@ -27,7 +27,7 @@ import DeviceList from '../components/DeviceList';
 import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros } from '../services/api';
 
 const Dashboard = () => {
-  const [selectedTab, setSelectedTab] = useState<number>(1); // Set initial tab to 1 for "Planta ALTA"
+  const [selectedTab, setSelectedTab] = useState<number>(0); // Set initial tab to 0 for the first tab
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
   const [tableros, setTableros] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
