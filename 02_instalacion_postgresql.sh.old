@@ -130,25 +130,15 @@ CREATE TABLE IF NOT EXISTS device (
     state BOOLEAN DEFAULT FALSE,
     room VARCHAR(50)
 );
-EOF
 
-# ===========================
-# 🔧 Generar hash bcrypt para la contraseña de admin
-# ===========================
-
-echo "🔧 Generando hash bcrypt para la contraseña de admin..."
-PASSWORD="admin123"
-HASHED_PASSWORD=$(python3 -c "import bcrypt; print(bcrypt.hashpw('$PASSWORD'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))")
-
-echo "🔧 Insertando usuario administrador por defecto en la base de datos..."
-sudo -u postgres psql -d $DB_NAME <<EOF
+-- 🔹 Insertar usuario administrador por defecto
 DO
 \$\$
 BEGIN
    IF NOT EXISTS (SELECT 1 FROM usuarios WHERE email = 'admin@shelly.local') THEN
        INSERT INTO usuarios (nombre, email, password_hash, role, username)
        VALUES ('Administrador', 'admin@shelly.local',
-               '$HASHED_PASSWORD',
+               'bcrypt hash de admin123',
                'admin', 'admin')
        ON CONFLICT (email) DO NOTHING;
    END IF;
