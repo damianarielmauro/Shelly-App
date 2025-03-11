@@ -61,12 +61,14 @@ echo "📂 Creando estructura de la base de datos..."
 sudo -u postgres psql -d $DB_NAME <<EOF
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
+-- Crear tablas y asignar permisos
 CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    rol VARCHAR(20) CHECK (rol IN ('admin', 'usuario')) NOT NULL
+    rol VARCHAR(20) CHECK (rol IN ('admin', 'usuario')) NOT NULL,
+    username VARCHAR(80) UNIQUE NOT NULL  -- Añadida la columna username
 );
 
 CREATE TABLE IF NOT EXISTS roles (
@@ -98,7 +100,6 @@ CREATE TABLE IF NOT EXISTS habitaciones (
 -- 🔹 Agregar columna orden en habitaciones si no existe
 ALTER TABLE habitaciones ADD COLUMN IF NOT EXISTS orden INT DEFAULT 0;
 
-
 CREATE TABLE IF NOT EXISTS dispositivos (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -106,7 +107,8 @@ CREATE TABLE IF NOT EXISTS dispositivos (
     tipo VARCHAR(50) NOT NULL,
     habitacion_id INT REFERENCES habitaciones(id) ON DELETE SET NULL,
     ultimo_consumo FLOAT DEFAULT 0,
-    tipo_artefacto_id INT REFERENCES tipos_artefacto(id) ON DELETE SET NULL
+    tipo_artefacto_id INT REFERENCES tipos_artefacto(id) ON DELETE SET NULL,
+    estado BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS historico_consumo (
@@ -138,10 +140,10 @@ DO
 \$\$
 BEGIN
    IF NOT EXISTS (SELECT 1 FROM usuarios WHERE email = 'admin@shelly.local') THEN
-       INSERT INTO usuarios (nombre, email, password_hash, rol)
+       INSERT INTO usuarios (nombre, email, password_hash, rol, username)
        VALUES ('Administrador', 'admin@shelly.local',
               crypt('admin123', gen_salt('bf', 8)),
-              'admin')
+              'admin', 'admin')
        ON CONFLICT (email) DO NOTHING;
    END IF;
 END;
@@ -151,43 +153,6 @@ EOF
 echo "✅ Estructura de la base de datos creada correctamente."
 
 # ===========================
-# 🛠️ ALTERACIÓN DE TABLA PARA AGREGAR `orden` EN `tableros`
-# ===========================
-echo "🔄 Verificando si la columna 'orden' existe en 'tableros'..."
-sudo -u postgres psql -d $DB_NAME <<EOF
-DO
-\$\$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_name='tableros' AND column_name='orden') THEN
-        ALTER TABLE tableros ADD COLUMN orden INTEGER DEFAULT 0;
-        RAISE NOTICE '📌 Columna "orden" agregada a la tabla tableros.';
-    ELSE
-        RAISE NOTICE '✅ La columna "orden" ya existe en la tabla tableros.';
-    END IF;
-END;
-\$\$;
-EOF
-echo "✅ Columna 'orden' verificada y agregada si no existía."
-
-# ===========================
-# 🛠️ ALTERACIÓN DE TABLA PARA AGREGAR `estado`
-# ===========================
-echo "🔄 Verificando si la columna 'estado' existe en 'dispositivos'..."
-sudo -u postgres psql -d $DB_NAME <<EOF
-DO
-\$\$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_name='dispositivos' AND column_name='estado') THEN
-        ALTER TABLE dispositivos ADD COLUMN estado BOOLEAN DEFAULT FALSE;
-    END IF;
-END;
-\$\$;
-EOF
-echo "✅ Columna 'estado' verificada y agregada si no existía."
-
-# ===========================
 # 🔧 Ajuste de permisos en la base de datos
 # ===========================
 
@@ -195,12 +160,27 @@ echo "🔧 Ajustando permisos y propietarios..."
 sudo -u postgres psql -d $DB_NAME <<EOF
 ALTER SCHEMA public OWNER TO $DB_USER;
 ALTER DATABASE $DB_NAME OWNER TO $DB_USER;
+
 DO
 \$\$
 DECLARE r RECORD;
 BEGIN
     FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
         EXECUTE 'ALTER TABLE ' || quote_ident(r.tablename) || ' OWNER TO $DB_USER';
+        EXECUTE 'GRANT ALL PRIVILEGES ON TABLE ' || quote_ident(r.tablename) || ' TO $DB_USER';
+    END LOOP;
+    
+    FOR r IN (SELECT sequencename FROM pg_sequences WHERE schemaname = 'public') LOOP
+        EXECUTE 'ALTER SEQUENCE ' || quote_ident(r.sequencename) || ' OWNER TO $DB_USER';
+        EXECUTE 'GRANT ALL PRIVILEGES ON SEQUENCE ' || quote_ident(r.sequencename) || ' TO $DB_USER';
+    END LOOP;
+    
+    FOR r IN (SELECT routine_name FROM information_schema.routines WHERE specific_schema = 'public' AND routine_name = 'digest') LOOP
+        IF (SELECT count(*) FROM pg_proc WHERE proname = 'digest') = 1 THEN
+            EXECUTE 'ALTER FUNCTION ' || quote_ident(r.routine_name) || ' OWNER TO $DB_USER';
+        ELSE
+            RAISE NOTICE 'Multiple functions named "digest" found, not changing owner.';
+        END IF;
     END LOOP;
 END;
 \$\$;

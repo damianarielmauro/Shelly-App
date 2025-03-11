@@ -13,7 +13,7 @@ cd "$FRONTEND_DIR"
 cat <<EOL > src/pages/Settings.tsx
 import React from 'react';
 import Discovery from '../components/Discovery';
-import UsersManagement from '../components/UsersManagement';
+import UsersManagement from '../pages/UsersManagement';
 import { Tabs, Tab, Box } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
@@ -208,15 +208,64 @@ export const createSSEConnection = (url: string, onMessage: (data: any) => void)
 };
 EOL
 
-# Crear el archivo src/components/UsersManagement.tsx
-cat <<EOL > src/components/UsersManagement.tsx
-import React from 'react';
+# Crear el archivo src/pages/UsersManagement.tsx
+cat <<EOL > src/pages/UsersManagement.tsx
+import React, { useState } from 'react';
+import { createUser } from '../services/api';
 
 const UsersManagement = () => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleCreateUser = async () => {
+    if (username && email && password && role) {
+      try {
+        await createUser(username, email, password, role);
+        setMessage('Usuario creado correctamente');
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setRole('');
+      } catch (error) {
+        setMessage('Error al crear el usuario');
+      }
+    } else {
+      setMessage('Por favor, completa todos los campos');
+    }
+  };
+
   return (
     <div>
-      <h1>Usuarios y Perfiles</h1>
-      {/* Placeholder para la gestión de usuarios y perfiles */}
+      <h2>Gestión de Usuarios</h2>
+      <input
+        type="text"
+        placeholder="Nombre de usuario"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Correo electrónico"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Rol"
+        value={role}
+        onChange={(e) => setRole(e.target.value)}
+      />
+      <button onClick={handleCreateUser}>Crear Usuario</button>
+      {message && <p>{message}</p>}
     </div>
   );
 };

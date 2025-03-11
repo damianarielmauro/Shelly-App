@@ -87,10 +87,11 @@ sudo chown www-data:www-data /var/log/shelly_discovery.log
 
 echo "🔧 Configurando la API de Flask en app.py..."
 cat > "$BACKEND_DIR/app.py" <<EOF
-from flask import Flask, jsonify, request, Response, stream_with_context
+from flask import Flask, jsonify, request, Response, stream_with_context, redirect, url_for, session
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import logging
 import subprocess
@@ -99,6 +100,7 @@ from threading import Thread
 
 # Configuración del backend Flask
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # Llave secreta para manejar sesiones
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 CORS(app)  # Habilita CORS en todas las rutas
 
@@ -109,7 +111,7 @@ db = SQLAlchemy(app)
 
 # Configuración de logs
 LOG_PATH = "/opt/shelly_monitoring/backend.log"
-logging.basicConfig(filename=LOG_PATH, level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 logging.info("🔧 Backend Flask iniciado.")
 
 # Definición de modelos
@@ -117,6 +119,7 @@ class User(db.Model):
     __tablename__ = 'usuarios'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), nullable=False)
 
@@ -153,6 +156,34 @@ class Dispositivos(db.Model):
 with app.app_context():
     db.create_all()
     db.session.commit()  # Asegura que los cambios se reflejen en PostgreSQL
+
+# API: Login
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    logging.debug(f"Intento de inicio de sesión: {email}")
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        logging.debug("Usuario encontrado en la base de datos")
+        if user.check_password(password):
+            logging.debug("Contraseña correcta")
+            session['user_id'] = user.id  # Guardar el ID del usuario en la sesión
+            return jsonify({"message": "Login exitoso"}), 200
+        else:
+            logging.debug("Contraseña incorrecta")
+    else:
+        logging.debug("Usuario no encontrado")
+    return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
+
+# Middleware para proteger rutas
+@app.before_request
+def require_login():
+    if not request.path.startswith('/api/login') and not request.path.startswith('/static'):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
 
 # API: Obtener dispositivos
 @app.route('/api/dispositivos', methods=['GET'])
@@ -290,10 +321,7 @@ def actualizar_orden_habitaciones():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ===========================
-# 🔹 API para iniciar descubrimiento
-# ===========================
-
+# API: Iniciar descubrimiento
 @app.route('/api/start_discovery', methods=['GET', 'POST'])
 def start_discovery():
     try:
@@ -330,9 +358,7 @@ def start_discovery():
             log_file.write(f"\n❌ Error en descubrimiento: {str(e)}\n")
         return jsonify({"error": f"Error al ejecutar el descubrimiento: {str(e)}"}), 500
 
-# ===========================
-# 📡 Endpoint SSE para transmitir logs en vivo
-# ===========================
+# API: Transmitir logs en vivo
 @app.route('/api/logs')
 def stream_logs():
     def generate():
@@ -348,9 +374,7 @@ def stream_logs():
                     time.sleep(1)  # Evita sobrecargar el sistema
     return Response(stream_with_context(generate()), content_type='text/event-stream')
 
-# ===========================
-# 🔹 Iniciar backend con HTTPS
-# ===========================
+# Iniciar backend con HTTPS
 if __name__ == '__main__':
     ssl_cert = "/etc/ssl/certs/shelly_monitoring.pem"
     ssl_key = "/etc/ssl/private/shelly_monitoring.key"
@@ -437,6 +461,7 @@ EOF
 
 # Recargar systemd para aplicar cambios
 sudo systemctl daemon-reload
+
 
 # ===========================
 # 🔧 Reiniciar el servicio

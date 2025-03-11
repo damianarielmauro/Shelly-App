@@ -68,3 +68,4 @@ CI=true npm install --loglevel=error --no-audit @emotion/react @emotion/styled @
 # Instalar react-app-rewired y ansi_up
 CI=true npm install --loglevel=error --no-audit react-app-rewired ansi_up --save
 
+npm install --loglevel=error --no-audit xterm xterm-addon-fit

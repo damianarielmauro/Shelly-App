@@ -95,5 +95,11 @@ export const getLogs = async () => {
   return response.data;
 };
 
+// Usuarios
+export const createUser = async (nombre: string, email: string, password: string, rol: string) => {
+  const response = await api.post('/usuarios', { nombre, email, password, rol });
+  return response.data;
+};
+
 export default api;
 EOF

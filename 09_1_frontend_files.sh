@@ -132,35 +132,108 @@ root.render(
 );
 EOL
 
+
 # Crear el archivo src/App.tsx
-cat <<EOL > src/App.tsx
+cat <<EOF > src/App.tsx
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Statistics from './pages/Statistics';
 import Consumption from './pages/Consumption';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import UsersManagement from './pages/UsersManagement';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import theme from './theme';
+import { isLoggedIn } from './services/auth';
+
+const PrivateRoute = ({ element: Element, ...rest }: any) => {
+  return isLoggedIn() ? <Element {...rest} /> : <Navigate to="/login" />;
+};
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/statistics" element={<Statistics />} />
-        <Route path="/consumption" element={<Consumption />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<PrivateRoute element={Dashboard} />} />
+        <Route path="/statistics" element={<PrivateRoute element={Statistics} />} />
+        <Route path="/consumption" element={<PrivateRoute element={Consumption} />} />
+        <Route path="/settings" element={<PrivateRoute element={Settings} />} />
+        <Route path="/users" element={<PrivateRoute element={UsersManagement} />} />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>
     </ThemeProvider>
   );
 };
 
 export default App;
-EOL
+EOF
+
+# Crear el archivo src/pages/Login.tsx
+cat <<EOF > src/pages/Login.tsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../services/auth';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    if (email && password) {
+      try {
+        await login(email, password);
+        navigate('/dashboard');
+      } catch (error) {
+        setMessage('Usuario o contraseña incorrectos');
+      }
+    } else {
+      setMessage('Por favor, completa todos los campos');
+    }
+  };
+
+  return (
+    <div>
+      <h2>Login</h2>
+      <input
+        type="text"
+        placeholder="Correo electrónico"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={handleLogin}>Iniciar Sesión</button>
+      {message && <p>{message}</p>}
+    </div>
+  );
+};
+
+export default Login;
+EOF
+
+# Crear el archivo src/services/auth.ts
+cat <<EOF > src/services/auth.ts
+import axios from 'axios';
+
+export const login = async (email: string, password: string) => {
+  const response = await axios.post('https://172.16.10.222:8000/api/login', { email, password });
+  return response.data;
+};
+
+export const isLoggedIn = () => {
+  return !!localStorage.getItem('token');
+};
+EOF
 
 # Crear el archivo src/theme.ts
 cat <<EOL > src/theme.ts
