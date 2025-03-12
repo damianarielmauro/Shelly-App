@@ -86,11 +86,19 @@ interface DeviceListProps {
 
 const DeviceList: React.FC<DeviceListProps> = ({ user }) => {
   const [dispositivos, setDispositivos] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDispositivos = async () => {
-      const data = await getDispositivos();
-      setDispositivos(data);
+      try {
+        const data = await getDispositivos();
+        setDispositivos(data);
+      } catch (error) {
+        setError('Error al obtener dispositivos');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchDispositivos();
@@ -101,10 +109,22 @@ const DeviceList: React.FC<DeviceListProps> = ({ user }) => {
       alert('No tienes permiso para cambiar el estado de los dispositivos.');
       return;
     }
-    await toggleDevice(deviceId);
-    const data = await getDispositivos();
-    setDispositivos(data);
+    try {
+      await toggleDevice(deviceId);
+      const data = await getDispositivos();
+      setDispositivos(data);
+    } catch (error) {
+      setError('Error al cambiar el estado del dispositivo');
+    }
   };
+
+  if (loading) {
+    return <p>Cargando dispositivos...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <List sx={{ backgroundColor: '#333', color: 'white' }}>
