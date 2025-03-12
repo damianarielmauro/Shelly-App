@@ -55,13 +55,13 @@ psycopg2-binary
 eventlet
 werkzeug
 bcrypt
+pyjwt
 EOF
 
 pip install -r requirements.txt
 pip install requests
 pip install flask-cors
 pip install gunicorn eventlet
-
 
 # 📌 Crear archivos de log si no existen
 echo "📂 Verificando archivos de log..."
@@ -75,12 +75,10 @@ sudo chown www-data:www-data "$LOG_PATH" "$DISCOVERY_LOG_PATH"
 sudo chmod 666 "$LOG_PATH" "$DISCOVERY_LOG_PATH"
 sudo chown -R www-data:www-data "$BACKEND_DIR/venv"
 
-
 # 📌 Asegurar permisos adecuados en logs
 echo "🔧 Ajustando permisos en logs..."
 sudo chmod 666 /var/log/shelly_discovery.log
 sudo chown www-data:www-data /var/log/shelly_discovery.log
-
 
 # ===========================
 # 📝 Creación del archivo app.py
@@ -93,15 +91,18 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
+import jwt
 import os
 import logging
 import subprocess
 import time
 from threading import Thread
+import functools
 
 # Configuración del backend Flask
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Llave secreta para manejar sesiones
+jwt_secret_key = os.environ.get('JWT_SECRET_KEY', 'your_jwt_secret_key')  # Llave secreta para JWT
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 CORS(app)  # Habilita CORS en todas las rutas
 
@@ -172,9 +173,11 @@ def login():
         logging.debug("Usuario encontrado en la base de datos")
         if user.check_password(password):
             logging.debug("Contraseña correcta")
+            # Generar token JWT
+            token = jwt.encode({'user_id': user.id}, jwt_secret_key, algorithm='HS256')
             session['user_id'] = user.id  # Guardar el ID del usuario en la sesión
             session['logged_in'] = True
-            return jsonify({"message": "Login exitoso"}), 200
+            return jsonify({"message": "Login exitoso", "token": token}), 200
         else:
             logging.debug("Contraseña incorrecta")
     else:
@@ -188,14 +191,31 @@ def require_login():
         if 'user_id' not in session:
             return jsonify({"error": "Usuario no autenticado"}), 401
 
+# Middleware para verificar permisos
+def require_permission(permission):
+    def decorator(f):
+        @functools.wraps(f)
+        def decorated_function(*args, **kwargs):
+            user_id = session.get('user_id')
+            if not user_id:
+                return jsonify({"error": "Usuario no autenticado"}), 401
+            user = User.query.get(user_id)
+            if not user or user.role != permission:
+                return jsonify({"error": "Permiso denegado"}), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 # API: Obtener dispositivos
 @app.route('/api/dispositivos', methods=['GET'])
+@require_permission('view_devices')
 def get_dispositivos():
     dispositivos = Dispositivos.query.all()
     return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado } for d in dispositivos])
 
 # API: Cambiar estado de un dispositivo
 @app.route('/api/toggle_device/<int:device_id>', methods=['POST'])
+@require_permission('toggle_device')
 def toggle_device(device_id):
     device = Dispositivos.query.get(device_id)
     if device:
@@ -207,18 +227,21 @@ def toggle_device(device_id):
 
 # API: Obtener habitaciones
 @app.route('/api/habitaciones', methods=['GET'])
+@require_permission('view_rooms')
 def get_habitaciones():
     habitaciones = Habitaciones.query.all()
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Obtener habitaciones por tablero
 @app.route('/api/tableros/<int:tablero_id>/habitaciones', methods=['GET'])
+@require_permission('view_rooms')
 def get_habitaciones_by_tablero(tablero_id):
     habitaciones = Habitaciones.query.filter_by(tablero_id=tablero_id).all()
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Eliminar una habitación
 @app.route('/api/habitaciones/<int:habitacion_id>', methods=['DELETE'])
+@require_permission('delete_room')
 def eliminar_habitacion(habitacion_id):
     habitacion = Habitaciones.query.get(habitacion_id)
     if habitacion:
@@ -229,6 +252,7 @@ def eliminar_habitacion(habitacion_id):
 
 # API: Crear una nueva habitación dentro de un tablero
 @app.route('/api/habitaciones', methods=['POST'])
+@require_permission('create_room')
 def crear_habitacion():
     data = request.get_json()
     nombre = data.get("nombre", "").strip()
@@ -255,12 +279,14 @@ def crear_habitacion():
 
 # API: Obtener lista de tableros
 @app.route('/api/tableros', methods=['GET'])
+@require_permission('view_boards')
 def get_tableros():
     tableros = Tableros.query.all()
     return jsonify([{ "id": t.id, "nombre": t.nombre } for t in tableros])
 
 # API: Crear un nuevo tablero
 @app.route('/api/tableros', methods=['POST'])
+@require_permission('create_board')
 def crear_tablero():
     data = request.get_json()
     nombre = data.get("nombre", "").strip()
@@ -279,6 +305,7 @@ def crear_tablero():
 
 # API: Eliminar un tablero (solo si no tiene habitaciones dentro)
 @app.route("/api/tableros/<int:tablero_id>", methods=["DELETE"])
+@require_permission('delete_board')
 def eliminar_tablero(tablero_id):
     """ Elimina un tablero si no tiene habitaciones dentro """
     tablero = Tableros.query.get(tablero_id)
@@ -298,6 +325,7 @@ def eliminar_tablero(tablero_id):
 
 # API: Actualizar orden de tableros
 @app.route('/api/tableros/orden', methods=['PUT'])
+@require_permission('update_board_order')
 def actualizar_orden_tableros():
     try:
         data = request.get_json()
@@ -312,6 +340,7 @@ def actualizar_orden_tableros():
 
 # API: Actualizar orden de habitaciones dentro de un tablero
 @app.route('/api/habitaciones/orden', methods=['PUT'])
+@require_permission('update_room_order')
 def actualizar_orden_habitaciones():
     try:
         data = request.get_json()
@@ -324,8 +353,11 @@ def actualizar_orden_habitaciones():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ===========================
 # API: Iniciar descubrimiento
+# ===========================
 @app.route('/api/start_discovery', methods=['GET', 'POST'])
+@require_permission('start_discovery')
 def start_discovery():
     try:
         data = request.get_json()
@@ -363,6 +395,7 @@ def start_discovery():
 
 # API: Transmitir logs en vivo
 @app.route('/api/logs')
+@require_permission('view_logs')
 def stream_logs():
     def generate():
         with open("/var/log/shelly_discovery.log", "r") as log_file:
@@ -402,7 +435,6 @@ if __name__ == "__main__":
     socketio.run(app)
 EOF
 
-
 # ===========================
 # 🔧 Ajustar permisos de ejecución
 # ===========================
@@ -414,20 +446,15 @@ sudo chmod +x "$BACKEND_DIR/app.py"
 # ===========================
 if [ -f "/etc/ssl/private/shelly_monitoring.key" ]; then
     echo "🔧 Ajustando permisos del certificado SSL..."
-#    sudo chmod 755 /etc/ssl/private/shelly_monitoring.key
-#    sudo chown root:www-data /etc/ssl/private/shelly_monitoring.key
-#    sudo chmod 755 /etc/ssl/certs/shelly_monitoring.pem  
-#    sudo chown root:www-data /etc/ssl/certs/shelly_monitoring.pem
     sudo chmod -R 755 /etc/ssl
     sudo chown -R root:www-data /etc/ssl
     sudo chmod 640 /etc/ssl/private/ssl-cert-snakeoil.key
     sudo chown root:ssl-cert /etc/ssl/private/ssl-cert-snakeoil.key
 fi
 
-
 # 📌 Verificar si el script de descubrimiento existe; si no, crearlo vacío
 if [ ! -f "/opt/shelly_monitoring/descubrir_shelly.py" ]; then
-    echo "⚠️ Script de descubrimiento no encontrado, creando uno vacío..."
+   echo "⚠️ Script de descubrimiento no encontrado, creando uno vacío..."
     sudo touch /opt/shelly_monitoring/descubrir_shelly.py
 fi
 

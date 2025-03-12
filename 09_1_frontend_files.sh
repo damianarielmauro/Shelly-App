@@ -65,6 +65,7 @@ echo "Reinstalando dependencias..."
 rm -rf node_modules package-lock.json
 CI=true npm install  --loglevel=error --no-audit
 
+
 # Crear el archivo .gitignore
 cat <<EOL > .gitignore
 node_modules
@@ -90,7 +91,6 @@ cat <<EOL > tsconfig.json
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "useUnknownInCatchVariables": true
     "jsx": "react-jsx"
   },
   "include": ["src"]
@@ -133,7 +133,7 @@ EOL
 
 # Crear el archivo src/App.tsx
 cat <<EOF > src/App.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Statistics from './pages/Statistics';
@@ -144,23 +144,41 @@ import UsersManagement from './pages/UsersManagement';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import theme from './theme';
-import { isLoggedIn } from './services/auth';
+import { isLoggedIn, getUser } from './services/auth';
 
-const PrivateRoute = ({ element: Element, ...rest }: any) => {
-  return isLoggedIn() ? <Element {...rest} /> : <Navigate to="/login" />;
+interface PrivateRouteProps {
+  element: React.ComponentType<any>;
+  path: string;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ element: Element, path, ...rest }) => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      const userData = getUser();
+      setUser(userData);
+    }
+  }, []);
+
+  if (!isLoggedIn()) {
+    return <Navigate to="/login" />;
+  }
+
+  return user ? <Element {...rest} user={user} /> : null;
 };
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<PrivateRoute element={Dashboard} />} />
-        <Route path="/statistics" element={<PrivateRoute element={Statistics} />} />
-        <Route path="/consumption" element={<PrivateRoute element={Consumption} />} />
-        <Route path="/settings" element={<PrivateRoute element={Settings} />} />
-        <Route path="/users" element={<PrivateRoute element={UsersManagement} />} />
+        <Route path="/dashboard" element={<PrivateRoute element={Dashboard} path="/dashboard" />} />
+        <Route path="/statistics" element={<PrivateRoute element={Statistics} path="/statistics" />} />
+        <Route path="/consumption" element={<PrivateRoute element={Consumption} path="/consumption" />} />
+        <Route path="/settings" element={<PrivateRoute element={Settings} path="/settings" />} />
+        <Route path="/users" element={<PrivateRoute element={UsersManagement} path="/users" />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>
     </ThemeProvider>
@@ -174,60 +192,78 @@ EOF
 cat <<EOF > src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../services/api';
+import { login } from '../services/auth';
 import { TextField, Button, Box, Typography } from '@mui/material';
-import axios, { AxiosError } from 'axios';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const Login: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      await loginUser(email, password);
-      navigate('/dashboard');  // Redirigir al dashboard si el login es exitoso
-    } catch (err) {
-      // Hacer una afirmación de tipo de AxiosError
-      const axiosError = err as AxiosError;
-      
-      if (axios.isAxiosError(axiosError)) {
-        setError(axiosError.response?.data?.error || 'Error desconocido');
-      } else if (err instanceof Error) {
-        setError(err.message || 'Error desconocido');
-      } else {
-        setError('Error desconocido');
+  const handleLogin = async () => {
+    if (email && password) {
+      try {
+        const data = await login(email, password);
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          navigate('/dashboard');
+        } else {
+          setMessage('Login exitoso, pero no se recibió un token.');
+        }
+      } catch (error) {
+        setMessage('Usuario o contraseña incorrectos');
       }
+    } else {
+      setMessage('Por favor, completa todos los campos');
     }
   };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100vh">
-      <Typography variant="h4" gutterBottom>Login</Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Correo electrónico"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Contraseña"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        {error && <Typography color="error">{error}</Typography>}
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Iniciar Sesión
-        </Button>
-      </form>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      minHeight="100vh"
+      bgcolor="black"
+      color="white"
+      p={3}
+    >
+      <Typography variant="h4" mb={3}>
+        Login
+      </Typography>
+      <TextField
+        fullWidth
+        variant="outlined"
+        placeholder="Correo electrónico"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        sx={{ mb: 2, bgcolor: 'white', borderRadius: 1 }}
+      />
+      <TextField
+        fullWidth
+        variant="outlined"
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        sx={{ mb: 2, bgcolor: 'white', borderRadius: 1 }}
+      />
+      <Button
+        fullWidth
+        variant="contained"
+        color="primary"
+        onClick={handleLogin}
+        sx={{ mb: 2 }}
+      >
+        Iniciar Sesión
+      </Button>
+      {message && (
+        <Typography variant="body2" color="error">
+          {message}
+        </Typography>
+      )}
     </Box>
   );
 };
@@ -239,13 +275,37 @@ EOF
 cat <<EOF > src/services/auth.ts
 import axios from 'axios';
 
-export const login = async (email: string, password: string) => {
+export const login = async (email: string, password: string): Promise<any> => {
   const response = await axios.post('https://172.16.10.222:8000/api/login', { email, password });
-  return response.data;
+  const data = response.data;
+  if (data.token) {
+    localStorage.setItem('token', data.token);
+  }
+  return data;
 };
 
-export const isLoggedIn = () => {
+export const isLoggedIn = (): boolean => {
   return !!localStorage.getItem('token');
+};
+
+export const checkPermission = (user: any, permission: string): boolean => {
+  // Implementa la lógica de verificación de permisos aquí
+  if (!user || !permission) {
+    return false;
+  }
+  // Ejemplo de lógica de verificación de permisos
+  return user.permissions && user.permissions.includes(permission);
+};
+
+// Obtener el token de autenticación
+export const getToken = (): string | null => {
+  return localStorage.getItem('token');
+};
+
+// Obtener el usuario autenticado
+export const getUser = (): any => {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
 };
 EOF
 
@@ -291,4 +351,4 @@ module.exports = function override(config, env) {
 };
 EOL
 
-echo "📂 Archivos básicos para frontend generados automáticamente..."
+echo "📂 Files basicos para frontend generados automáticamente..."

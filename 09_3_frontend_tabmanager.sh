@@ -4,7 +4,6 @@ echo "*****************************************"
 echo "*        09_3_frontend_tabmanager       *"
 echo "*****************************************"
 
-
 # Nombre del directorio del frontend
 FRONTEND_DIR="/opt/shelly_monitoring/frontend"
 
@@ -13,15 +12,19 @@ cd "$FRONTEND_DIR"
 # Crear el archivo src/components/TabManager.tsx
 cat <<'EOF' > src/components/TabManager.tsx
 import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, TextField, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, 
-Button, Checkbox, Box, IconButton, Tooltip } from '@mui/material';
+import { Tabs, Tab, TextField, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Checkbox, Box, IconButton, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { getTableros, createTablero, updateTableroName, deleteTablero, getHabitaciones, createHabitacion, getHabitacionesByTablero } from '../services/api';
+import { checkPermission } from '../services/auth';
 
 interface Tab {
   id: number;
   nombre: string;
-  habitaciones: { id: number; nombre: string, consumo: number }[];
+  habitaciones: { id: number; nombre: string; consumo: number }[];
+}
+
+interface User {
+  permissions: string[];
 }
 
 interface TabManagerProps {
@@ -32,17 +35,18 @@ interface TabManagerProps {
   setHabitaciones: React.Dispatch<React.SetStateAction<any[]>>;
   setTableros: React.Dispatch<React.SetStateAction<any[]>>;
   deleteMode: boolean;
-  setDeleteMode: React.Dispatch<React.SetStateAction<boolean>>; 
+  setDeleteMode: React.Dispatch<React.SetStateAction<boolean>>;
   handleDeleteOptionSelect: (type: string) => void;
   selectedItems: number[];
-  setSelectedItems: React.Dispatch<React.SetStateAction<number[]>>; 
-  deleteType: string; 
+  setSelectedItems: React.Dispatch<React.SetStateAction<number[]>>;
+  deleteType: string;
+  user: User;
 }
 
 const TabManager: React.FC<TabManagerProps> = ({
   selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones,
-  setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect, 
-  selectedItems, setSelectedItems, deleteType 
+  setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect,
+  selectedItems, setSelectedItems, deleteType, user
 }) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [habitaciones, setHabitacionesState] = useState<any[]>([]);
@@ -57,7 +61,6 @@ const TabManager: React.FC<TabManagerProps> = ({
     const fetchTableros = async () => {
       try {
         const data = await getTableros();
-        console.log("Tableros fetched:", data);
         setTabs(data);
       } catch (error) {
         console.error('Error fetching tableros:', error);
@@ -73,7 +76,6 @@ const TabManager: React.FC<TabManagerProps> = ({
         try {
           const data = await getHabitaciones();
           const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id);
-          console.log(`Habitaciones fetched for tablero ID ${tabs[selectedTab]?.id}:`, filteredHabitaciones);
           setHabitaciones(filteredHabitaciones);
           setHabitacionesState(filteredHabitaciones);
         } catch (error) {
@@ -86,19 +88,25 @@ const TabManager: React.FC<TabManagerProps> = ({
   }, [selectedTab, tabs]);
 
   const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
-    console.log(`Tab changed to index: ${newValue}, Tab ID: ${tabs[newValue]?.id}`);
     setSelectedTab(newValue);
   };
 
   const handleCreateTablero = async (nombre: string) => {
+    if (!checkPermission(user, 'create_tablero')) {
+      alert('No tienes permiso para crear tableros.');
+      return;
+    }
     await createTablero(nombre);
     const data = await getTableros();
     setTabs(data);
     setSelectedTab(data.length - 1);
-    console.log("New Tablero created and selected:", data[data.length - 1]);
   };
 
   const handleCreateHabitacion = async (nombre: string, tableroId: number) => {
+    if (!checkPermission(user, 'create_habitacion')) {
+      alert('No tienes permiso para crear habitaciones.');
+      return;
+    }
     await createHabitacion(nombre, tableroId);
     const data = await getHabitaciones();
     const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tableroId);
@@ -106,18 +114,24 @@ const TabManager: React.FC<TabManagerProps> = ({
     setHabitacionesState(filteredHabitaciones);
     const updatedTableros = await getTableros();
     setTabs(updatedTableros);
-    console.log(`New Habitacion created in Tablero ID ${tableroId}:`, filteredHabitaciones);
   };
 
   const handleRenameTablero = async (id: number, nombre: string) => {
+    if (!checkPermission(user, 'rename_tablero')) {
+      alert('No tienes permiso para renombrar tableros.');
+      return;
+    }
     await updateTableroName(id, nombre);
     const data = await getTableros();
     setTabs(data);
     setRenamingTab(null);
-    console.log(`Tablero ID ${id} renamed to ${nombre}`);
   };
 
   const handleDeleteTablero = async (id: number) => {
+    if (!checkPermission(user, 'delete_tablero')) {
+      alert('No tienes permiso para eliminar tableros.');
+      return;
+    }
     const habitacionesAsignadas = await getHabitacionesByTablero(id);
     if (habitacionesAsignadas.length > 0) {
       alert('El tablero ' + id + ' tiene habitaciones asignadas y no se puede borrar.');
@@ -129,7 +143,6 @@ const TabManager: React.FC<TabManagerProps> = ({
     if (selectedTab >= data.length) {
       setSelectedTab(data.length - 1);
     }
-    console.log(`Tablero ID ${id} deleted`);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -176,7 +189,7 @@ const TabManager: React.FC<TabManagerProps> = ({
               color: 'blue',
               fontWeight: 'bold',
             },
-            flexGrow: 1 // Ensure the tabs take up all available space
+            flexGrow: 1
           }}
           variant="scrollable"
           scrollButtons="auto"

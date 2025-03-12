@@ -18,7 +18,13 @@ import { Tabs, Tab, Box } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 
-const Settings = () => {
+interface SettingsProps {
+  user: {
+    permissions: string[];
+  };
+}
+
+const Settings: React.FC<SettingsProps> = ({ user }) => {
   const [selectedTab, setSelectedTab] = React.useState(0);
   const navigate = useNavigate();
 
@@ -41,8 +47,8 @@ const Settings = () => {
       </Box>
       <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />
       <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
-        {selectedTab === 0 && <Discovery />}
-        {selectedTab === 1 && <UsersManagement />}
+        {selectedTab === 0 && <Discovery user={user} />}
+        {selectedTab === 1 && <UsersManagement user={user} />}
       </Box>
     </Box>
   );
@@ -60,8 +66,15 @@ import { TextField, Button, Box, Typography, LinearProgress } from '@mui/materia
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import 'xterm/css/xterm.css';
+import { checkPermission } from '../services/auth';
 
-const Discovery = () => {
+interface DiscoveryProps {
+  user: {
+    permissions: string[];
+  };
+}
+
+const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
   const [subnets, setSubnets] = useState<string>('');
   const [isDiscovering, setIsDiscovering] = useState<boolean>(false);
   const [lastDiscoveryTime, setLastDiscoveryTime] = useState<string | null>(
@@ -111,6 +124,10 @@ const Discovery = () => {
   }, [isDiscovering]);
 
   const handleDiscovery = async () => {
+    if (!checkPermission(user, 'start_discovery')) {
+      alert('No tienes permiso para iniciar el descubrimiento.');
+      return;
+    }
     if (!subnets.trim()) {
       alert('Por favor, ingrese las subredes (ejemplo: 192.168.1.0/24, 10.1.100.0/24)');
       return;
@@ -212,15 +229,26 @@ EOL
 cat <<EOL > src/pages/UsersManagement.tsx
 import React, { useState } from 'react';
 import { createUser } from '../services/api';
+import { checkPermission } from '../services/auth';
 
-const UsersManagement = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('');
-  const [message, setMessage] = useState('');
+interface UsersManagementProps {
+  user: {
+    permissions: string[];
+  };
+}
+
+const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
+  const [username, setUsername] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [role, setRole] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
 
   const handleCreateUser = async () => {
+    if (!checkPermission(user, 'create_user')) {
+      alert('No tienes permiso para crear usuarios.');
+      return;
+    }
     if (username && email && password && role) {
       try {
         await createUser(username, email, password, role);

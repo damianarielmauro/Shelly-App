@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "*****************************************"
-echo "*       09_5_frontend_rooms_devices     *"
+echo "*        09_5_frontend_room_devices     *"
 echo "*****************************************"
 
 # Nombre del directorio del frontend
@@ -12,56 +12,48 @@ cd "$FRONTEND_DIR"
 # Crear el archivo src/components/RoomMatrix.tsx
 cat <<'EOF' > src/components/RoomMatrix.tsx
 import React from 'react';
-import { Checkbox, Box, Typography, Card, CardContent } from '@mui/material';
-import BoltIcon from '@mui/icons-material/Bolt';
+import { Box, Card, CardContent, Typography, Checkbox } from '@mui/material';
+import { checkPermission } from '../services/auth';
+
+interface Habitacion {
+  id: number;
+  nombre: string;
+  consumo: number;
+}
 
 interface RoomMatrixProps {
-  habitaciones: any[];
+  user: {
+    permissions: string[];
+  };
+  habitaciones: Habitacion[];
   deleteMode: boolean;
   selectedItems: number[];
   handleDeleteSelectionChange: (id: number) => void;
 }
 
-const RoomMatrix: React.FC<RoomMatrixProps> = ({
-  habitaciones,
-  deleteMode,
-  selectedItems,
-  handleDeleteSelectionChange,
-}) => {
+const RoomMatrix: React.FC<RoomMatrixProps> = ({ user, habitaciones, deleteMode, selectedItems, handleDeleteSelectionChange }) => {
   return (
-    <Box display="flex" flexWrap="wrap" gap={0}>
-      {habitaciones.map((habitacion) => {
-        const consumo =
-          habitacion.consumo < 1000
-            ? `${habitacion.consumo} W`
-            : `${(habitacion.consumo / 1000).toFixed(2)} kW`;
-
-        return (
-          <Card
-            key={habitacion.id}
-            sx={{
-              m: 1,
-              p: 2,
-              backgroundColor: '#333',
-              color: 'white',
-              width: '120px',
-              height: '100px',
-              textAlign: 'center',
-              borderRadius: '8px',
-              position: 'relative',
-            }}
-          >
-            {deleteMode && (
+    <Box display="flex" flexWrap="wrap">
+      {habitaciones.map((habitacion) => (
+        <Card key={habitacion.id} sx={{ width: 200, margin: 1, backgroundColor: '#333', color: 'white', position: 'relative' }}>
+          <CardContent>
+            <Typography variant="h6" component="div">
+              {habitacion.nombre}
+            </Typography>
+            <Typography variant="body2">
+              Consumo: {habitacion.consumo} kWh
+            </Typography>
+            {deleteMode && checkPermission(user, 'delete_habitacion') && (
               <Checkbox
                 checked={selectedItems.includes(habitacion.id)}
                 onChange={() => handleDeleteSelectionChange(habitacion.id)}
                 sx={{
                   position: 'absolute',
-                  bottom: '-5px',
-                  right: '-5px',
+                  top: 0,
+                  right: 0,
                   color: 'red',
                   '& .MuiSvgIcon-root': {
-                    color: selectedItems.includes(habitacion.id) ? 'red' : 'red',
+                    color: selectedItems.includes(habitacion.id) ? 'red' : 'white',
                   },
                   '&.Mui-checked': {
                     backgroundColor: 'none',
@@ -69,36 +61,9 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
                 }}
               />
             )}
-            <Typography
-              variant="body2"
-              sx={{
-                fontSize: '0.8rem',
-                fontWeight: 'bold',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '50%',
-                mb: 0.5,
-              }}
-            >
-              {habitacion.nombre}
-            </Typography>
-            <Box display="flex" alignItems="center" justifyContent="center">
-              <BoltIcon sx={{ fontSize: '1rem', color: '#1976d2', mr: 0.5 }} />
-              <Typography
-                variant="body2"
-                sx={{
-                  fontSize: '0.8rem',
-                  fontWeight: 'bold',
-                  color: '#1976d2',
-                }}
-              >
-                {consumo}
-              </Typography>
-            </Box>
-          </Card>
-        );
-      })}
+          </CardContent>
+        </Card>
+      ))}
     </Box>
   );
 };
@@ -108,69 +73,56 @@ EOF
 
 # Crear el archivo src/components/DeviceList.tsx
 cat <<'EOF' > src/components/DeviceList.tsx
-import React, { useEffect, useState } from 'react';
-import { Box, List, ListItem, Typography } from '@mui/material';
-import BoltIcon from '@mui/icons-material/Bolt';
-import { getDispositivos } from '../services/api';
+import React, { useState, useEffect } from 'react';
+import { getDispositivos, toggleDevice } from '../services/api';
+import { List, ListItem, ListItemText, Button, ListItemSecondaryAction } from '@mui/material';
+import { checkPermission } from '../services/auth';
 
-const DeviceList = () => {
+interface DeviceListProps {
+  user: {
+    permissions: string[];
+  };
+}
+
+const DeviceList: React.FC<DeviceListProps> = ({ user }) => {
   const [dispositivos, setDispositivos] = useState<any[]>([]);
-  const [totalDispositivos, setTotalDispositivos] = useState(0);
 
   useEffect(() => {
     const fetchDispositivos = async () => {
-      try {
-        const data = await getDispositivos();
-        setDispositivos(data);
-        setTotalDispositivos(data.length);
-      } catch (error) {
-        console.error('Error al obtener los dispositivos:', error);
-      }
+      const data = await getDispositivos();
+      setDispositivos(data);
     };
 
     fetchDispositivos();
   }, []);
 
-  const totalConsumo = -12800; // Ejemplo en W (-12.8 kW)
-  const consumoColor = totalConsumo >= 0 ? '#1E8FFF' : '#00ff00'; // Verde más intenso y brillante
-  const formattedConsumo = totalConsumo < 1000 && totalConsumo > -1000 ? `${totalConsumo} W` : `${(totalConsumo / 1000).toFixed(2)} kW`;
-  const consumoLabel = totalConsumo >= 0 ? 'Consumo Total' : 'Generación Total';
-
-  const getColorForConsumo = (consumo: number) => {
-    return consumo >= 0 ? '#1E8FFF' : '#00ff00'; // Azul intenso para valores positivos, verde para negativos
+  const handleToggle = async (deviceId: number) => {
+    if (!checkPermission(user, 'toggle_device')) {
+      alert('No tienes permiso para cambiar el estado de los dispositivos.');
+      return;
+    }
+    await toggleDevice(deviceId);
+    const data = await getDispositivos();
+    setDispositivos(data);
   };
 
   return (
-    <Box className="device-list" sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', width: '100%', maxWidth: '300px', height: 'calc(100vh - 85px)', overflowY: 'auto', overflowX: 'hidden' }}>
-      <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', mb: 1 }}>
-        <BoltIcon sx={{ color: consumoColor }} />
-        <Typography sx={{ color: consumoColor, fontSize: '1rem', fontWeight: 'bold' }}>{formattedConsumo}</Typography>
-        <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{consumoLabel}</Typography>
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-        <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', width: '48%' }}>
-          <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>4</Typography>
-          <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Offline</Typography>
-        </Box>
-        <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', width: '48%' }}>
-          <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{totalDispositivos}</Typography>
-          <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Total</Typography>
-        </Box>
-      </Box>
-      <List sx={{ padding: 0 }}>
-        {dispositivos.map((dispositivo) => {
-          const consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7; // Valor aleatorio entre 7W y 3578W
-          const formattedConsumo = consumo < 1000 ? `${consumo} W` : `${(consumo / 1000).toFixed(2)} kW`;
-          const consumoColor = getColorForConsumo(consumo);
-          return (
-            <ListItem key={dispositivo.id} sx={{ display: 'flex', justifyContent: 'space-between', py: 0.2, px: 0.5 }} className="device-list-item">
-              <Typography sx={{ fontSize: '0.75rem', mr: 1, flexShrink: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '65%' }}>{dispositivo.nombre}</Typography>
-              <Typography sx={{ fontSize: '0.75rem', color: consumoColor, flexShrink: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '35%' }}>{formattedConsumo}</Typography>
-            </ListItem>
-          );
-        })}
-      </List>
-    </Box>
+    <List sx={{ backgroundColor: '#333', color: 'white' }}>
+      {dispositivos.map((dispositivo) => (
+        <ListItem key={dispositivo.id} sx={{ borderBottom: '1px solid #444' }}>
+          <ListItemText primary={dispositivo.nombre} secondary={`Estado: ${dispositivo.estado ? 'Encendido' : 'Apagado'}`} />
+          <ListItemSecondaryAction>
+            <Button
+              variant="contained"
+              color={dispositivo.estado ? 'secondary' : 'primary'}
+              onClick={() => handleToggle(dispositivo.id)}
+            >
+              {dispositivo.estado ? 'Apagar' : 'Encender'}
+            </Button>
+          </ListItemSecondaryAction>
+        </ListItem>
+      ))}
+    </List>
   );
 };
 

@@ -14,7 +14,7 @@ cd "$FRONTEND_DIR"
 cat <<'EOF' > src/pages/Dashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem } from '@mui/material';
+import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import BoltIcon from '@mui/icons-material/Bolt';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -25,9 +25,16 @@ import RoomMatrix from '../components/RoomMatrix';
 import TabManager from '../components/TabManager';
 import DeviceList from '../components/DeviceList';
 import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros } from '../services/api';
+import { checkPermission } from '../services/auth';
 
-const Dashboard = () => {
-  const [selectedTab, setSelectedTab] = useState<number>(0); // Set initial tab to 0 for the first tab
+interface DashboardProps {
+  user: {
+    permissions: string[];
+  };
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ user }) => {
+  const [selectedTab, setSelectedTab] = useState<number>(0);
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
   const [tableros, setTableros] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -35,13 +42,19 @@ const Dashboard = () => {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteType, setDeleteType] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true); // Estado de carga
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTableros = async () => {
-      const data = await getTableros();
-      console.log("Tableros fetched in Dashboard:", data);
-      setTableros(data);
+      try {
+        const data = await getTableros();
+        setTableros(data);
+      } catch (error) {
+        console.error("Error fetching tableros:", error);
+      } finally {
+        setLoading(false); // Finaliza la carga
+      }
     };
 
     fetchTableros();
@@ -70,6 +83,10 @@ const Dashboard = () => {
   };
 
   const toggleEditMode = () => {
+    if (!checkPermission(user, 'edit_dashboard')) {
+      alert('No tienes permiso para editar el dashboard.');
+      return;
+    }
     if (editMode) {
       setDeleteMode(false);
       setSelectedItems([]);
@@ -78,36 +95,44 @@ const Dashboard = () => {
   };
 
   const handleDeleteAction = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!checkPermission(user, 'delete_dashboard')) {
+      alert('No tienes permiso para eliminar elementos del dashboard.');
+      return;
+    }
     if (deleteMode) {
-      if (deleteType === 'Habitación') {
-        for (const id of selectedItems) {
-          await deleteHabitacion(id);
-        }
-        const newHabitaciones = habitaciones.filter(hab => !selectedItems.includes(hab.id));
-        setHabitaciones(newHabitaciones);
-        setSelectedItems([]);
-        setDeleteMode(false);
-      } else if (deleteType === 'Tablero') {
-        const tablerosConHabitaciones = await Promise.all(selectedItems.map(async (id) => {
-          const habitacionesAsignadas = await getHabitacionesByTablero(id);
-          return habitacionesAsignadas.length > 0 ? id : null;
-        }));
-
-        const tablerosSinHabitaciones = selectedItems.filter(id => !tablerosConHabitaciones.includes(id));
-        if (tablerosConHabitaciones.filter(Boolean).length > 0) {
-          alert(`Algunos tableros tienen habitaciones asignadas y no se pueden borrar.`);
+      try {
+        if (deleteType === 'Habitación') {
+          for (const id of selectedItems) {
+            await deleteHabitacion(id);
+          }
+          const newHabitaciones = habitaciones.filter(hab => !selectedItems.includes(hab.id));
+          setHabitaciones(newHabitaciones);
           setSelectedItems([]);
           setDeleteMode(false);
-          return;
-        }
+        } else if (deleteType === 'Tablero') {
+          const tablerosConHabitaciones = await Promise.all(selectedItems.map(async (id) => {
+            const habitacionesAsignadas = await getHabitacionesByTablero(id);
+            return habitacionesAsignadas.length > 0 ? id : null;
+          }));
 
-        for (const id of tablerosSinHabitaciones) {
-          await deleteTablero(id);
+          const tablerosSinHabitaciones = selectedItems.filter(id => !tablerosConHabitaciones.includes(id));
+          if (tablerosConHabitaciones.filter(Boolean).length > 0) {
+            alert(`Algunos tableros tienen habitaciones asignadas y no se pueden borrar.`);
+            setSelectedItems([]);
+            setDeleteMode(false);
+            return;
+          }
+
+          for (const id of tablerosSinHabitaciones) {
+            await deleteTablero(id);
+          }
+          const data = await getTableros();
+          setTableros(data);
+          setSelectedItems([]);
+          setDeleteMode(false);
         }
-        const data = await getTableros(); // Refetch tableros
-        setTableros(data); // Update tableros in the UI
-        setSelectedItems([]);
-        setDeleteMode(false);
+      } catch (error) {
+        console.error("Error deleting items:", error);
       }
     } else {
       setAnchorEl(event.currentTarget);
@@ -117,15 +142,21 @@ const Dashboard = () => {
   useEffect(() => {
     if (tableros.length > 0 && tableros[selectedTab]) {
       const fetchHabitaciones = async () => {
-        const tableroId = tableros[selectedTab].id;
-        console.log(`Fetching habitaciones for tablero ID: ${tableroId}`);
-        const data = await getHabitacionesByTablero(tableroId);
-        console.log(`Habitaciones fetched for tablero ID ${tableroId}:`, data);
-        setHabitaciones(data);
+        try {
+          const tableroId = tableros[selectedTab].id;
+          const data = await getHabitacionesByTablero(tableroId);
+          setHabitaciones(data);
+        } catch (error) {
+          console.error("Error fetching habitaciones:", error);
+        }
       };
       fetchHabitaciones();
     }
   }, [selectedTab, tableros]);
+
+  if (loading) {
+    return <CircularProgress />;
+  }
 
   return (
     <Box sx={{ backgroundColor: 'black', color: 'white', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -143,6 +174,7 @@ const Dashboard = () => {
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems} 
           deleteType={deleteType} 
+          user={user}  // Pasar el usuario actual aquí
         />
         <Box display="flex" alignItems="center" sx={{ marginLeft: 'auto', justifyContent: 'flex-end', alignItems: 'center' }}>
           {editMode && (
@@ -182,6 +214,7 @@ const Dashboard = () => {
       <Box display="flex" sx={{ flexGrow: 1, overflow: 'hidden' }}>
         <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
           <RoomMatrix 
+            user={user}  // Pasar el usuario actual aquí
             habitaciones={habitaciones} 
             deleteMode={deleteMode && deleteType === 'Habitación'} 
             selectedItems={selectedItems} 
@@ -189,7 +222,7 @@ const Dashboard = () => {
           />
         </Box>
         <Box sx={{ width: '300px', overflow: 'auto', p: 2 }}>
-          <DeviceList />
+          <DeviceList user={user} />  // Pasar el usuario actual aquí
         </Box>
       </Box>
     </Box>
@@ -203,7 +236,13 @@ EOF
 cat <<EOF > src/pages/Statistics.tsx
 import React from 'react';
 
-const Statistics = () => {
+interface StatisticsProps {
+  user: {
+    permissions: string[];
+  };
+}
+
+const Statistics: React.FC<StatisticsProps> = ({ user }) => {
   return (
     <div>
       <h1>Statistics Page</h1>
@@ -219,7 +258,13 @@ EOF
 cat <<EOF > src/pages/Consumption.tsx
 import React from 'react';
 
-const Consumption = () => {
+interface ConsumptionProps {
+  user: {
+    permissions: string[];
+  };
+}
+
+const Consumption: React.FC<ConsumptionProps> = ({ user }) => {
   return (
     <div>
       <h1>Consumption Page</h1>
