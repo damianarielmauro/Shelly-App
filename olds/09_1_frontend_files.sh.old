@@ -65,6 +65,8 @@ echo "Reinstalando dependencias..."
 rm -rf node_modules package-lock.json
 CI=true npm install  --loglevel=error --no-audit
 
+
+
 # Crear el archivo .gitignore
 cat <<EOL > .gitignore
 node_modules
@@ -90,7 +92,6 @@ cat <<EOL > tsconfig.json
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "useUnknownInCatchVariables": true
     "jsx": "react-jsx"
   },
   "include": ["src"]
@@ -130,6 +131,7 @@ root.render(
   </React.StrictMode>
 );
 EOL
+
 
 # Crear el archivo src/App.tsx
 cat <<EOF > src/App.tsx
@@ -174,61 +176,45 @@ EOF
 cat <<EOF > src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../services/api';
-import { TextField, Button, Box, Typography } from '@mui/material';
-import axios, { AxiosError } from 'axios';
+import { login } from '../services/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      await loginUser(email, password);
-      navigate('/dashboard');  // Redirigir al dashboard si el login es exitoso
-    } catch (err) {
-      // Hacer una afirmación de tipo de AxiosError
-      const axiosError = err as AxiosError;
-      
-      if (axios.isAxiosError(axiosError)) {
-        setError(axiosError.response?.data?.error || 'Error desconocido');
-      } else if (err instanceof Error) {
-        setError(err.message || 'Error desconocido');
-      } else {
-        setError('Error desconocido');
+  const handleLogin = async () => {
+    if (email && password) {
+      try {
+        await login(email, password);
+        navigate('/dashboard');
+      } catch (error) {
+        setMessage('Usuario o contraseña incorrectos');
       }
+    } else {
+      setMessage('Por favor, completa todos los campos');
     }
   };
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100vh">
-      <Typography variant="h4" gutterBottom>Login</Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Correo electrónico"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Contraseña"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          fullWidth
-          margin="normal"
-        />
-        {error && <Typography color="error">{error}</Typography>}
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Iniciar Sesión
-        </Button>
-      </form>
-    </Box>
+    <div>
+      <h2>Login</h2>
+      <input
+        type="text"
+        placeholder="Correo electrónico"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={handleLogin}>Iniciar Sesión</button>
+      {message && <p>{message}</p>}
+    </div>
   );
 };
 
@@ -291,4 +277,4 @@ module.exports = function override(config, env) {
 };
 EOL
 
-echo "📂 Archivos básicos para frontend generados automáticamente..."
+echo "📂 Files basicos para frontend generados automáticamente..."

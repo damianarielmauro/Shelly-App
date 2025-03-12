@@ -66,6 +66,6 @@ echo "📦 Instalación de dependencias adicionales..."
 CI=true npm install --loglevel=error --no-audit @emotion/react @emotion/styled @mui/icons-material @mui/material axios react-router-dom@^6 ajv@^6.12.6 ajv-keywords@^3.5.2 crypto-browserify process buffer
 
 # Instalar react-app-rewired y ansi_up
-CI=true npm install --loglevel=error --no-audit react-app-rewired ansi_up --save
+CI=true npm install --loglevel=error --no-audit react-scripts@latest typescript@latest react-app-rewired@latest ansi_up --save
 
 npm install --loglevel=error --no-audit xterm xterm-addon-fit

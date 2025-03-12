@@ -101,5 +101,15 @@ export const createUser = async (nombre: string, email: string, password: string
   return response.data;
 };
 
+// Agregar función de login
+export const loginUser = async (email: string, password: string) => {
+  try {
+    const response = await api.post('/login', { email, password });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
 export default api;
 EOF

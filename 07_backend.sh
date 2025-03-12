@@ -173,6 +173,7 @@ def login():
         if user.check_password(password):
             logging.debug("Contraseña correcta")
             session['user_id'] = user.id  # Guardar el ID del usuario en la sesión
+            session['logged_in'] = True
             return jsonify({"message": "Login exitoso"}), 200
         else:
             logging.debug("Contraseña incorrecta")
@@ -185,14 +186,13 @@ def login():
 def require_login():
     if not request.path.startswith('/api/login') and not request.path.startswith('/static'):
         if 'user_id' not in session:
-            return redirect(url_for('login'))
+            return jsonify({"error": "Usuario no autenticado"}), 401
 
 # API: Obtener dispositivos
 @app.route('/api/dispositivos', methods=['GET'])
 def get_dispositivos():
     dispositivos = Dispositivos.query.all()
-    return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado } for d 
-in dispositivos])
+    return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado } for d in dispositivos])
 
 # API: Cambiar estado de un dispositivo
 @app.route('/api/toggle_device/<int:device_id>', methods=['POST'])
@@ -209,15 +209,13 @@ def toggle_device(device_id):
 @app.route('/api/habitaciones', methods=['GET'])
 def get_habitaciones():
     habitaciones = Habitaciones.query.all()
-    return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones
-])
+    return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Obtener habitaciones por tablero
 @app.route('/api/tableros/<int:tablero_id>/habitaciones', methods=['GET'])
 def get_habitaciones_by_tablero(tablero_id):
     habitaciones = Habitaciones.query.filter_by(tablero_id=tablero_id).all()
-    return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones
-])
+    return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Eliminar una habitación
 @app.route('/api/habitaciones/<int:habitacion_id>', methods=['DELETE'])

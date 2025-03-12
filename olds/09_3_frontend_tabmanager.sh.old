@@ -10,6 +10,7 @@ FRONTEND_DIR="/opt/shelly_monitoring/frontend"
 
 cd "$FRONTEND_DIR"
 
+
 # Crear el archivo src/components/TabManager.tsx
 cat <<'EOF' > src/components/TabManager.tsx
 import React, { useState, useEffect } from 'react';
