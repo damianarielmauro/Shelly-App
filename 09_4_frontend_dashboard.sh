@@ -25,7 +25,7 @@ import RoomMatrix from '../components/RoomMatrix';
 import TabManager from '../components/TabManager';
 import DeviceList from '../components/DeviceList';
 import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros } from '../services/api';
-import { checkPermission } from '../services/auth';
+import { checkPermission, setAuthToken } from '../services/auth';
 
 interface DashboardProps {
   user: {
@@ -46,6 +46,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    setAuthToken(token); // Set the token in axios headers
+
     const fetchTableros = async () => {
       try {
         const data = await getTableros();

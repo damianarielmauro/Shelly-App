@@ -104,7 +104,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Llave secreta para manejar sesiones
 jwt_secret_key = os.environ.get('JWT_SECRET_KEY', 'your_jwt_secret_key')  # Llave secreta para JWT
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
-CORS(app)  # Habilita CORS en todas las rutas
+CORS(app, resources={r"/api/*": {"origins": "*"}})  # Habilita CORS en todas las rutas con configuración explícita
 
 # Configuración de PostgreSQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://shelly_user:shelly_pass@localhost:5432/shelly_db'
@@ -115,6 +115,34 @@ db = SQLAlchemy(app)
 LOG_PATH = "/opt/shelly_monitoring/backend.log"
 logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 logging.info("🔧 Backend Flask iniciado.")
+
+# Diccionario de roles y permisos
+roles_permissions = {
+    'admin': ['view_devices', 'toggle_device', 'view_rooms', 'create_room', 'delete_room', 'view_boards', 'create_board', 'delete_board', 'update_board_order', 'update_room_order', 'start_discovery', 'view_logs'],
+    'user': ['view_devices', 'toggle_device', 'view_rooms']
+}
+
+# Middleware para proteger rutas
+@app.before_request
+def require_login():
+    if not request.path.startswith('/api/login') and not request.path.startswith('/static'):
+        if 'user_id' not in session:
+            return jsonify({"error": "Usuario no autenticado"}), 401
+
+# Middleware para verificar permisos
+def require_permission(permission):
+    def decorator(f):
+        @functools.wraps(f)
+        def decorated_function(*args, **kwargs):
+            user_id = session.get('user_id')
+            if not user_id:
+                return jsonify({"error": "Usuario no autenticado"}), 401
+            user = User.query.get(user_id)
+            if not user or permission not in roles_permissions.get(user.role, []):
+                return jsonify({"error": "Permiso denegado"}), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 # Definición de modelos
 class User(db.Model):
@@ -177,45 +205,23 @@ def login():
             token = jwt.encode({'user_id': user.id}, jwt_secret_key, algorithm='HS256')
             session['user_id'] = user.id  # Guardar el ID del usuario en la sesión
             session['logged_in'] = True
-            return jsonify({"message": "Login exitoso", "token": token}), 200
+            return jsonify({"message": "Login exitoso", "token": token, "user": {"id": user.id, "username": user.username, "email": user.email, "role": user.role}}), 200
         else:
             logging.debug("Contraseña incorrecta")
     else:
         logging.debug("Usuario no encontrado")
     return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
 
-# Middleware para proteger rutas
-@app.before_request
-def require_login():
-    if not request.path.startswith('/api/login') and not request.path.startswith('/static'):
-        if 'user_id' not in session:
-            return jsonify({"error": "Usuario no autenticado"}), 401
-
-# Middleware para verificar permisos
-def require_permission(permission):
-    def decorator(f):
-        @functools.wraps(f)
-        def decorated_function(*args, **kwargs):
-            user_id = session.get('user_id')
-            if not user_id:
-                return jsonify({"error": "Usuario no autenticado"}), 401
-            user = User.query.get(user_id)
-            if not user or user.role != permission:
-                return jsonify({"error": "Permiso denegado"}), 403
-            return f(*args, **kwargs)
-        return decorated_function
-    return decorator
-
 # API: Obtener dispositivos
 @app.route('/api/dispositivos', methods=['GET'])
-@require_permission('view_devices')
+#@require_permission('view_devices')
 def get_dispositivos():
     dispositivos = Dispositivos.query.all()
     return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado } for d in dispositivos])
 
 # API: Cambiar estado de un dispositivo
 @app.route('/api/toggle_device/<int:device_id>', methods=['POST'])
-@require_permission('toggle_device')
+#@require_permission('toggle_device')
 def toggle_device(device_id):
     device = Dispositivos.query.get(device_id)
     if device:
@@ -227,21 +233,21 @@ def toggle_device(device_id):
 
 # API: Obtener habitaciones
 @app.route('/api/habitaciones', methods=['GET'])
-@require_permission('view_rooms')
+#@require_permission('view_rooms')
 def get_habitaciones():
     habitaciones = Habitaciones.query.all()
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Obtener habitaciones por tablero
 @app.route('/api/tableros/<int:tablero_id>/habitaciones', methods=['GET'])
-@require_permission('view_rooms')
+#@require_permission('view_rooms')
 def get_habitaciones_by_tablero(tablero_id):
     habitaciones = Habitaciones.query.filter_by(tablero_id=tablero_id).all()
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Eliminar una habitación
 @app.route('/api/habitaciones/<int:habitacion_id>', methods=['DELETE'])
-@require_permission('delete_room')
+#@require_permission('delete_room')
 def eliminar_habitacion(habitacion_id):
     habitacion = Habitaciones.query.get(habitacion_id)
     if habitacion:
@@ -252,7 +258,7 @@ def eliminar_habitacion(habitacion_id):
 
 # API: Crear una nueva habitación dentro de un tablero
 @app.route('/api/habitaciones', methods=['POST'])
-@require_permission('create_room')
+#@require_permission('create_room')
 def crear_habitacion():
     data = request.get_json()
     nombre = data.get("nombre", "").strip()
@@ -279,14 +285,14 @@ def crear_habitacion():
 
 # API: Obtener lista de tableros
 @app.route('/api/tableros', methods=['GET'])
-@require_permission('view_boards')
+#@require_permission('view_boards')
 def get_tableros():
     tableros = Tableros.query.all()
     return jsonify([{ "id": t.id, "nombre": t.nombre } for t in tableros])
 
 # API: Crear un nuevo tablero
 @app.route('/api/tableros', methods=['POST'])
-@require_permission('create_board')
+#@require_permission('create_board')
 def crear_tablero():
     data = request.get_json()
     nombre = data.get("nombre", "").strip()
@@ -305,7 +311,7 @@ def crear_tablero():
 
 # API: Eliminar un tablero (solo si no tiene habitaciones dentro)
 @app.route("/api/tableros/<int:tablero_id>", methods=["DELETE"])
-@require_permission('delete_board')
+#@require_permission('delete_board')
 def eliminar_tablero(tablero_id):
     """ Elimina un tablero si no tiene habitaciones dentro """
     tablero = Tableros.query.get(tablero_id)
@@ -325,7 +331,7 @@ def eliminar_tablero(tablero_id):
 
 # API: Actualizar orden de tableros
 @app.route('/api/tableros/orden', methods=['PUT'])
-@require_permission('update_board_order')
+#@require_permission('update_board_order')
 def actualizar_orden_tableros():
     try:
         data = request.get_json()
@@ -340,7 +346,7 @@ def actualizar_orden_tableros():
 
 # API: Actualizar orden de habitaciones dentro de un tablero
 @app.route('/api/habitaciones/orden', methods=['PUT'])
-@require_permission('update_room_order')
+#@require_permission('update_room_order')
 def actualizar_orden_habitaciones():
     try:
         data = request.get_json()
@@ -357,7 +363,7 @@ def actualizar_orden_habitaciones():
 # API: Iniciar descubrimiento
 # ===========================
 @app.route('/api/start_discovery', methods=['GET', 'POST'])
-@require_permission('start_discovery')
+#@require_permission('start_discovery')
 def start_discovery():
     try:
         data = request.get_json()
@@ -395,7 +401,7 @@ def start_discovery():
 
 # API: Transmitir logs en vivo
 @app.route('/api/logs')
-@require_permission('view_logs')
+#@require_permission('view_logs')
 def stream_logs():
     def generate():
         with open("/var/log/shelly_discovery.log", "r") as log_file:

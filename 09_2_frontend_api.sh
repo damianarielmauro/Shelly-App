@@ -14,17 +14,19 @@ cat <<'EOF' > src/services/api.ts
 import axios from 'axios';
 import { getToken } from './auth';
 
+// Crear una instancia de Axios con configuración personalizada
 const api = axios.create({
   baseURL: 'https://172.16.10.222:8000/api',
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
 // Interceptor para añadir el token de autorización a cada solicitud
 api.interceptors.request.use(
   (config) => {
     const token = getToken();
+    console.log('Interceptor: Adding token to request', token); // Log de depuración
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

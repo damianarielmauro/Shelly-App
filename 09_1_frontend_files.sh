@@ -25,7 +25,8 @@ if [ ! -f "/opt/shelly_monitoring/frontend/package.json" ]; then
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.1"
+    "react-router-dom": "^6.20.1",
+    "axios": "^0.24.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -64,7 +65,6 @@ CI=true npx json -I -f package.json -e 'this.scripts.test="react-app-rewired tes
 echo "Reinstalando dependencias..."
 rm -rf node_modules package-lock.json
 CI=true npm install  --loglevel=error --no-audit
-
 
 # Crear el archivo .gitignore
 cat <<EOL > .gitignore
@@ -144,27 +144,35 @@ import UsersManagement from './pages/UsersManagement';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import theme from './theme';
-import { isLoggedIn, getUser } from './services/auth';
+import { isLoggedIn, getUser, setAuthToken } from './services/auth';
 
 interface PrivateRouteProps {
   element: React.ComponentType<any>;
-  path: string;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ element: Element, path, ...rest }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ element: Element, ...rest }) => {
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isLoggedIn()) {
       const userData = getUser();
       setUser(userData);
+      const token = localStorage.getItem('token');
+      setAuthToken(token); // Set the token in axios headers
     }
+    setLoading(false);
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Puedes reemplazar esto con un spinner o algún componente de carga
+  }
 
   if (!isLoggedIn()) {
     return <Navigate to="/login" />;
   }
 
+  console.log('Render PrivateRoute with user:', user); // Log de depuración
   return user ? <Element {...rest} user={user} /> : null;
 };
 
@@ -174,11 +182,11 @@ const App: React.FC = () => {
       <CssBaseline />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<PrivateRoute element={Dashboard} path="/dashboard" />} />
-        <Route path="/statistics" element={<PrivateRoute element={Statistics} path="/statistics" />} />
-        <Route path="/consumption" element={<PrivateRoute element={Consumption} path="/consumption" />} />
-        <Route path="/settings" element={<PrivateRoute element={Settings} path="/settings" />} />
-        <Route path="/users" element={<PrivateRoute element={UsersManagement} path="/users" />} />
+        <Route path="/dashboard" element={<PrivateRoute element={Dashboard} />} />
+        <Route path="/statistics" element={<PrivateRoute element={Statistics} />} />
+        <Route path="/consumption" element={<PrivateRoute element={Consumption} />} />
+        <Route path="/settings" element={<PrivateRoute element={Settings} />} />
+        <Route path="/users" element={<PrivateRoute element={UsersManagement} />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>
     </ThemeProvider>
@@ -272,40 +280,74 @@ export default Login;
 EOF
 
 # Crear el archivo src/services/auth.ts
-cat <<EOF > src/services/auth.ts
+cat <<'EOF' > src/services/auth.ts
 import axios from 'axios';
 
+// Set up the base URL for axios
+axios.defaults.baseURL = 'https://172.16.10.222:8000';
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+
+// Function to set the Authorization header
+export const setAuthToken = (token: string | null) => {
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common['Authorization'];
+  }
+};
+
+// Login function
 export const login = async (email: string, password: string): Promise<any> => {
-  const response = await axios.post('https://172.16.10.222:8000/api/login', { email, password });
+  const response = await axios.post('/api/login', { email, password });
   const data = response.data;
+  console.log('Login response:', data); // Log de depuración
   if (data.token) {
+    // Añadir permisos al objeto user
+    const userWithPermissions = {
+      ...data.user,
+      permissions: ['toggle_device', 'delete_habitacion', 'add_user', 'add_dashboard', 'add_habitacion'] // Permisos de ejemplo
+    };
     localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(userWithPermissions));
+    setAuthToken(data.token); // Set the token in axios headers
   }
   return data;
 };
 
 export const isLoggedIn = (): boolean => {
-  return !!localStorage.getItem('token');
+  const token = localStorage.getItem('token');
+  console.log('Is logged in:', !!token); // Log de depuración
+  return !!token;
 };
 
-export const checkPermission = (user: any, permission: string): boolean => {
-  // Implementa la lógica de verificación de permisos aquí
-  if (!user || !permission) {
-    return false;
-  }
-  // Ejemplo de lógica de verificación de permisos
-  return user.permissions && user.permissions.includes(permission);
-};
-
-// Obtener el token de autenticación
-export const getToken = (): string | null => {
-  return localStorage.getItem('token');
-};
-
-// Obtener el usuario autenticado
 export const getUser = (): any => {
   const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
+  try {
+    const parsedUser = user ? JSON.parse(user) : null;
+    console.log('Get user:', parsedUser); // Log de depuración
+    return parsedUser;
+  } catch (error) {
+    console.error('Error parsing user JSON:', error);
+    return null;
+  }
+};
+
+// Function to get the token
+export const getToken = (): string | null => {
+  const token = localStorage.getItem('token');
+  console.log('Get token:', token); // Log de depuración
+  return token;
+};
+
+// Function to check user permissions
+export const checkPermission = (user: any, permission: string): boolean => {
+  console.log('Checking permission for user:', user, 'Permission:', permission); // Log de depuración
+  if (user && user.permissions) {
+    const hasPermission = user.permissions.includes(permission);
+    console.log('Has permission:', hasPermission); // Log de depuración
+    return hasPermission;
+  }
+  return false;
 };
 EOF
 
@@ -350,5 +392,6 @@ module.exports = function override(config, env) {
   return config;
 };
 EOL
+
 
 echo "📂 Files basicos para frontend generados automáticamente..."
