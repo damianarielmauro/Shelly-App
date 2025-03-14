@@ -35,7 +35,7 @@ roles_permissions = {
         'view_boards', 'create_board', 'delete_board', 'update_board_order',
         'update_room_order', 'start_discovery', 'view_logs', 'edit_dashboard',
         'create_user', 'create_tablero', 'delete_dashboard', 'delete_habitacion',
-        'create_habitacion', 'rename_tablero', 'stream_logs'
+        'create_habitacion', 'rename_tablero', 'stream_logs', 'view_statistics', 'delete_habitacion'
     ],
     'user': ['view_devices', 'toggle_device', 'view_rooms']
 }
@@ -44,7 +44,19 @@ roles_permissions = {
 @app.before_request
 def require_login():
     if not request.path.startswith('/api/login') and not request.path.startswith('/static'):
-        if 'user_id' not in session:
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+            try:
+                decoded_token = jwt.decode(token, jwt_secret_key, algorithms=['HS256'])
+                user_id = decoded_token['user_id']
+                session['user_id'] = user_id
+                session['logged_in'] = True
+            except jwt.ExpiredSignatureError:
+                return jsonify({"error": "Token ha expirado"}), 401
+            except jwt.InvalidTokenError:
+                return jsonify({"error": "Token inválido"}), 401
+        else:
             return jsonify({"error": "Usuario no autenticado"}), 401
 
 # Middleware para verificar permisos basado en roles

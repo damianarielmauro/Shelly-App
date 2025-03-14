@@ -88,13 +88,15 @@ CREATE TABLE IF NOT EXISTS tableros (
     nombre VARCHAR(100) UNIQUE NOT NULL
 );
 
+-- 🔹 Agregar columna orden en tableros si no existe
+ALTER TABLE tableros ADD COLUMN IF NOT EXISTS orden INT DEFAULT 0;
+
 CREATE TABLE IF NOT EXISTS habitaciones (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) UNIQUE NOT NULL,
-    tablero_id INT REFERENCES tableros(id) ON DELETE CASCADE
+    tablero_id INT REFERENCES tableros(id) ON DELETE CASCADE,
+    orden INT DEFAULT 0  -- Añadir la columna orden
 );
--- 🔹 Agregar columna orden en habitaciones si no existe
-ALTER TABLE habitaciones ADD COLUMN IF NOT EXISTS orden INT DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS dispositivos (
     id SERIAL PRIMARY KEY,

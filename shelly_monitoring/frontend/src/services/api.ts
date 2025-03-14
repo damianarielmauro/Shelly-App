@@ -16,10 +16,13 @@ api.interceptors.request.use(
     console.log('Interceptor: Adding token to request', token); // Log de depuración
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      console.warn('No token found in localStorage');
     }
     return config;
   },
   (error) => {
+    console.error('Interceptor error:', error); // Log de depuración
     return Promise.reject(error);
   }
 );

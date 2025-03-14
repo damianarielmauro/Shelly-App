@@ -192,3 +192,413 @@
 2025-03-14 03:37:11,932 - DEBUG - Intento de inicio de sesión: admin@shelly.local
 2025-03-14 03:37:11,942 - DEBUG - Usuario encontrado en la base de datos
 2025-03-14 03:37:12,283 - DEBUG - Contraseña correcta
+2025-03-14 13:07:04,148 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 13:08:27,086 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 13:09:06,748 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 13:09:06,758 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 13:09:07,104 - DEBUG - Contraseña correcta
+2025-03-14 13:09:29,491 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 13:09:29,493 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 13:09:29,842 - DEBUG - Contraseña correcta
+2025-03-14 13:10:06,320 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 13:10:06,322 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 13:10:06,661 - DEBUG - Contraseña correcta
+2025-03-14 13:11:38,974 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 13:11:38,976 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 13:11:39,327 - DEBUG - Contraseña correcta
+2025-03-14 13:12:34,585 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 13:12:34,588 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 13:12:34,927 - DEBUG - Contraseña correcta
+2025-03-14 13:13:24,194 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 13:13:24,196 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 13:13:24,538 - DEBUG - Contraseña correcta
+2025-03-14 13:17:32,918 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 13:17:43,665 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 14:05:04,994 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 14:05:31,514 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 14:05:31,525 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 14:05:31,864 - DEBUG - Contraseña correcta
+2025-03-14 14:09:38,013 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 14:09:54,319 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 14:09:54,329 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 14:09:54,671 - DEBUG - Contraseña correcta
+2025-03-14 14:11:22,719 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 14:11:33,338 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 14:11:33,348 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 14:11:33,690 - DEBUG - Contraseña correcta
+2025-03-14 14:12:01,404 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 14:12:01,407 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 14:12:01,747 - DEBUG - Contraseña correcta
+2025-03-14 14:28:29,292 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 14:28:29,295 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 14:28:29,637 - DEBUG - Contraseña correcta
+2025-03-14 14:33:36,334 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 14:33:36,339 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 14:33:36,681 - DEBUG - Contraseña correcta
+2025-03-14 14:51:05,610 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 14:51:05,616 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 14:51:05,962 - DEBUG - Contraseña correcta
+2025-03-14 14:54:26,333 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 14:54:26,336 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 14:54:26,677 - DEBUG - Contraseña correcta
+2025-03-14 16:15:21,941 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 16:15:21,945 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 16:15:22,285 - DEBUG - Contraseña correcta
+2025-03-14 17:05:04,092 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 17:34:21,954 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 18:02:28,675 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 18:31:33,064 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 18:31:33,076 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 18:31:33,418 - DEBUG - Contraseña correcta
+2025-03-14 19:23:54,319 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 19:23:54,325 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 19:23:54,665 - DEBUG - Contraseña correcta
+2025-03-14 19:27:04,387 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 19:27:04,390 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 19:27:04,732 - DEBUG - Contraseña correcta
+2025-03-14 20:46:15,055 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 20:46:51,311 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 20:46:51,321 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 20:46:51,667 - DEBUG - Contraseña correcta
+2025-03-14 20:47:52,170 - ERROR - Exception on /api/tableros [GET]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column tableros.orden does not exist
+LINE 1: ... tableros_id, tableros.nombre AS tableros_nombre, tableros.o...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 73, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 234, in get_tableros
+    tableros = Tableros.query.all()
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2858, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column tableros.orden does not exist
+LINE 1: ... tableros_id, tableros.nombre AS tableros_nombre, tableros.o...
+                                                             ^
+
+[SQL: SELECT tableros.id AS tableros_id, tableros.nombre AS tableros_nombre, tableros.orden AS tableros_orden 
+FROM tableros]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-03-14 20:50:22,265 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 20:50:22,267 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 20:50:22,608 - DEBUG - Contraseña correcta
+2025-03-14 20:50:39,971 - ERROR - Exception on /api/tableros [GET]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column tableros.orden does not exist
+LINE 1: ... tableros_id, tableros.nombre AS tableros_nombre, tableros.o...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 73, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 234, in get_tableros
+    tableros = Tableros.query.all()
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2858, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column tableros.orden does not exist
+LINE 1: ... tableros_id, tableros.nombre AS tableros_nombre, tableros.o...
+                                                             ^
+
+[SQL: SELECT tableros.id AS tableros_id, tableros.nombre AS tableros_nombre, tableros.orden AS tableros_orden 
+FROM tableros]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-03-14 20:52:36,290 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 20:52:36,293 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 20:52:36,632 - DEBUG - Contraseña correcta
+2025-03-14 20:53:08,014 - ERROR - Exception on /api/tableros [GET]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column tableros.orden does not exist
+LINE 1: ... tableros_id, tableros.nombre AS tableros_nombre, tableros.o...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 73, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 234, in get_tableros
+    tableros = Tableros.query.all()
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2858, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column tableros.orden does not exist
+LINE 1: ... tableros_id, tableros.nombre AS tableros_nombre, tableros.o...
+                                                             ^
+
+[SQL: SELECT tableros.id AS tableros_id, tableros.nombre AS tableros_nombre, tableros.orden AS tableros_orden 
+FROM tableros]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-03-14 20:54:08,497 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 20:54:08,501 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 20:54:08,840 - DEBUG - Contraseña correcta
+2025-03-14 20:54:14,158 - ERROR - Exception on /api/tableros [GET]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column tableros.orden does not exist
+LINE 1: ... tableros_id, tableros.nombre AS tableros_nombre, tableros.o...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 73, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 234, in get_tableros
+    tableros = Tableros.query.all()
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2858, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column tableros.orden does not exist
+LINE 1: ... tableros_id, tableros.nombre AS tableros_nombre, tableros.o...
+                                                             ^
+
+[SQL: SELECT tableros.id AS tableros_id, tableros.nombre AS tableros_nombre, tableros.orden AS tableros_orden 
+FROM tableros]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-03-14 21:07:33,369 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 21:07:33,372 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 21:07:33,711 - DEBUG - Contraseña correcta
+2025-03-14 21:27:58,211 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 21:27:58,213 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 21:27:58,553 - DEBUG - Contraseña correcta
+2025-03-14 21:28:44,305 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 21:28:44,307 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 21:28:44,647 - DEBUG - Contraseña correcta
+2025-03-14 22:26:02,264 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 22:26:02,268 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 22:26:02,608 - DEBUG - Contraseña correcta
+2025-03-14 22:29:02,566 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 22:29:20,662 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 22:29:20,672 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 22:29:21,014 - DEBUG - Contraseña correcta
+2025-03-14 22:35:33,657 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 22:35:33,660 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 22:35:34,008 - DEBUG - Contraseña correcta
+2025-03-14 22:40:43,646 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 22:40:43,649 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 22:40:43,989 - DEBUG - Contraseña correcta
+2025-03-14 22:46:37,402 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 22:46:37,499 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 22:46:37,842 - DEBUG - Contraseña correcta

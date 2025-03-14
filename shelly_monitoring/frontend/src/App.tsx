@@ -10,6 +10,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import theme from './theme';
 import { isLoggedIn, getUser, setAuthToken } from './services/auth';
+import TabManager from './components/TabManager'; // Importar TabManager
 
 interface PrivateRouteProps {
   element: React.ComponentType<any>;
@@ -42,17 +43,33 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element: Element, ...rest }
   return user ? <Element {...rest} user={user} /> : null;
 };
 
-const App: React.FC = () => {
+interface AppProps {
+  selectedTab: number;
+  setSelectedTab: React.Dispatch<React.SetStateAction<number>>;
+  editMode: boolean;
+  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  setHabitaciones: React.Dispatch<React.SetStateAction<any[]>>;
+  setTableros: React.Dispatch<React.SetStateAction<any[]>>;
+  deleteMode: boolean;
+  setDeleteMode: React.Dispatch<React.SetStateAction<boolean>>;
+  handleDeleteOptionSelect: (type: string) => void;
+  selectedItems: number[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<number[]>>;
+  deleteType: string;
+  user: any;
+}
+
+const App: React.FC<AppProps> = (props) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<PrivateRoute element={Dashboard} />} />
-        <Route path="/statistics" element={<PrivateRoute element={Statistics} />} />
-        <Route path="/consumption" element={<PrivateRoute element={Consumption} />} />
-        <Route path="/settings" element={<PrivateRoute element={Settings} />} />
-        <Route path="/users" element={<PrivateRoute element={UsersManagement} />} />
+        <Route path="/dashboard" element={<PrivateRoute element={Dashboard} {...props} />} />
+        <Route path="/statistics" element={<PrivateRoute element={Statistics} {...props} />} />
+        <Route path="/consumption" element={<PrivateRoute element={Consumption} {...props} />} />
+        <Route path="/settings" element={<PrivateRoute element={Settings} {...props} />} />
+        <Route path="/users" element={<PrivateRoute element={UsersManagement} {...props} />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>
     </ThemeProvider>

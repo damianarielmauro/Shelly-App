@@ -4,6 +4,7 @@ import UsersManagement from '../pages/UsersManagement';
 import { Tabs, Tab, Box } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
+import { checkPermission } from '../services/auth';
 
 interface SettingsProps {
   user: {
@@ -34,8 +35,8 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
       </Box>
       <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />
       <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
-        {selectedTab === 0 && <Discovery user={user} />}
-        {selectedTab === 1 && <UsersManagement user={user} />}
+        {selectedTab === 0 && checkPermission(user, 'discover_devices') && <Discovery user={user} />}
+        {selectedTab === 1 && checkPermission(user, 'manage_users') && <UsersManagement user={user} />}
       </Box>
     </Box>
   );
