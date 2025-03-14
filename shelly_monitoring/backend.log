@@ -1,0 +1,194 @@
+2025-03-12 05:00:59,321 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:01,382 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:03,123 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:04,907 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:07,060 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:09,431 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:11,427 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:13,189 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:15,114 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:01:16,875 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:19:23,702 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 05:31:33,791 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:33:26,259 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 16:33:26,276 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 16:33:26,615 - DEBUG - Contraseña correcta
+2025-03-12 16:37:46,572 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:37:48,370 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:37:50,107 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:37:51,860 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:37:53,602 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:04,940 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:06,903 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:08,879 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:10,709 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:12,636 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:20,557 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:22,434 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:24,401 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:26,126 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 16:41:27,923 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 17:19:25,049 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 17:19:26,870 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 17:19:28,618 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 17:19:30,371 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 17:19:32,099 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 17:41:01,666 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 17:43:21,739 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 17:43:21,749 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 17:43:22,089 - DEBUG - Contraseña correcta
+2025-03-12 17:57:57,350 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 17:57:57,352 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 17:57:57,692 - DEBUG - Contraseña correcta
+2025-03-12 17:58:50,168 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 17:58:50,170 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 17:58:50,510 - DEBUG - Contraseña correcta
+2025-03-12 17:59:31,957 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 17:59:31,959 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 17:59:32,299 - DEBUG - Contraseña correcta
+2025-03-12 18:14:34,738 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 18:14:34,745 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 18:14:35,085 - DEBUG - Contraseña correcta
+2025-03-12 18:24:40,081 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 18:24:40,085 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 18:24:40,424 - DEBUG - Contraseña correcta
+2025-03-12 18:26:27,142 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 18:26:27,144 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 18:26:27,484 - DEBUG - Contraseña correcta
+2025-03-12 18:26:51,178 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 18:26:51,180 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 18:26:51,520 - DEBUG - Contraseña correcta
+2025-03-12 18:49:38,188 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 18:49:38,190 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 18:49:38,529 - DEBUG - Contraseña correcta
+2025-03-12 18:50:52,630 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 18:50:52,632 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 18:50:52,972 - DEBUG - Contraseña correcta
+2025-03-12 18:57:41,084 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 18:57:41,087 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 18:57:41,427 - DEBUG - Contraseña correcta
+2025-03-12 19:02:46,424 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 19:02:46,427 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 19:02:46,766 - DEBUG - Contraseña correcta
+2025-03-12 19:04:22,989 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 19:04:22,992 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 19:04:23,332 - DEBUG - Contraseña correcta
+2025-03-12 19:12:04,158 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 19:12:04,160 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 19:12:04,500 - DEBUG - Contraseña correcta
+2025-03-12 19:26:40,728 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 19:26:40,735 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 19:26:41,075 - DEBUG - Contraseña correcta
+2025-03-12 20:59:17,944 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 20:59:39,695 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 20:59:39,705 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 20:59:40,053 - DEBUG - Contraseña correcta
+2025-03-12 21:06:36,159 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 21:06:36,167 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 21:06:36,517 - DEBUG - Contraseña correcta
+2025-03-12 21:12:05,669 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 21:12:22,812 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 21:12:22,824 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 21:12:23,161 - DEBUG - Contraseña correcta
+2025-03-12 21:19:20,857 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 21:19:20,862 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 21:19:21,202 - DEBUG - Contraseña correcta
+2025-03-12 21:21:03,752 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 21:21:03,755 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 21:21:04,095 - DEBUG - Contraseña correcta
+2025-03-12 21:32:11,643 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 21:32:11,649 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 21:32:11,989 - DEBUG - Contraseña correcta
+2025-03-12 21:40:33,023 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 21:40:33,030 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 21:40:33,370 - DEBUG - Contraseña correcta
+2025-03-12 21:54:29,532 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 21:54:29,539 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 21:54:29,879 - DEBUG - Contraseña correcta
+2025-03-12 22:00:28,256 - INFO - 🔧 Backend Flask iniciado.
+2025-03-12 22:04:50,073 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-12 22:04:50,087 - DEBUG - Usuario encontrado en la base de datos
+2025-03-12 22:04:50,426 - DEBUG - Contraseña correcta
+2025-03-13 04:23:12,993 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 04:23:13,000 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 04:23:13,339 - DEBUG - Contraseña correcta
+2025-03-13 04:35:53,762 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 04:35:53,765 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 04:35:54,103 - DEBUG - Contraseña correcta
+2025-03-13 04:40:03,072 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 04:40:03,081 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 04:40:03,428 - DEBUG - Contraseña correcta
+2025-03-13 04:41:41,150 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 04:41:41,153 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 04:41:41,497 - DEBUG - Contraseña correcta
+2025-03-13 04:52:28,726 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 04:52:28,729 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 04:52:29,074 - DEBUG - Contraseña correcta
+2025-03-13 04:57:15,305 - INFO - 🔧 Backend Flask iniciado.
+2025-03-13 04:57:47,990 - INFO - 🔧 Backend Flask iniciado.
+2025-03-13 04:58:11,133 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 04:58:11,143 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 04:58:11,482 - DEBUG - Contraseña correcta
+2025-03-13 05:29:29,354 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 05:29:29,360 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 05:29:29,700 - DEBUG - Contraseña correcta
+2025-03-13 05:55:50,532 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 05:55:50,538 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 05:55:50,878 - DEBUG - Contraseña correcta
+2025-03-13 19:21:49,221 - INFO - 🔧 Backend Flask iniciado.
+2025-03-13 19:23:19,661 - INFO - 🔧 Backend Flask iniciado.
+2025-03-13 19:51:00,042 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 19:51:00,055 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 19:51:00,394 - DEBUG - Contraseña correcta
+2025-03-13 20:59:06,867 - INFO - 🔧 Backend Flask iniciado.
+2025-03-13 21:00:53,667 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:00:53,676 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:00:54,017 - DEBUG - Contraseña correcta
+2025-03-13 21:07:09,521 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:07:09,524 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:07:09,866 - DEBUG - Contraseña correcta
+2025-03-13 21:09:34,889 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:09:34,895 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:09:35,240 - DEBUG - Contraseña correcta
+2025-03-13 21:12:30,533 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:12:30,537 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:12:30,877 - DEBUG - Contraseña correcta
+2025-03-13 21:17:01,262 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:17:01,264 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:17:01,608 - DEBUG - Contraseña correcta
+2025-03-13 21:33:39,358 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:33:39,361 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:33:39,703 - DEBUG - Contraseña correcta
+2025-03-13 21:37:42,580 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:37:42,587 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:37:42,928 - DEBUG - Contraseña correcta
+2025-03-13 21:47:42,248 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:47:42,253 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:47:42,596 - DEBUG - Contraseña correcta
+2025-03-13 21:58:20,893 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-13 21:58:20,896 - DEBUG - Usuario encontrado en la base de datos
+2025-03-13 21:58:21,243 - DEBUG - Contraseña correcta
+2025-03-13 22:24:31,605 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 01:16:48,355 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 01:16:48,368 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 01:16:48,708 - DEBUG - Contraseña correcta
+2025-03-14 01:40:25,895 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 01:41:22,146 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 01:41:22,156 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 01:41:22,496 - DEBUG - Contraseña correcta
+2025-03-14 01:51:18,395 - INFO - 🔧 Backend Flask iniciado.
+2025-03-14 01:55:31,305 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 01:55:31,315 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 01:55:31,660 - DEBUG - Contraseña correcta
+2025-03-14 03:02:23,576 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 03:02:23,580 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 03:02:23,920 - DEBUG - Contraseña correcta
+2025-03-14 03:17:22,120 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 03:17:22,122 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 03:17:22,462 - DEBUG - Contraseña correcta
+2025-03-14 03:23:57,142 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 03:23:57,145 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 03:23:57,485 - DEBUG - Contraseña correcta
+2025-03-14 03:37:11,932 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-14 03:37:11,942 - DEBUG - Usuario encontrado en la base de datos
+2025-03-14 03:37:12,283 - DEBUG - Contraseña correcta
