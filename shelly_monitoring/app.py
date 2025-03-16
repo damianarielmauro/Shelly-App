@@ -41,23 +41,26 @@ roles_permissions = {
 }
 
 # Middleware para proteger rutas
-@app.before_request
-def require_login():
-    if not request.path.startswith('/api/login') and not request.path.startswith('/static'):
-        auth_header = request.headers.get('Authorization')
-        if auth_header and auth_header.startswith('Bearer '):
-            token = auth_header.split(' ')[1]
-            try:
-                decoded_token = jwt.decode(token, jwt_secret_key, algorithms=['HS256'])
-                user_id = decoded_token['user_id']
-                session['user_id'] = user_id
-                session['logged_in'] = True
-            except jwt.ExpiredSignatureError:
-                return jsonify({"error": "Token ha expirado"}), 401
-            except jwt.InvalidTokenError:
-                return jsonify({"error": "Token inválido"}), 401
-        else:
-            return jsonify({"error": "Usuario no autenticado"}), 401
+def require_login(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not request.path.startswith('/api/login') and not request.path.startswith('/static'):
+            auth_header = request.headers.get('Authorization')
+            if auth_header and auth_header.startswith('Bearer '):
+                token = auth_header.split(' ')[1]
+                try:
+                    decoded_token = jwt.decode(token, jwt_secret_key, algorithms=['HS256'])
+                    user_id = decoded_token['user_id']
+                    session['user_id'] = user_id
+                    session['logged_in'] = True
+                except jwt.ExpiredSignatureError:
+                    return jsonify({"error": "Token ha expirado"}), 401
+                except jwt.InvalidTokenError:
+                    return jsonify({"error": "Token inválido"}), 401
+            else:
+                return jsonify({"error": "Usuario no autenticado"}), 401
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Middleware para verificar permisos basado en roles
 def require_permission(permission):
@@ -94,14 +97,14 @@ class Tableros(db.Model):
     __tablename__ = 'tableros'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True, nullable=False)
-    orden = db.Column(db.Integer, nullable=False, default=0)  # Nuevo campo
+    orden = db.Column(db.Integer, nullable=False, default=0)
 
 class Habitaciones(db.Model):
     __tablename__ = 'habitaciones'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True, nullable=False)
     tablero_id = db.Column(db.Integer, db.ForeignKey('tableros.id'), nullable=False)
-    orden = db.Column(db.Integer, nullable=False, default=0)  # Nuevo campo
+    orden = db.Column(db.Integer, nullable=False, default=0)
 
 class Dispositivos(db.Model):
     __tablename__ = 'dispositivos'
@@ -116,7 +119,7 @@ class Dispositivos(db.Model):
 # Crear base de datos si no existe
 with app.app_context():
     db.create_all()
-    db.session.commit()  # Asegura que los cambios se reflejen en PostgreSQL
+    db.session.commit()
 
 # API: Login
 @app.route('/api/login', methods=['POST'])
@@ -133,7 +136,7 @@ def login():
             logging.debug("Contraseña correcta")
             # Generar token JWT
             token = jwt.encode({'user_id': user.id}, jwt_secret_key, algorithm='HS256')
-            session['user_id'] = user.id  # Guardar el ID del usuario en la sesión
+            session['user_id'] = user.id
             session['logged_in'] = True
 
             # Obtener permisos del rol del usuario
@@ -155,6 +158,13 @@ def login():
     else:
         logging.debug("Usuario no encontrado")
     return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
+
+# Endpoint para obtener permisos de un rol
+@app.route('/api/roles/<role>/permissions', methods=['GET'])
+@require_login
+def get_role_permissions(role):
+    permissions = roles_permissions.get(role, [])
+    return jsonify({"permissions": permissions})
 
 # API: Obtener dispositivos
 @app.route('/api/dispositivos', methods=['GET'])
@@ -319,17 +329,14 @@ def start_discovery():
         subredes = [subred.strip() for subred in subredes]
         subredes_str = ",".join(subredes)
 
-        # Escribir en el log que el descubrimiento inició
         with open("/var/log/shelly_discovery.log", "a") as log_file:
             log_file.write(f"\n📢 Descubrimiento iniciado en subredes: {subredes_str}\n")
 
-        # Ejecutar el script de descubrimiento
         command = ["/usr/bin/python3", "/opt/shelly_monitoring/descubrir_shelly.py"] + subredes
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
         stdout, stderr = process.communicate()
         
-        # Guardar salida en el log
         with open("/var/log/shelly_discovery.log", "a") as log_file:
             if stdout:
                 log_file.write(stdout)
@@ -349,15 +356,14 @@ def start_discovery():
 def stream_logs():
     def generate():
         with open("/var/log/shelly_discovery.log", "r") as log_file:
-            log_file.seek(0, 2)  # Ir al final del archivo
+            log_file.seek(0, 2)
             while True:
                 line = log_file.readline()
                 if line:
-                    # Remover la fecha y hora (formato: [YYYY-MM-DD HH:MM:SS])
                     clean_line = line[line.find("]") + 2:] if "]" in line else line
                     yield f"data: {clean_line}\n\n"
                 else:
-                    time.sleep(1)  # Evita sobrecargar el sistema
+                    time.sleep(1)
     return Response(stream_with_context(generate()), content_type='text/event-stream')
 
 # API: Crear un nuevo usuario
@@ -391,12 +397,6 @@ def crear_usuario():
         logging.error(f"Error al crear el usuario: {str(e)}")
         return jsonify({"error": f"Error al crear el usuario: {str(e)}"}), 500
 
-# Endpoint para obtener permisos de un rol
-@app.route('/api/roles/<role>/permissions', methods=['GET'])
-def get_role_permissions(role):
-    permissions = roles_permissions.get(role, [])
-    return jsonify({"permissions": permissions})
-
 # Iniciar backend con HTTPS
 if __name__ == '__main__':
     ssl_cert = "/etc/ssl/certs/shelly_monitoring.pem"
@@ -406,6 +406,6 @@ if __name__ == '__main__':
         logging.error("❌ Error: No se encontraron los certificados SSL en las rutas especificadas.")
         exit(1)
 
-    logging.info(f"📢 Iniciando servidor en 0.0.0.0:8000 con Gunicorn y SSL habilitado.")
+    logging.info(f"📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.")
     context = (ssl_cert, ssl_key)
     app.run(host="0.0.0.0", port=8000, ssl_context=context)

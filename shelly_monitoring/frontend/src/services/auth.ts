@@ -8,8 +8,10 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 export const setAuthToken = (token: string | null) => {
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    console.log(`Authorization header set: Bearer ${token}`);
   } else {
     delete axios.defaults.headers.common['Authorization'];
+    console.log('Authorization header removed');
   }
 };
 
@@ -19,17 +21,30 @@ export const login = async (email: string, password: string): Promise<any> => {
   const data = response.data;
   console.log('Login response:', data); // Log de depuración
   if (data.token) {
+    // Set the token in axios headers
+    setAuthToken(data.token);
+    
     // Obtener permisos del rol del usuario desde el backend
-    const rolePermissionsResponse = await axios.get(`/api/roles/${data.user.role}/permissions`);
-    const rolePermissions = rolePermissionsResponse.data.permissions;
+    try {
+      console.log(`Fetching permissions for role: ${data.user.role} with token: ${data.token}`);
+      const rolePermissionsResponse = await axios.get(`/api/roles/${data.user.role}/permissions`, {
+        headers: {
+          Authorization: `Bearer ${data.token}`
+        }
+      });
+      const rolePermissions = rolePermissionsResponse.data.permissions;
+      console.log('Role permissions response:', rolePermissionsResponse);
 
-    const userWithPermissions = {
-      ...data.user,
-      permissions: rolePermissions
-    };
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(userWithPermissions));
-    setAuthToken(data.token); // Set the token in axios headers
+      const userWithPermissions = {
+        ...data.user,
+        permissions: rolePermissions
+      };
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(userWithPermissions));
+    } catch (error) {
+      console.error('Error fetching role permissions:', error);
+      throw new Error('Error al obtener permisos del rol');
+    }
   }
   return data;
 };
