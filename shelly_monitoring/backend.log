@@ -668,3 +668,1010 @@ FROM tableros]
 2025-03-16 15:32:18,495 - DEBUG - Intento de inicio de sesión: admin@shelly.local
 2025-03-16 15:32:18,505 - DEBUG - Usuario encontrado en la base de datos
 2025-03-16 15:32:18,844 - DEBUG - Contraseña correcta
+2025-03-17 00:45:01,310 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 00:45:45,644 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 00:46:00,528 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 00:46:00,537 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 00:46:00,877 - DEBUG - Contraseña correcta
+2025-03-17 00:51:16,742 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 00:51:16,745 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 00:51:17,085 - DEBUG - Contraseña correcta
+2025-03-17 00:55:49,981 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 00:56:06,842 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 00:56:06,853 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 00:56:07,192 - DEBUG - Contraseña correcta
+2025-03-17 00:57:28,752 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 00:58:25,457 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 00:58:37,399 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 00:58:51,474 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 00:58:51,483 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 00:58:51,825 - DEBUG - Contraseña correcta
+2025-03-17 02:23:23,306 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 02:23:23,310 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 02:23:23,648 - DEBUG - Contraseña correcta
+2025-03-17 02:34:39,596 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 02:34:39,599 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 02:34:39,938 - DEBUG - Contraseña correcta
+2025-03-17 02:35:23,634 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 02:35:23,636 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 02:35:23,975 - DEBUG - Contraseña correcta
+2025-03-17 02:47:18,943 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 02:47:18,946 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 02:47:19,286 - DEBUG - Contraseña correcta
+2025-03-17 03:06:05,391 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 03:07:21,054 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:07:21,063 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 03:07:21,402 - DEBUG - Contraseña correcta
+2025-03-17 03:07:23,387 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 03:07:23,388 - DEBUG - Token válido para el usuario: 1
+2025-03-17 03:15:40,367 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 03:17:42,046 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:17:42,054 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 03:17:42,396 - DEBUG - Contraseña correcta
+2025-03-17 03:17:44,526 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 03:17:44,526 - DEBUG - Token válido para el usuario: 1
+2025-03-17 03:17:46,640 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:17:46,640 - DEBUG - Usuario no autenticado
+2025-03-17 03:17:50,058 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:17:50,059 - DEBUG - Usuario no autenticado
+2025-03-17 03:17:51,139 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:17:51,139 - DEBUG - Usuario no autenticado
+2025-03-17 03:22:35,008 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 03:27:56,034 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:27:56,045 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 03:27:56,384 - DEBUG - Contraseña correcta
+2025-03-17 03:28:41,990 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:28:41,993 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 03:28:42,333 - DEBUG - Contraseña correcta
+2025-03-17 03:28:44,788 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 03:28:44,788 - DEBUG - Token válido para el usuario: 1
+2025-03-17 03:28:47,457 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:28:47,457 - DEBUG - Usuario no autenticado
+2025-03-17 03:28:50,443 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:28:50,444 - DEBUG - Usuario no autenticado
+2025-03-17 03:28:51,409 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:28:51,409 - DEBUG - Usuario no autenticado
+2025-03-17 03:29:52,096 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:29:52,099 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 03:29:52,439 - DEBUG - Contraseña correcta
+2025-03-17 03:29:54,481 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 03:29:54,482 - DEBUG - Token válido para el usuario: 1
+2025-03-17 03:29:56,520 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:29:56,520 - DEBUG - Usuario no autenticado
+2025-03-17 03:29:59,619 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:29:59,619 - DEBUG - Usuario no autenticado
+2025-03-17 03:30:00,770 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:30:00,771 - DEBUG - Usuario no autenticado
+2025-03-17 03:31:28,859 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 03:33:29,333 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:33:29,342 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 03:33:29,681 - DEBUG - Contraseña correcta
+2025-03-17 03:33:31,537 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 03:33:31,537 - DEBUG - Token válido para el usuario: 1
+2025-03-17 03:33:33,622 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:33:33,622 - DEBUG - Usuario no autenticado
+2025-03-17 03:33:36,870 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:33:36,870 - DEBUG - Usuario no autenticado
+2025-03-17 03:33:38,079 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 03:33:38,079 - DEBUG - Usuario no autenticado
+2025-03-17 03:34:42,182 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:34:42,184 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 03:34:42,524 - DEBUG - Contraseña correcta
+2025-03-17 03:38:31,767 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 03:39:39,206 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:39:39,206 - ERROR - Exception on /api/login [POST]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 102, in login
+    user = User.query.filter_by(email=email).first()
+           ^^^^
+NameError: name 'User' is not defined
+2025-03-17 03:40:54,522 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:40:54,522 - ERROR - Exception on /api/login [POST]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 102, in login
+    user = User.query.filter_by(email=email).first()
+           ^^^^
+NameError: name 'User' is not defined
+2025-03-17 03:42:47,670 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 03:43:48,461 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:43:48,462 - ERROR - Exception on /api/login [POST]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 102, in login
+    user = User.query.filter_by(email=email).first()
+           ^^^^
+NameError: name 'User' is not defined
+2025-03-17 03:48:01,246 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 03:49:16,367 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 03:49:16,368 - ERROR - Exception on /api/login [POST]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 102, in login
+    user = User.query.filter_by(email=email).first()
+           ^^^^
+NameError: name 'User' is not defined
+2025-03-17 04:22:35,726 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 04:24:19,678 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 04:24:19,687 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 04:24:20,026 - DEBUG - Contraseña correcta
+2025-03-17 04:24:21,929 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 04:24:21,930 - DEBUG - Token válido para el usuario: 1
+2025-03-17 04:24:24,178 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:24:24,178 - DEBUG - Usuario no autenticado
+2025-03-17 04:24:27,460 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:24:27,460 - DEBUG - Usuario no autenticado
+2025-03-17 04:24:28,617 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:24:28,617 - DEBUG - Usuario no autenticado
+2025-03-17 04:29:18,895 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 04:30:37,547 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 04:30:37,556 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 04:30:37,896 - DEBUG - Contraseña correcta
+2025-03-17 04:30:40,262 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 04:30:40,262 - DEBUG - Token válido para el usuario: 1
+2025-03-17 04:30:42,140 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:30:42,140 - DEBUG - Usuario no autenticado
+2025-03-17 04:30:45,179 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:30:45,179 - DEBUG - Usuario no autenticado
+2025-03-17 04:30:46,167 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:30:46,167 - DEBUG - Usuario no autenticado
+2025-03-17 04:45:14,402 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 04:46:26,342 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 04:46:26,358 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 04:46:26,702 - DEBUG - Contraseña correcta
+2025-03-17 04:46:28,810 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 04:46:28,812 - DEBUG - Token válido para el usuario: 1
+2025-03-17 04:46:30,644 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:46:30,644 - DEBUG - Usuario no autenticado
+2025-03-17 04:46:33,842 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:46:33,842 - DEBUG - Usuario no autenticado
+2025-03-17 04:46:34,821 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 04:46:34,821 - DEBUG - Usuario no autenticado
+2025-03-17 05:00:05,194 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 05:01:08,123 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 05:01:08,132 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 05:01:08,475 - DEBUG - Contraseña correcta
+2025-03-17 05:01:10,430 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 05:01:10,430 - DEBUG - Token válido para el usuario: 1
+2025-03-17 05:01:12,320 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 05:01:12,320 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 05:01:15,616 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 05:01:15,616 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 05:01:16,828 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 05:01:16,828 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 05:06:12,207 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 05:07:08,299 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 05:07:08,308 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 05:07:08,649 - DEBUG - Contraseña correcta
+2025-03-17 05:07:11,057 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 05:07:11,058 - DEBUG - Token válido para el usuario: 1
+2025-03-17 05:07:12,906 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 05:07:12,906 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 05:07:16,065 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 05:07:16,065 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 05:07:17,145 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 05:07:17,145 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:09:41,390 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 12:10:53,523 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 12:13:28,795 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 12:13:57,285 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 12:13:57,295 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 12:13:57,634 - DEBUG - Contraseña correcta
+2025-03-17 12:13:57,982 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:13:57,982 - DEBUG - Decoded user_id: 1
+2025-03-17 12:13:57,982 - DEBUG - Token válido para el usuario: 1
+2025-03-17 12:13:58,351 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:13:58,352 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:13:58,733 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:13:58,733 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:13:58,748 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:13:58,748 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:15:42,807 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:15:42,807 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:15:43,344 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:15:43,344 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:15:43,540 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:15:43,540 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:15:58,452 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:15:58,452 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:15:59,047 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:15:59,047 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:15:59,233 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:15:59,233 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:16:05,692 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:16:05,692 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:16:06,076 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:16:06,076 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:16:06,077 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:16:06,077 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:17:38,103 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 12:18:04,621 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 12:18:04,632 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 12:18:04,973 - DEBUG - Contraseña correcta
+2025-03-17 12:18:06,870 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:18:06,870 - DEBUG - Decoded user_id: 1
+2025-03-17 12:18:06,870 - DEBUG - Token válido para el usuario: 1
+2025-03-17 12:18:07,382 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:18:07,382 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:18:08,017 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:18:08,017 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:18:08,184 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:18:08,184 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:18:57,953 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 12:18:57,956 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 12:18:58,295 - DEBUG - Contraseña correcta
+2025-03-17 12:20:07,945 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:20:07,946 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:22:07,054 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 12:22:29,729 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 12:22:29,739 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 12:22:30,079 - DEBUG - Contraseña correcta
+2025-03-17 12:22:30,535 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:22:30,535 - DEBUG - Decoded user_id: 1
+2025-03-17 12:22:30,535 - DEBUG - Token válido para el usuario: 1
+2025-03-17 12:22:31,166 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:22:31,167 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:22:31,844 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:22:31,844 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:22:31,846 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:22:31,847 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:22:46,261 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:22:46,261 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:22:46,423 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:22:46,423 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:43:53,971 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 12:44:18,426 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 12:44:18,436 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 12:44:18,776 - DEBUG - Contraseña correcta
+2025-03-17 12:44:18,776 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:44:19,111 - DEBUG - Ejecutando middleware require_login
+2025-03-17 12:44:19,111 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:44:19,111 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:44:19,112 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 12:44:19,112 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 12:44:19,464 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:44:19,464 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:44:19,843 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:44:19,844 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:44:19,845 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:44:19,845 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:51:47,071 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 12:52:19,912 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 12:52:19,923 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 12:52:20,263 - DEBUG - Contraseña correcta
+2025-03-17 12:52:20,263 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:52:20,604 - DEBUG - Ejecutando middleware require_login
+2025-03-17 12:52:20,604 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:52:20,604 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 12:52:20,604 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 12:52:20,604 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 12:52:21,013 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:52:21,013 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:52:21,583 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:52:21,583 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 12:52:21,765 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 12:52:21,766 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 13:21:10,248 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 13:21:26,355 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 13:21:26,429 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmpx5nmmnps.__wz_cache'
+2025-03-17 13:22:34,037 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 13:22:34,048 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 13:22:34,390 - DEBUG - Contraseña correcta
+2025-03-17 13:22:34,390 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 13:22:34,391 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 13:22:34,392 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 13:22:34,393 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/acc4c0301d93f214b1c057e114cddef0'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmpo07r3d32.__wz_cache'
+2025-03-17 13:22:35,092 - DEBUG - Ejecutando middleware require_login
+2025-03-17 13:22:35,092 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 13:22:35,092 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 13:22:35,093 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 13:22:35,093 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 13:22:35,093 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 13:22:35,094 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 13:22:35,094 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/4116d5c6ffac814eee94635568225e2c'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmpx1nknzdb.__wz_cache'
+2025-03-17 13:22:35,565 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 13:22:35,566 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 13:22:36,162 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 13:22:36,162 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 13:22:36,334 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 13:22:36,334 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:38:26,225 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 19:38:26,230 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 19:38:26,569 - DEBUG - Contraseña correcta
+2025-03-17 19:38:26,569 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:38:26,570 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 19:38:26,571 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 19:38:26,571 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/814d22f28b7ae73ec71f79e9be117f0a'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmpzd8kst2y.__wz_cache'
+2025-03-17 19:38:27,091 - DEBUG - Ejecutando middleware require_login
+2025-03-17 19:38:27,091 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:38:27,091 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:38:27,091 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 19:38:27,091 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 19:38:27,092 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 19:38:27,092 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 19:38:27,093 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/6bc69ae34c994156aa7d443180391dec'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmphh7o4e5k.__wz_cache'
+2025-03-17 19:38:27,517 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:38:27,517 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:38:28,112 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:38:28,112 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:38:28,296 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:38:28,296 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:43:21,618 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 19:43:21,674 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmpv3kd7m7i.__wz_cache'
+2025-03-17 19:44:21,231 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 19:44:21,242 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 19:44:21,584 - DEBUG - Contraseña correcta
+2025-03-17 19:44:21,584 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:44:21,585 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 19:44:21,586 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 19:44:21,587 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/d816eb30fab354e05881b6504abacdf1'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmp62rxiy71.__wz_cache'
+2025-03-17 19:44:22,279 - DEBUG - Ejecutando middleware require_login
+2025-03-17 19:44:22,279 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:44:22,279 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:44:22,279 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 19:44:22,279 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 19:44:22,280 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 19:44:22,280 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 221, in get
+    with self._safe_stream_open(filename, "rb") as f:
+  File "/usr/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 342, in _safe_stream_open
+    fs = self._run_safely(open, path, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 336, in _run_safely
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+2025-03-17 19:44:22,281 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/b3fee8a128316daa74274b8126c861bd'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmpm1siah92.__wz_cache'
+2025-03-17 19:44:22,835 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:44:22,835 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:44:23,336 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:44:23,336 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:44:23,475 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:44:23,475 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:49:29,829 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 19:49:29,886 - WARNING - Exception raised while handling cache file '/opt/shelly_monitoring/flask_session/2029240f6d1128be89ddc32729463129'
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/cachelib/file.py", line 260, in set
+    fd, tmp = tempfile.mkstemp(
+              ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 496, in mkstemp
+    return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tempfile.py", line 395, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/eventlet/green/os.py", line 131, in open
+    fd = __original_open__(file, flags, mode)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/opt/shelly_monitoring/flask_session/tmpo9bmkghz.__wz_cache'
+2025-03-17 19:50:32,098 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 19:50:59,929 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 19:50:59,939 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 19:51:00,279 - DEBUG - Contraseña correcta
+2025-03-17 19:51:00,279 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:51:00,564 - DEBUG - Ejecutando middleware require_login
+2025-03-17 19:51:00,564 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:51:00,564 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:51:00,565 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 19:51:00,565 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 19:51:00,864 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:51:00,864 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:51:01,197 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:51:01,197 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:51:01,198 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:51:01,198 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:54:47,556 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 19:55:08,697 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 19:55:08,710 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 19:55:09,050 - DEBUG - Contraseña correcta
+2025-03-17 19:55:09,050 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:09,537 - DEBUG - Ejecutando middleware require_login
+2025-03-17 19:55:09,538 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:09,538 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:09,538 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 19:55:09,538 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 19:55:09,538 - ERROR - Exception on /api/roles/admin/permissions [GET]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 74, in decorated_function
+    session.save()  # Guardar la sesión explícitamente
+    ^^^^^^^^^^^^
+AttributeError: 'FileSystemSession' object has no attribute 'save'
+2025-03-17 19:55:24,371 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 19:55:24,374 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 19:55:24,717 - DEBUG - Contraseña correcta
+2025-03-17 19:55:24,719 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:25,005 - DEBUG - Ejecutando middleware require_login
+2025-03-17 19:55:25,006 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:25,006 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:25,006 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 19:55:25,006 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 19:55:25,006 - ERROR - Exception on /api/roles/admin/permissions [GET]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 74, in decorated_function
+    session.save()  # Guardar la sesión explícitamente
+    ^^^^^^^^^^^^
+AttributeError: 'FileSystemSession' object has no attribute 'save'
+2025-03-17 19:55:33,392 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 19:55:33,395 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 19:55:33,734 - DEBUG - Contraseña correcta
+2025-03-17 19:55:33,734 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:34,019 - DEBUG - Ejecutando middleware require_login
+2025-03-17 19:55:34,019 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:34,019 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:55:34,019 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 19:55:34,019 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 19:55:34,020 - ERROR - Exception on /api/roles/admin/permissions [GET]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/app.py", line 74, in decorated_function
+    session.save()  # Guardar la sesión explícitamente
+    ^^^^^^^^^^^^
+AttributeError: 'FileSystemSession' object has no attribute 'save'
+2025-03-17 19:57:08,010 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 19:57:23,467 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 19:57:23,476 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 19:57:23,815 - DEBUG - Contraseña correcta
+2025-03-17 19:57:23,815 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:57:24,124 - DEBUG - Ejecutando middleware require_login
+2025-03-17 19:57:24,124 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:57:24,125 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:57:24,125 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 19:57:24,125 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 19:57:24,426 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:57:24,426 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:57:24,755 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:57:24,755 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:57:24,757 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:57:24,757 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:59:33,641 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 19:59:48,191 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 19:59:48,200 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 19:59:48,543 - DEBUG - Contraseña correcta
+2025-03-17 19:59:48,543 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:59:48,894 - DEBUG - Ejecutando middleware require_login
+2025-03-17 19:59:48,894 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:59:48,894 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 19:59:48,895 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 19:59:48,895 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 19:59:49,203 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:59:49,204 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:59:49,746 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:59:49,747 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 19:59:49,887 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 19:59:49,887 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:06:05,597 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 20:06:35,078 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 20:06:35,087 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 20:06:35,427 - DEBUG - Contraseña correcta
+2025-03-17 20:06:35,427 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:06:35,714 - DEBUG - Ejecutando middleware require_login
+2025-03-17 20:06:35,714 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:06:35,714 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:06:35,714 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 20:06:35,714 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 20:06:36,015 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:06:36,015 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:06:36,468 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:06:36,468 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:06:36,609 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:06:36,609 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:22:34,355 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 20:22:53,916 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 20:22:53,925 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 20:22:54,265 - DEBUG - Contraseña correcta
+2025-03-17 20:22:54,265 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:22:54,596 - DEBUG - Ejecutando middleware require_login
+2025-03-17 20:22:54,596 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:22:54,596 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:22:54,596 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 20:22:54,596 - DEBUG - Estado actual de la sesión antes de configurar: <FileSystemSession {}>
+2025-03-17 20:22:54,597 - DEBUG - Estado de la sesión después de configurar: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:22:54,597 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 20:22:54,902 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:22:54,902 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:22:55,220 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:22:55,220 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:22:55,222 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:22:55,222 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:25:47,467 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 20:26:03,918 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 20:26:03,928 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 20:26:04,271 - DEBUG - Contraseña correcta
+2025-03-17 20:26:04,271 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:26:04,632 - DEBUG - Ejecutando middleware require_login
+2025-03-17 20:26:04,632 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:26:04,632 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:26:04,632 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 20:26:04,632 - DEBUG - Estado actual de la sesión antes de configurar: <FileSystemSession {}>
+2025-03-17 20:26:04,633 - DEBUG - Estado de la sesión después de configurar: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:26:04,633 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 20:26:05,047 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:26:05,047 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:26:05,048 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:26:05,508 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:26:05,519 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:26:05,519 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:26:05,658 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:26:05,658 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:26:05,658 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:41:26,884 - INFO - 🔧 Backend Flask iniciado.
+2025-03-17 20:41:41,377 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:41,378 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:41,649 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:41,650 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 20:41:41,658 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 20:41:41,996 - DEBUG - Contraseña correcta
+2025-03-17 20:41:41,996 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:41:41,996 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:41:42,205 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:42,206 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:42,452 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:42,452 - DEBUG - Ejecutando middleware require_login
+2025-03-17 20:41:42,452 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:41:42,452 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:41:42,453 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 20:41:42,453 - DEBUG - Estado actual de la sesión antes de configurar: <FileSystemSession {}>
+2025-03-17 20:41:42,453 - DEBUG - Estado de la sesión después de configurar: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:41:42,453 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 20:41:42,453 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:41:42,733 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:42,733 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:42,881 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:42,881 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:41:42,881 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:41:42,881 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:41:42,882 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:43,085 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:43,085 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:43,086 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:43,087 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:43,226 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:43,226 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:41:43,226 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:41:43,226 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:41:43,226 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:43,242 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:41:43,242 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:41:43,242 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:41:43,242 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:41:43,243 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:28,319 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:28,319 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:28,592 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:28,593 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 20:46:28,596 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 20:46:28,935 - DEBUG - Contraseña correcta
+2025-03-17 20:46:28,935 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:46:28,935 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:46:29,079 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,080 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,220 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,220 - DEBUG - Ejecutando middleware require_login
+2025-03-17 20:46:29,220 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:46:29,220 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:46:29,220 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 20:46:29,220 - DEBUG - Estado actual de la sesión antes de configurar: <FileSystemSession {}>
+2025-03-17 20:46:29,221 - DEBUG - Estado de la sesión después de configurar: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:46:29,221 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 20:46:29,221 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:46:29,377 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,377 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,517 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,517 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:46:29,518 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:46:29,518 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:46:29,518 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,682 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,683 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,825 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,825 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,965 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:29,965 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:46:29,965 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:46:29,965 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:46:29,966 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:30,109 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:30,110 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:46:30,110 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:46:30,110 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:46:30,110 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:49,348 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:49,348 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:49,490 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:49,490 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-17 20:46:49,493 - DEBUG - Usuario encontrado en la base de datos
+2025-03-17 20:46:49,833 - DEBUG - Contraseña correcta
+2025-03-17 20:46:49,833 - DEBUG - Token generado: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:46:49,833 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:46:49,981 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:49,981 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,135 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,136 - DEBUG - Ejecutando middleware require_login
+2025-03-17 20:46:50,136 - DEBUG - Authorization header: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:46:50,136 - DEBUG - Token recibido: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Ql2z3Q06DCptkiE0oobOYogpNccHD86O59NyCHWf7sk
+2025-03-17 20:46:50,136 - DEBUG - Token decodificado correctamente, user_id: 1
+2025-03-17 20:46:50,136 - DEBUG - Estado actual de la sesión antes de configurar: <FileSystemSession {}>
+2025-03-17 20:46:50,136 - DEBUG - Estado de la sesión después de configurar: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:46:50,136 - DEBUG - Sesión configurada para el usuario: 1
+2025-03-17 20:46:50,136 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {'user_id': 1, 'logged_in': True}>
+2025-03-17 20:46:50,303 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,303 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,559 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,559 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:46:50,559 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:46:50,559 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:46:50,559 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,744 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,744 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,892 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:50,892 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:51,034 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:51,034 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:46:51,034 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:46:51,034 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:46:51,034 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:51,179 - DEBUG - Estado de la sesión al inicio de la solicitud: <FileSystemSession {}>
+2025-03-17 20:46:51,179 - DEBUG - Verificando permisos para el usuario: None
+2025-03-17 20:46:51,179 - DEBUG - Estado actual de la sesión: <FileSystemSession {}>
+2025-03-17 20:46:51,179 - DEBUG - Usuario no autenticado: session.get('user_id') devolvió None
+2025-03-17 20:46:51,179 - DEBUG - Estado de la sesión al final de la solicitud: <FileSystemSession {}>

@@ -25,7 +25,7 @@ db = SQLAlchemy(app)
 
 # Configuración de logs
 LOG_PATH = "/opt/shelly_monitoring/backend.log"
-logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG, format="%(asctime)s - %(levellevelname)s - %(message)s")
 logging.info("🔧 Backend Flask iniciado.")
 
 # Diccionario de roles y permisos
@@ -35,30 +35,32 @@ roles_permissions = {
         'view_boards', 'create_board', 'delete_board', 'update_board_order',
         'update_room_order', 'start_discovery', 'view_logs', 'edit_dashboard',
         'create_user', 'create_tablero', 'delete_dashboard', 'delete_habitacion',
-        'create_habitacion', 'rename_tablero', 'stream_logs', 'view_statistics', 'delete_habitacion'
+        'create_habitacion', 'rename_tablero', 'stream_logs', 'view_statistics', 'delete_habitacion',
+        'discover_devices', 'manage_users', 'view_consumption'
     ],
     'user': ['view_devices', 'toggle_device', 'view_rooms']
 }
 
 # Middleware para proteger rutas
-def require_login(f):
+def require_jwt(f):
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
-        if not request.path.startswith('/api/login') and not request.path.startswith('/static'):
-            auth_header = request.headers.get('Authorization')
-            if auth_header and auth_header.startswith('Bearer '):
-                token = auth_header.split(' ')[1]
-                try:
-                    decoded_token = jwt.decode(token, jwt_secret_key, algorithms=['HS256'])
-                    user_id = decoded_token['user_id']
-                    session['user_id'] = user_id
-                    session['logged_in'] = True
-                except jwt.ExpiredSignatureError:
-                    return jsonify({"error": "Token ha expirado"}), 401
-                except jwt.InvalidTokenError:
-                    return jsonify({"error": "Token inválido"}), 401
-            else:
-                return jsonify({"error": "Usuario no autenticado"}), 401
+        auth_header = request.headers.get('Authorization')
+        token = request.args.get('token')  # Obtener el token de la URL para SSE
+
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+        elif not token:
+            return jsonify({"error": "Usuario no autenticado"}), 401
+
+        try:
+            decoded_token = jwt.decode(token, jwt_secret_key, algorithms=['HS256'])
+            request.user_id = decoded_token['user_id']  # Almacena el user_id en el request
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token ha expirado"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Token inválido"}), 401
+
         return f(*args, **kwargs)
     return decorated_function
 
@@ -67,15 +69,21 @@ def require_permission(permission):
     def decorator(f):
         @functools.wraps(f)
         def decorated_function(*args, **kwargs):
-            user_id = session.get('user_id')
+            user_id = getattr(request, 'user_id', None)
+            logging.debug(f"Verificando permisos para el usuario: {user_id}")
             if not user_id:
+                logging.debug("Usuario no autenticado: request.user_id devolvió None")
                 return jsonify({"error": "Usuario no autenticado"}), 401
             user = User.query.get(user_id)
+            logging.debug(f"Permisos del usuario: {user.role if user else 'No user found'}")
             if not user or permission not in roles_permissions.get(user.role, []):
+                logging.debug(f"Permiso denegado para la acción: {permission}")
                 return jsonify({"error": "Permiso denegado"}), 403
+            logging.debug(f"Permiso concedido para la acción: {permission}")
             return f(*args, **kwargs)
         return decorated_function
     return decorator
+
 
 # Definición de modelos
 class User(db.Model):
@@ -138,6 +146,7 @@ def login():
             token = jwt.encode({'user_id': user.id}, jwt_secret_key, algorithm='HS256')
             session['user_id'] = user.id
             session['logged_in'] = True
+            session.modified = True  # Asegurar que la sesión se guarde
 
             # Obtener permisos del rol del usuario
             role_permissions = roles_permissions.get(user.role, [])
@@ -159,23 +168,25 @@ def login():
         logging.debug("Usuario no encontrado")
     return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
 
-# Endpoint para obtener permisos de un rol
+
+
+# API: Obtener permisos de un rol
 @app.route('/api/roles/<role>/permissions', methods=['GET'])
-@require_login
+@require_jwt
 def get_role_permissions(role):
     permissions = roles_permissions.get(role, [])
     return jsonify({"permissions": permissions})
 
 # API: Obtener dispositivos
 @app.route('/api/dispositivos', methods=['GET'])
-@require_permission('view_devices')
+@require_jwt
 def get_dispositivos():
     dispositivos = Dispositivos.query.all()
     return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado } for d in dispositivos])
 
 # API: Cambiar estado de un dispositivo
 @app.route('/api/toggle_device/<int:device_id>', methods=['POST'])
-@require_permission('toggle_device')
+@require_jwt
 def toggle_device(device_id):
     device = Dispositivos.query.get(device_id)
     if device:
@@ -187,21 +198,21 @@ def toggle_device(device_id):
 
 # API: Obtener habitaciones
 @app.route('/api/habitaciones', methods=['GET'])
-@require_permission('view_rooms')
+@require_jwt
 def get_habitaciones():
     habitaciones = Habitaciones.query.all()
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Obtener habitaciones por tablero
 @app.route('/api/tableros/<int:tablero_id>/habitaciones', methods=['GET'])
-@require_permission('view_rooms')
+@require_jwt
 def get_habitaciones_by_tablero(tablero_id):
     habitaciones = Habitaciones.query.filter_by(tablero_id=tablero_id).all()
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Eliminar una habitación
 @app.route('/api/habitaciones/<int:habitacion_id>', methods=['DELETE'])
-@require_permission('delete_room')
+@require_jwt
 def eliminar_habitacion(habitacion_id):
     habitacion = Habitaciones.query.get(habitacion_id)
     if habitacion:
@@ -212,7 +223,7 @@ def eliminar_habitacion(habitacion_id):
 
 # API: Crear una nueva habitación dentro de un tablero
 @app.route('/api/habitaciones', methods=['POST'])
-@require_permission('create_room')
+@require_jwt
 def crear_habitacion():
     data = request.get_json()
     nombre = data.get("nombre", "").strip()
@@ -239,14 +250,14 @@ def crear_habitacion():
 
 # API: Obtener lista de tableros
 @app.route('/api/tableros', methods=['GET'])
-@require_permission('view_boards')
+@require_jwt
 def get_tableros():
     tableros = Tableros.query.all()
     return jsonify([{ "id": t.id, "nombre": t.nombre } for t in tableros])
 
 # API: Crear un nuevo tablero
 @app.route('/api/tableros', methods=['POST'])
-@require_permission('create_board')
+@require_jwt
 def crear_tablero():
     data = request.get_json()
     nombre = data.get("nombre", "").strip()
@@ -265,7 +276,7 @@ def crear_tablero():
 
 # API: Eliminar un tablero (solo si no tiene habitaciones dentro)
 @app.route("/api/tableros/<int:tablero_id>", methods=["DELETE"])
-@require_permission('delete_board')
+@require_jwt
 def eliminar_tablero(tablero_id):
     """ Elimina un tablero si no tiene habitaciones dentro """
     tablero = Tableros.query.get(tablero_id)
@@ -285,7 +296,7 @@ def eliminar_tablero(tablero_id):
 
 # API: Actualizar orden de tableros
 @app.route('/api/tableros/orden', methods=['PUT'])
-@require_permission('update_board_order')
+@require_jwt
 def actualizar_orden_tableros():
     try:
         data = request.get_json()
@@ -300,7 +311,7 @@ def actualizar_orden_tableros():
 
 # API: Actualizar orden de habitaciones dentro de un tablero
 @app.route('/api/habitaciones/orden', methods=['PUT'])
-@require_permission('update_room_order')
+@require_jwt
 def actualizar_orden_habitaciones():
     try:
         data = request.get_json()
@@ -317,7 +328,7 @@ def actualizar_orden_habitaciones():
 # API: Iniciar descubrimiento
 # ===========================
 @app.route('/api/start_discovery', methods=['GET', 'POST'])
-@require_permission('start_discovery')
+@require_jwt
 def start_discovery():
     try:
         data = request.get_json()
@@ -352,7 +363,7 @@ def start_discovery():
 
 # API: Transmitir logs en vivo
 @app.route('/api/logs')
-@require_permission('view_logs')
+@require_jwt
 def stream_logs():
     def generate():
         with open("/var/log/shelly_discovery.log", "r") as log_file:
@@ -368,7 +379,7 @@ def stream_logs():
 
 # API: Crear un nuevo usuario
 @app.route('/api/usuarios', methods=['POST'])
-@require_permission('create_user')
+@require_jwt
 def crear_usuario():
     data = request.get_json()
     logging.debug(f"Datos recibidos para crear usuario: {data}")
@@ -396,6 +407,8 @@ def crear_usuario():
     except Exception as e:
         logging.error(f"Error al crear el usuario: {str(e)}")
         return jsonify({"error": f"Error al crear el usuario: {str(e)}"}), 500
+
+
 
 # Iniciar backend con HTTPS
 if __name__ == '__main__':

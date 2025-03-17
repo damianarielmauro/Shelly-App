@@ -1,46 +1,54 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Checkbox } from '@mui/material';
-import { checkPermission } from '../services/auth';
-
-interface Habitacion {
-  id: number;
-  nombre: string;
-  consumo: number;
-}
+import { Checkbox, Box, Typography, Card, CardContent } from '@mui/material';
+import BoltIcon from '@mui/icons-material/Bolt';
 
 interface RoomMatrixProps {
-  user: {
-    permissions: string[];
-  };
-  habitaciones: Habitacion[];
+  habitaciones: any[];
   deleteMode: boolean;
   selectedItems: number[];
   handleDeleteSelectionChange: (id: number) => void;
 }
 
-const RoomMatrix: React.FC<RoomMatrixProps> = ({ user, habitaciones, deleteMode, selectedItems, handleDeleteSelectionChange }) => {
+const RoomMatrix: React.FC<RoomMatrixProps> = ({
+  habitaciones,
+  deleteMode,
+  selectedItems,
+  handleDeleteSelectionChange,
+}) => {
   return (
-    <Box display="flex" flexWrap="wrap">
-      {habitaciones.map((habitacion) => (
-        <Card key={habitacion.id} sx={{ width: 200, margin: 1, backgroundColor: '#333', color: 'white', position: 'relative' }}>
-          <CardContent>
-            <Typography variant="h6" component="div">
-              {habitacion.nombre}
-            </Typography>
-            <Typography variant="body2">
-              Consumo: {habitacion.consumo} kWh
-            </Typography>
-            {deleteMode && checkPermission(user, 'delete_habitacion') && (
+    <Box display="flex" flexWrap="wrap" gap={0}>
+      {habitaciones.map((habitacion) => {
+        const consumo =
+          habitacion.consumo < 1000
+            ? `${habitacion.consumo} W`
+            : `${(habitacion.consumo / 1000).toFixed(2)} kW`;
+
+        return (
+          <Card
+            key={habitacion.id}
+            sx={{
+              m: 1,
+              p: 2,
+              backgroundColor: '#333',
+              color: 'white',
+              width: '120px',
+              height: '100px',
+              textAlign: 'center',
+              borderRadius: '8px',
+              position: 'relative',
+            }}
+          >
+            {deleteMode && (
               <Checkbox
                 checked={selectedItems.includes(habitacion.id)}
                 onChange={() => handleDeleteSelectionChange(habitacion.id)}
                 sx={{
                   position: 'absolute',
-                  top: 0,
-                  right: 0,
+                  bottom: '-5px',
+                  right: '-5px',
                   color: 'red',
                   '& .MuiSvgIcon-root': {
-                    color: selectedItems.includes(habitacion.id) ? 'red' : 'white',
+                    color: selectedItems.includes(habitacion.id) ? 'red' : 'red',
                   },
                   '&.Mui-checked': {
                     backgroundColor: 'none',
@@ -48,9 +56,36 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({ user, habitaciones, deleteMode,
                 }}
               />
             )}
-          </CardContent>
-        </Card>
-      ))}
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: '0.8rem',
+                fontWeight: 'bold',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '50%',
+                mb: 0.5,
+              }}
+            >
+              {habitacion.nombre}
+            </Typography>
+            <Box display="flex" alignItems="center" justifyContent="center">
+              <BoltIcon sx={{ fontSize: '1rem', color: '#1976d2', mr: 0.5 }} />
+              <Typography
+                variant="body2"
+                sx={{
+                  fontSize: '0.8rem',
+                  fontWeight: 'bold',
+                  color: '#1976d2',
+                }}
+              >
+                {consumo}
+              </Typography>
+            </Box>
+          </Card>
+        );
+      })}
     </Box>
   );
 };

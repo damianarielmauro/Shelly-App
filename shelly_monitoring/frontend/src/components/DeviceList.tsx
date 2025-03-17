@@ -1,73 +1,66 @@
-import React, { useState, useEffect } from 'react';
-import { getDispositivos, toggleDevice } from '../services/api';
-import { List, ListItem, ListItemText, Button, ListItemSecondaryAction } from '@mui/material';
-import { checkPermission } from '../services/auth';
+import React, { useEffect, useState } from 'react';
+import { Box, List, ListItem, Typography } from '@mui/material';
+import BoltIcon from '@mui/icons-material/Bolt';
+import { getDispositivos } from '../services/api';
 
-interface DeviceListProps {
-  user: {
-    permissions: string[];
-  };
-}
-
-const DeviceList: React.FC<DeviceListProps> = ({ user }) => {
+const DeviceList = () => {
   const [dispositivos, setDispositivos] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [totalDispositivos, setTotalDispositivos] = useState(0);
 
   useEffect(() => {
     const fetchDispositivos = async () => {
       try {
         const data = await getDispositivos();
         setDispositivos(data);
+        setTotalDispositivos(data.length);
       } catch (error) {
-        setError('Error al obtener dispositivos');
-      } finally {
-        setLoading(false);
+        console.error('Error al obtener los dispositivos:', error);
       }
     };
 
     fetchDispositivos();
   }, []);
 
-  const handleToggle = async (deviceId: number) => {
-    if (!checkPermission(user, 'toggle_device')) {
-      alert('No tienes permiso para cambiar el estado de los dispositivos.');
-      return;
-    }
-    try {
-      await toggleDevice(deviceId);
-      const data = await getDispositivos();
-      setDispositivos(data);
-    } catch (error) {
-      setError('Error al cambiar el estado del dispositivo');
-    }
+  const totalConsumo = -12800; // Ejemplo en W (-12.8 kW)
+  const consumoColor = totalConsumo >= 0 ? '#1E8FFF' : '#00ff00'; // Verde más intenso y brillante
+  const formattedConsumo = totalConsumo < 1000 && totalConsumo > -1000 ? `${totalConsumo} W` : `${(totalConsumo / 1000).toFixed(2)} kW`;
+  const consumoLabel = totalConsumo >= 0 ? 'Consumo Total' : 'Generación Total';
+
+  const getColorForConsumo = (consumo: number) => {
+    return consumo >= 0 ? '#1E8FFF' : '#00ff00'; // Azul intenso para valores positivos, verde para negativos
   };
 
-  if (loading) {
-    return <p>Cargando dispositivos...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
-
   return (
-    <List sx={{ backgroundColor: '#333', color: 'white' }}>
-      {dispositivos.map((dispositivo) => (
-        <ListItem key={dispositivo.id} sx={{ borderBottom: '1px solid #444' }}>
-          <ListItemText primary={dispositivo.nombre} secondary={`Estado: ${dispositivo.estado ? 'Encendido' : 'Apagado'}`} />
-          <ListItemSecondaryAction>
-            <Button
-              variant="contained"
-              color={dispositivo.estado ? 'secondary' : 'primary'}
-              onClick={() => handleToggle(dispositivo.id)}
-            >
-              {dispositivo.estado ? 'Apagar' : 'Encender'}
-            </Button>
-          </ListItemSecondaryAction>
-        </ListItem>
-      ))}
-    </List>
+    <Box className="device-list" sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', width: '100%', maxWidth: '300px', height: 'calc(100vh - 85px)', overflowY: 'auto', overflowX: 'hidden', padding: '8px', margin: '0 auto', boxSizing: 'border-box' }}>
+      <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', mb: 1 }}>
+        <BoltIcon sx={{ color: consumoColor }} />
+        <Typography sx={{ color: consumoColor, fontSize: '1rem', fontWeight: 'bold' }}>{formattedConsumo}</Typography>
+        <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{consumoLabel}</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+        <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', width: '48%' }}>
+          <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>4</Typography>
+          <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Offline</Typography>
+        </Box>
+        <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', width: '48%' }}>
+          <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{totalDispositivos}</Typography>
+          <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Total</Typography>
+        </Box>
+      </Box>
+      <List sx={{ padding: 0 }}>
+        {dispositivos.map((dispositivo) => {
+          const consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7; // Valor aleatorio entre 7W y 3578W
+          const formattedConsumo = consumo < 1000 ? `${consumo} W` : `${(consumo / 1000).toFixed(2)} kW`;
+          const consumoColor = getColorForConsumo(consumo);
+          return (
+            <ListItem key={dispositivo.id} sx={{ display: 'flex', justifyContent: 'space-between', py: 0.2, px: 0.5 }} className="device-list-item">
+              <Typography sx={{ fontSize: '0.75rem', mr: 1, flexShrink: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '65%' }}>{dispositivo.nombre}</Typography>
+              <Typography sx={{ fontSize: '0.75rem', color: consumoColor, flexShrink: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '35%' }}>{formattedConsumo}</Typography>
+            </ListItem>
+          );
+        })}
+      </List>
+    </Box>
   );
 };
 

@@ -52,12 +52,16 @@ const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
           const discoveryTime = new Date().toLocaleString();
           setLastDiscoveryTime(discoveryTime);
           localStorage.setItem('lastDiscoveryTime', discoveryTime);
-          eventSource.close();
+          if (eventSource) {
+            eventSource.close();
+          }
         }
       });
 
       return () => {
-        eventSource.close();
+        if (eventSource) {
+          eventSource.close();
+        }
       };
     }
   }, [isDiscovering]);

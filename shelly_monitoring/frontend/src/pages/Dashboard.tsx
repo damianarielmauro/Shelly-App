@@ -163,7 +163,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems} 
           deleteType={deleteType} 
-          user={user}  // Pasar el usuario actual aquí
+          user={user}
         />
         <Box display="flex" alignItems="center" sx={{ marginLeft: 'auto', justifyContent: 'flex-end', alignItems: 'center' }}>
           {editMode && (
@@ -203,7 +203,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       <Box display="flex" sx={{ flexGrow: 1, overflow: 'hidden' }}>
         <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
           <RoomMatrix 
-            user={user}  // Pasar el usuario actual aquí
             habitaciones={habitaciones} 
             deleteMode={deleteMode && deleteType === 'Habitación'} 
             selectedItems={selectedItems} 
@@ -211,7 +210,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           />
         </Box>
         <Box sx={{ width: '300px', overflow: 'auto', p: 2 }}>
-          <DeviceList user={user} />  // Pasar el usuario actual aquí
+          <DeviceList />  // Componente actualizado, no necesita props
         </Box>
       </Box>
     </Box>

@@ -14,7 +14,7 @@ const Login: React.FC = () => {
       try {
         const data = await login(email, password);
         if (data.token) {
-          localStorage.setItem('token', data.token);
+          localStorage.setItem('jwtToken', data.token);
           setAuthToken(data.token); // Set the token in axios headers
           const user = getUser();
           localStorage.setItem('user', JSON.stringify(user)); // Store user info
