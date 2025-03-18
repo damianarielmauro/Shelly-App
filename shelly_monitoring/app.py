@@ -26,6 +26,7 @@ db = SQLAlchemy(app)
 # Configuración de logs
 LOG_PATH = "/opt/shelly_monitoring/backend.log"
 logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG, format="%(asctime)s - %(levellevelname)s - %(message)s")
+logging.getLogger().setLevel(logging.DEBUG)
 logging.info("🔧 Backend Flask iniciado.")
 
 # Diccionario de roles y permisos
@@ -408,6 +409,61 @@ def crear_usuario():
         logging.error(f"Error al crear el usuario: {str(e)}")
         return jsonify({"error": f"Error al crear el usuario: {str(e)}"}), 500
 
+# API: Obtener todos los usuarios
+@app.route('/api/usuarios', methods=['GET'])
+@require_jwt
+def get_users():
+    users = User.query.all()
+    return jsonify([{
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "nombre": user.nombre
+    } for user in users])
+
+# API: Eliminar un usuario
+@app.route('/api/usuarios/<int:user_id>', methods=['DELETE'])
+@require_jwt
+def delete_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({"message": "Usuario eliminado correctamente"}), 200
+    return jsonify({"error": "Usuario no encontrado"}), 404
+
+# API: Actualizar rol de un usuario
+@app.route('/api/usuarios/<int:user_id>/rol', methods=['PUT'])
+@require_jwt
+def actualizar_rol_usuario(user_id):
+    try:
+        data = request.get_json()
+        nuevo_rol = data.get('rol')
+
+        logging.debug(f"Datos recibidos para actualizar rol: {data}")
+
+        if not nuevo_rol:
+            logging.error("Error: El rol es obligatorio")
+            return jsonify({"error": "El rol es obligatorio"}), 400
+
+        usuario = User.query.get(user_id)
+        if not usuario:
+            logging.error(f"Error: Usuario con ID {user_id} no encontrado")
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        if nuevo_rol not in roles_permissions:
+            logging.error(f"Error: Rol no válido - {nuevo_rol}")
+            return jsonify({"error": "Rol no válido"}), 400
+
+        usuario.role = nuevo_rol
+        db.session.commit()
+
+        logging.info(f"Rol del usuario {user_id} actualizado a {nuevo_rol}")
+        return jsonify({"message": "Rol actualizado correctamente"}), 200
+    except Exception as e:
+        logging.error(f"Error al actualizar el rol del usuario: {str(e)}")
+        return jsonify({"error": f"Error al actualizar el rol del usuario: {str(e)}"}), 500
 
 
 # Iniciar backend con HTTPS

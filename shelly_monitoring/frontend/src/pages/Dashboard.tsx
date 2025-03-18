@@ -210,7 +210,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           />
         </Box>
         <Box sx={{ width: '300px', overflow: 'auto', p: 2 }}>
-          <DeviceList />  // Componente actualizado, no necesita props
+          <DeviceList />
         </Box>
       </Box>
     </Box>

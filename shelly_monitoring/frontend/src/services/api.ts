@@ -114,6 +114,18 @@ export const getRoles = async (): Promise<any> => {
   return response.data;
 };
 
+// Obtener todos los usuarios
+export const getUsers = async (): Promise<any> => {
+  const response = await api.get('/usuarios');
+  return response.data;
+};
+
+// Eliminar un usuario
+export const deleteUser = async (id: number): Promise<any> => {
+  const response = await api.delete(`/usuarios/${id}`);
+  return response.data;
+};
+
 // Actualizar rol de un usuario
 export const updateUserRole = async (userId: number, rol: string): Promise<any> => {
   const response = await api.put(`/usuarios/${userId}/rol`, { rol });

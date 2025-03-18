@@ -31,7 +31,7 @@ const DeviceList = () => {
   };
 
   return (
-    <Box className="device-list" sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', width: '100%', maxWidth: '300px', height: 'calc(100vh - 85px)', overflowY: 'auto', overflowX: 'hidden', padding: '8px', margin: '0 auto', boxSizing: 'border-box' }}>
+    <Box className="device-list" sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', maxWidth: '300px', height: 'calc(100vh - 85px)', overflowY: 'auto', overflowX: 'hidden', padding: '8px', margin: '0 auto', boxSizing: 'border-box' }}>
       <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', mb: 1 }}>
         <BoltIcon sx={{ color: consumoColor }} />
         <Typography sx={{ color: consumoColor, fontSize: '1rem', fontWeight: 'bold' }}>{formattedConsumo}</Typography>

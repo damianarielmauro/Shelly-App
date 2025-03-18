@@ -44,37 +44,39 @@ const Login: React.FC = () => {
       <Typography variant="h4" mb={3}>
         Login
       </Typography>
-      <TextField
-        fullWidth
-        variant="outlined"
-        placeholder="Correo electrónico"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        sx={{ mb: 2, bgcolor: 'white', borderRadius: 1 }}
-      />
-      <TextField
-        fullWidth
-        variant="outlined"
-        type="password"
-        placeholder="Contraseña"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        sx={{ mb: 2, bgcolor: 'white', borderRadius: 1 }}
-      />
-      <Button
-        fullWidth
-        variant="contained"
-        color="primary"
-        onClick={handleLogin}
-        sx={{ mb: 2 }}
-      >
-        Iniciar Sesión
-      </Button>
-      {message && (
-        <Typography variant="body2" color="error">
-          {message}
-        </Typography>
-      )}
+      <Box width="100%" maxWidth="400px">
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Correo electrónico"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          sx={{ mb: 2, bgcolor: 'white', borderRadius: 1 }}
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={{ mb: 2, bgcolor: 'white', borderRadius: 1 }}
+        />
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          onClick={handleLogin}
+          sx={{ mb: 2 }}
+        >
+          Iniciar Sesión
+        </Button>
+        {message && (
+          <Typography variant="body2" color="error">
+            {message}
+          </Typography>
+        )}
+      </Box>
     </Box>
   );
 };
