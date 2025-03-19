@@ -51,7 +51,8 @@ const Login: React.FC = () => {
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          sx={{ mb: 2, bgcolor: 'white', borderRadius: 1 }}
+          sx={{ mb: 2, bgcolor: 'white', borderRadius: 1, height: '40px' }}
+          InputProps={{ style: { height: '40px' } }}
         />
         <TextField
           fullWidth
@@ -60,14 +61,15 @@ const Login: React.FC = () => {
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          sx={{ mb: 2, bgcolor: 'white', borderRadius: 1 }}
+          sx={{ mb: 2, bgcolor: 'white', borderRadius: 1, height: '40px' }}
+          InputProps={{ style: { height: '40px' } }}
         />
         <Button
           fullWidth
           variant="contained"
           color="primary"
           onClick={handleLogin}
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, height: '40px' }}
         >
           Iniciar Sesión
         </Button>

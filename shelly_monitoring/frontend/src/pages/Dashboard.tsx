@@ -233,19 +233,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             </IconButton>
           </Tooltip>
           <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={() => handleDeleteOptionSelect('Tablero')}>Tablero</MenuItem>
-            <MenuItem onClick={() => handleDeleteOptionSelect('Habitación')}>Habitación</MenuItem>
-          </Menu>
-          <Menu
             anchorEl={userMenuAnchorEl}
             open={Boolean(userMenuAnchorEl)}
             onClose={handleUserMenuClose}
+            PaperProps={{ sx: { minWidth: '150px' } }} // Asegura que el menú de usuario tenga una anchura mínima
           >
-            <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+            <MenuItem onClick={handleLogout} sx={{ height: '20px' }}>Cerrar sesión</MenuItem>
           </Menu>
         </Box>
       </Box>
