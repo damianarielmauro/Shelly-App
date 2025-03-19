@@ -132,6 +132,14 @@ CREATE TABLE IF NOT EXISTS device (
     state BOOLEAN DEFAULT FALSE,
     room VARCHAR(50)
 );
+
+-- 🔹 AGREGAR TABLA user_room_permissions PARA PERMISOS DE HABITACIONES
+
+CREATE TABLE IF NOT EXISTS user_room_permissions (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    room_id INT REFERENCES habitaciones(id) ON DELETE CASCADE
+);
 EOF
 
 # ===========================

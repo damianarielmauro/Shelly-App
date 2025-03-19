@@ -52,3 +52,68 @@
 2025-03-19 05:02:20,761 - DEBUG - Intento de inicio de sesión: admin@shelly.local
 2025-03-19 05:02:20,785 - DEBUG - Usuario encontrado en la base de datos
 2025-03-19 05:02:21,129 - DEBUG - Contraseña correcta
+2025-03-19 05:57:40,687 - INFO - 🔧 Backend Flask iniciado.
+2025-03-19 06:16:53,297 - INFO - 🔧 Backend Flask iniciado.
+2025-03-19 06:19:13,237 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 06:19:13,248 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 06:19:13,588 - DEBUG - Contraseña correcta
+2025-03-19 06:21:12,645 - DEBUG - Datos recibidos para crear usuario: {'nombre': 'mama', 'email': 'mama@mama', 'password': 'mama', 'rol': 'user'}
+2025-03-19 06:21:13,041 - DEBUG - Usuario creado: <User 18>
+2025-03-19 07:07:50,122 - INFO - 🔧 Backend Flask iniciado.
+2025-03-19 07:13:35,517 - INFO - 🔧 Backend Flask iniciado.
+2025-03-19 07:19:05,673 - INFO - 🔧 Backend Flask iniciado.
+2025-03-19 07:20:39,676 - DEBUG - Intento de inicio de sesión: mama@mama
+2025-03-19 07:20:39,680 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 07:20:40,019 - DEBUG - Contraseña correcta
+2025-03-19 07:40:17,937 - INFO - 🔧 Backend Flask iniciado.
+2025-03-19 07:41:14,719 - DEBUG - Intento de inicio de sesión: mama@mama
+2025-03-19 07:41:14,722 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 07:41:15,063 - DEBUG - Contraseña correcta
+2025-03-19 07:42:23,394 - DEBUG - Intento de inicio de sesión: dami@dami
+2025-03-19 07:42:23,397 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 07:42:23,737 - DEBUG - Contraseña correcta
+2025-03-19 07:43:34,836 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 07:43:34,838 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 07:43:35,178 - DEBUG - Contraseña correcta
+2025-03-19 07:57:44,824 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 07:57:44,831 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 07:57:45,177 - DEBUG - Contraseña correcta
+2025-03-19 07:59:18,089 - DEBUG - Intento de inicio de sesión: mama@mama
+2025-03-19 07:59:18,092 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 07:59:18,431 - DEBUG - Contraseña correcta
+2025-03-19 08:00:26,555 - DEBUG - Intento de inicio de sesión: pepe@pepe
+2025-03-19 08:00:26,559 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:00:26,900 - DEBUG - Contraseña correcta
+2025-03-19 08:01:28,836 - DEBUG - Intento de inicio de sesión: dami@dami
+2025-03-19 08:01:28,838 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:01:29,176 - DEBUG - Contraseña correcta
+2025-03-19 08:11:52,365 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 08:11:52,367 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:11:52,709 - DEBUG - Contraseña correcta
+2025-03-19 08:12:32,502 - DEBUG - Datos recibidos para actualizar rol: {'rol': 'user'}
+2025-03-19 08:12:32,504 - DEBUG - Actualizando rol del usuario 4 a user
+2025-03-19 08:12:32,520 - INFO - Rol del usuario 4 actualizado a user
+2025-03-19 08:12:48,478 - DEBUG - Datos recibidos para actualizar rol: {'rol': 'admin'}
+2025-03-19 08:12:48,480 - DEBUG - Actualizando rol del usuario 4 a admin
+2025-03-19 08:12:48,493 - INFO - Rol del usuario 4 actualizado a admin
+2025-03-19 08:19:52,618 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 08:19:52,621 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:19:52,960 - DEBUG - Contraseña correcta
+2025-03-19 08:21:20,695 - DEBUG - Intento de inicio de sesión: dami@dami
+2025-03-19 08:21:20,698 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:21:21,037 - DEBUG - Contraseña correcta
+2025-03-19 08:29:29,930 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 08:29:29,933 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:29:30,273 - DEBUG - Contraseña correcta
+2025-03-19 08:51:11,003 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 08:51:11,005 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:51:11,355 - DEBUG - Contraseña correcta
+2025-03-19 08:52:42,586 - DEBUG - Intento de inicio de sesión: pepe@pepe
+2025-03-19 08:52:42,588 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:52:42,928 - DEBUG - Contraseña correcta
+2025-03-19 08:57:50,571 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 08:57:50,574 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:57:50,914 - DEBUG - Contraseña correcta
+2025-03-19 08:59:26,400 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-19 08:59:26,403 - DEBUG - Usuario encontrado en la base de datos
+2025-03-19 08:59:26,748 - DEBUG - Contraseña correcta

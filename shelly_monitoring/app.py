@@ -25,7 +25,11 @@ db = SQLAlchemy(app)
 
 # Configuración de logs
 LOG_PATH = "/opt/shelly_monitoring/backend.log"
-logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    filename=LOG_PATH, 
+    level=logging.DEBUG, 
+    format="%(asctime)s - %(levelname)s - %(message)s"  # Asegúrate de que el formato sea correcto
+)
 logging.getLogger().setLevel(logging.DEBUG)
 logging.info("🔧 Backend Flask iniciado.")
 
@@ -125,6 +129,12 @@ class Dispositivos(db.Model):
     ultimo_consumo = db.Column(db.Float, default=0)
     estado = db.Column(db.Boolean, default=False)
 
+class UserRoomPermission(db.Model):
+    __tablename__ = 'user_room_permissions'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('habitaciones.id'), nullable=False)
+
 # Crear base de datos si no existe
 with app.app_context():
     db.create_all()
@@ -197,11 +207,20 @@ def toggle_device(device_id):
         return jsonify({"message": "Estado cambiado"}), 200
     return jsonify({"error": "Dispositivo no encontrado"}), 404
 
-# API: Obtener habitaciones
+# API: Obtener habitaciones con permisos del usuario
 @app.route('/api/habitaciones', methods=['GET'])
 @require_jwt
 def get_habitaciones():
-    habitaciones = Habitaciones.query.all()
+    user_id = request.user_id
+    user = User.query.get(user_id)
+
+    if user.role == 'admin':
+        habitaciones = Habitaciones.query.all()
+    else:
+        permisos = UserRoomPermission.query.filter_by(user_id=user_id).all()
+        room_ids = [permiso.room_id for permiso in permisos]
+        habitaciones = Habitaciones.query.filter(Habitaciones.id.in_(room_ids)).all()
+
     return jsonify([{ "id": h.id, "nombre": h.nombre, "tablero_id": h.tablero_id } for h in habitaciones])
 
 # API: Obtener habitaciones por tablero
@@ -378,6 +397,7 @@ def stream_logs():
                     time.sleep(1)
     return Response(stream_with_context(generate()), content_type='text/event-stream')
 
+
 # API: Crear un nuevo usuario
 @app.route('/api/usuarios', methods=['POST'])
 @require_jwt
@@ -403,6 +423,14 @@ def crear_usuario():
         db.session.add(new_user)
         db.session.commit()
         logging.debug(f"Usuario creado: {new_user}")
+
+        # Si el usuario es admin, establecer todas las habitaciones permitidas por defecto
+        if role == 'admin':
+            habitaciones = Habitaciones.query.all()
+            for habitacion in habitaciones:
+                permission = UserRoomPermission(user_id=new_user.id, room_id=habitacion.id)
+                db.session.add(permission)
+            db.session.commit()
 
         return jsonify({"message": "Usuario creado correctamente", "user": {"id": new_user.id, "username": new_user.username, "email": new_user.email, "role": new_user.role}}), 201
     except Exception as e:
@@ -467,6 +495,50 @@ def actualizar_rol_usuario(user_id):
         return jsonify({"error": f"Error al actualizar el rol del usuario: {str(e)}"}), 500
 
 
+# API: Guardar permisos de habitaciones
+@app.route('/api/save_user_permissions', methods=['POST'])
+@require_jwt
+def save_user_permissions():
+    data = request.json
+    user_id = data.get('user_id')
+    room_ids = data.get('room_ids')
+
+    if not user_id or room_ids is None:
+        return jsonify({'success': False, 'message': 'Missing fields'}), 400
+
+    # Si el usuario es admin, establecer todas las habitaciones permitidas por defecto
+    user = User.query.get(user_id)
+    if user.role == 'admin':
+        habitaciones = Habitaciones.query.all()
+        room_ids = [habitacion.id for habitacion in habitaciones]
+
+    UserRoomPermission.query.filter_by(user_id=user_id).delete()
+
+    for room_id in room_ids:
+        permission = UserRoomPermission(user_id=user_id, room_id=room_id)
+        db.session.add(permission)
+
+    db.session.commit()
+    return jsonify({'success': True, 'message': 'Permissions saved successfully'}), 200
+
+
+
+# API: Obtener los permisos de habitaciones
+@app.route('/api/get_user_permissions/<int:user_id>', methods=['GET'])
+@require_jwt
+def get_user_permissions(user_id):
+    permissions = UserRoomPermission.query.filter_by(user_id=user_id).all()
+    room_ids = [permission.room_id for permission in permissions]
+    return jsonify({'room_ids': room_ids})
+
+
+# API: Endpoint de prueba de conexión
+@app.route('/api/test', methods=['GET'])
+def test_connection():
+    return jsonify({"message": "Connection successful"}), 200
+
+
+
 # Iniciar backend con HTTPS
 if __name__ == '__main__':
     ssl_cert = "/etc/ssl/certs/shelly_monitoring.pem"
@@ -479,3 +551,4 @@ if __name__ == '__main__':
     logging.info(f"📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.")
     context = (ssl_cert, ssl_key)
     app.run(host="0.0.0.0", port=8000, ssl_context=context)
+

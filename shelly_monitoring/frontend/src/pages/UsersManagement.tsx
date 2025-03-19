@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { createUser, getUsers, deleteUser, updateUserRole } from '../services/api';
+import { createUser, getUsers, deleteUser, updateUserRole, getRooms, getUserPermissions, saveUserPermissions } from '../services/api'; // Línea corregida
 import { checkPermission } from '../services/auth';
-import { Box, TextField, Button, MenuItem, Typography, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, TextField, Button, MenuItem, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, FormControlLabel, Checkbox } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit'; // Línea corregida
+import DeleteIcon from '@mui/icons-material/Delete'; // Línea corregida
 
 interface UsersManagementProps {
   user: {
@@ -16,6 +16,12 @@ interface User {
   username: string;
   email: string;
   role: string;
+  permissions: number[];
+}
+
+interface Room {
+  id: number;
+  nombre: string;
 }
 
 const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
@@ -28,13 +34,26 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editUserId, setEditUserId] = useState<number | null>(null);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [selectedRooms, setSelectedRooms] = useState<number[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
       const fetchedUsers = await getUsers();
+      console.log('Fetched users:', fetchedUsers);
       setUsers(fetchedUsers);
     };
     fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      const fetchedRooms = await getRooms();
+      console.log('Fetched rooms:', fetchedRooms);
+      setRooms(fetchedRooms);
+    };
+    fetchRooms();
   }, []);
 
   const handleCreateUser = async () => {
@@ -54,6 +73,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         const fetchedUsers = await getUsers();
         setUsers(fetchedUsers);
       } catch (error) {
+        console.error('Error creating user:', error);
         setMessage('Error al crear el usuario');
         setMessageColor('red'); // Set error message color to red
       }
@@ -88,7 +108,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         const fetchedUsers = await getUsers();
         setUsers(fetchedUsers);
       } catch (error) {
-        console.error('Error al actualizar el usuario:', error);
+        console.error('Error updating user:', error);
         setMessage('Error al actualizar el usuario');
         setMessageColor('red'); // Set error message color to red
       }
@@ -98,9 +118,49 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const handleDeleteUser = async (id: number) => {
     const confirmed = window.confirm('¿Estás seguro de que deseas eliminar este usuario?');
     if (confirmed) {
-      await deleteUser(id);
-      const fetchedUsers = await getUsers();
-      setUsers(fetchedUsers);
+      try {
+        await deleteUser(id);
+        const fetchedUsers = await getUsers();
+        setUsers(fetchedUsers);
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
+  };
+
+  const handleOpenDialog = async (id: number) => {
+    setEditUserId(id);
+    try {
+      const userPermissions = await getUserPermissions(id);
+      console.log('User permissions:', userPermissions);
+      setSelectedRooms(userPermissions.room_ids);
+      setOpen(true);
+    } catch (error) {
+      console.error('Error fetching user permissions:', error);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setSelectedRooms([]);
+  };
+
+  const handleRoomChange = (roomId: number) => {
+    setSelectedRooms((prevSelected) =>
+      prevSelected.includes(roomId)
+        ? prevSelected.filter((id) => id !== roomId)
+        : [...prevSelected, roomId]
+    );
+  };
+
+  const handleSavePermissions = async () => {
+    if (editUserId !== null) {
+      try {
+        await saveUserPermissions(editUserId, selectedRooms);
+        handleCloseDialog();
+      } catch (error) {
+        console.error('Error saving user permissions:', error);
+      }
     }
   };
 
@@ -275,6 +335,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           <Box
             key={user.id}
             display="flex"
+            flexDirection="column"
             alignItems="center"
             justifyContent="space-between"
             sx={{
@@ -284,21 +345,66 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               mb: 1,
               borderRadius: 1,
               boxShadow: 1,
-              height: '40px',
+              height: 'auto',
+              width: '100%',
             }}
           >
-            <Typography>{user.username} - {user.email} - {user.role}</Typography>
-            <Box>
-              <IconButton onClick={() => handleEditUser(user.id)}>
-                <EditIcon sx={{ color: 'white' }} />
-              </IconButton>
-              <IconButton onClick={() => handleDeleteUser(user.id)}>
-                <DeleteIcon sx={{ color: 'white' }} />
-              </IconButton>
+            <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
+              <Typography>{user.username} - {user.email} - {user.role}</Typography>
+              <Box>
+                <Button onClick={() => handleOpenDialog(user.id)} variant="outlined" color="primary">
+                  Permisos
+                </Button>
+                <IconButton onClick={() => handleEditUser(user.id)}>
+                  <EditIcon sx={{ color: 'white' }} />
+                </IconButton>
+                <IconButton onClick={() => handleDeleteUser(user.id)}>
+                  <DeleteIcon sx={{ color: 'white' }} />
+                </IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ mt: 1, width: '100%' }}>
+              {user.role === 'admin' ? (
+                <Typography variant="body2" sx={{ color: 'lightgreen' }}>
+                  Todas las habitaciones permitidas
+                </Typography>
+              ) : (
+                <Typography variant="body2" sx={{ color: 'lightgray' }}>
+                  Habitaciones permitidas: {rooms && user.permissions && user.permissions.length > 0 ? user.permissions.map(id => rooms.find(room => room.id === id)?.nombre).filter(Boolean).join(', ') : 'Ninguna'}
+                </Typography>
+              )}
             </Box>
           </Box>
         ))}
       </Box>
+
+      <Dialog open={open} onClose={handleCloseDialog}>
+        <DialogTitle>Seleccionar Habitaciones Permitidas</DialogTitle>
+        <DialogContent>
+          <Box display="flex" flexDirection="column" sx={{ fontSize: '0.5rem', lineHeight: '1rem' }}>
+            {rooms.map((room) => (
+              <FormControlLabel
+                key={room.id}
+                control={
+                  <Checkbox
+                    checked={selectedRooms.includes(room.id)}
+                    onChange={() => handleRoomChange(room.id)}
+                  />
+                }
+                label={room.nombre}
+              />
+            ))}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={handleSavePermissions} color="primary">
+            Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
