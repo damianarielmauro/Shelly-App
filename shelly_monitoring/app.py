@@ -25,7 +25,7 @@ db = SQLAlchemy(app)
 
 # Configuración de logs
 LOG_PATH = "/opt/shelly_monitoring/backend.log"
-logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG, format="%(asctime)s - %(levellevelname)s - %(message)s")
+logging.basicConfig(filename=LOG_PATH, level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 logging.getLogger().setLevel(logging.DEBUG)
 logging.info("🔧 Backend Flask iniciado.")
 
@@ -456,6 +456,7 @@ def actualizar_rol_usuario(user_id):
             logging.error(f"Error: Rol no válido - {nuevo_rol}")
             return jsonify({"error": "Rol no válido"}), 400
 
+        logging.debug(f"Actualizando rol del usuario {user_id} a {nuevo_rol}")
         usuario.role = nuevo_rol
         db.session.commit()
 

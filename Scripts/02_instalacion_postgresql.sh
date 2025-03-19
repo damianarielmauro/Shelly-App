@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    role VARCHAR(20) CHECK (role IN ('admin', 'usuario')) NOT NULL,
+    role VARCHAR(20) CHECK (role IN ('admin', 'user')) NOT NULL,
     username VARCHAR(80) UNIQUE NOT NULL  -- Añadida la columna username
 );
 
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS roles (
 );
 
 INSERT INTO roles (nombre) VALUES ('admin') ON CONFLICT (nombre) DO NOTHING;
-INSERT INTO roles (nombre) VALUES ('usuario') ON CONFLICT (nombre) DO NOTHING;
+INSERT INTO roles (nombre) VALUES ('user') ON CONFLICT (nombre) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS permisos (
     id SERIAL PRIMARY KEY,
@@ -197,3 +197,15 @@ EOF
 echo "✅ Permisos configurados correctamente."
 
 echo "🐘 PostgreSQL instalado y configurado exitosamente."
+
+# ===========================
+# 🔧 Ajuste de restricción de la columna role en la tabla usuarios
+# ===========================
+
+echo "🔧 Ajustando restricción de la columna role en la tabla usuarios..."
+sudo -u postgres psql -d $DB_NAME <<EOF
+ALTER TABLE usuarios DROP CONSTRAINT IF EXISTS usuarios_role_check;
+ALTER TABLE usuarios ADD CONSTRAINT usuarios_role_check CHECK (role IN ('admin', 'user'));
+EOF
+
+echo "✅ Restricción ajustada correctamente."

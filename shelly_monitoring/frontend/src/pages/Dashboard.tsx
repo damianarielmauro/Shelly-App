@@ -6,7 +6,7 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import RoomMatrix from '../components/RoomMatrix';
 import TabManager from '../components/TabManager';
 import DeviceList from '../components/DeviceList';
@@ -29,6 +29,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteType, setDeleteType] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true); // Estado de carga
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null); // Estado del menú de usuario
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -147,6 +148,35 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     return <CircularProgress />;
   }
 
+  const handleUserMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setUserMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  const handleSettingsClick = () => {
+    navigate('/settings');
+  };
+
+  const handleBoltClick = () => {
+    navigate('/consumption');
+  };
+
+  const handleBarChartClick = () => {
+    navigate('/statistics');
+  };
+
+  const handleAccountClick = () => {
+    console.log("Account Icon Clicked");
+  };
+
   return (
     <Box sx={{ backgroundColor: 'black', color: 'white', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0 }}>
@@ -188,15 +218,35 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
               <EditIcon />
             </IconButton>
           </Tooltip>
-          <IconButton color="inherit" onClick={() => navigate('/consumption')}>
-            <BoltIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/statistics')}>
-            <BarChartIcon />
-          </IconButton>
-          <IconButton color="inherit" onClick={() => navigate('/settings')}>
+          <IconButton color="inherit" onClick={handleSettingsClick}>
             <SettingsIcon />
           </IconButton>
+          <IconButton color="inherit" onClick={handleBoltClick}>
+            <BoltIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={handleBarChartClick}>
+            <BarChartIcon />
+          </IconButton>
+          <Tooltip title="Usuario">
+            <IconButton color="inherit" onClick={handleUserMenuClick}>
+              <AccountCircleIcon />
+            </IconButton>
+          </Tooltip>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => handleDeleteOptionSelect('Tablero')}>Tablero</MenuItem>
+            <MenuItem onClick={() => handleDeleteOptionSelect('Habitación')}>Habitación</MenuItem>
+          </Menu>
+          <Menu
+            anchorEl={userMenuAnchorEl}
+            open={Boolean(userMenuAnchorEl)}
+            onClose={handleUserMenuClose}
+          >
+            <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+          </Menu>
         </Box>
       </Box>
       <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />

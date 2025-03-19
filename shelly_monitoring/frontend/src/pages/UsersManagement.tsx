@@ -22,7 +22,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [role, setRole] = useState<string>('');
+  const [role, setRole] = useState<string>('user'); // Default role to 'user'
   const [message, setMessage] = useState<string>('');
   const [messageColor, setMessageColor] = useState<string>(''); // New state for message color
   const [users, setUsers] = useState<User[]>([]);
@@ -50,7 +50,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         setUsername('');
         setEmail('');
         setPassword('');
-        setRole('');
+        setRole('user'); // Reset role to 'user'
         const fetchedUsers = await getUsers();
         setUsers(fetchedUsers);
       } catch (error) {
@@ -82,7 +82,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         setMessageColor('#1976d2'); // Set success message color to blue
         setUsername('');
         setEmail('');
-        setRole('');
+        setRole('user'); // Reset role to 'user'
         setEditUserId(null);
         setEditMode(false);
         const fetchedUsers = await getUsers();
