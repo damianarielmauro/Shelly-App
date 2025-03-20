@@ -447,23 +447,44 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           </Box>
         ))}
       </Box>
-
 <Dialog open={open} onClose={handleCloseDialog}>
-  <DialogTitle sx={{ fontSize: '0.75rem' }}>Seleccionar Habitaciones Permitidas</DialogTitle>
-  <DialogContent>
-    <Box display="flex" flexDirection="column" sx={{ fontSize: '0.5rem', lineHeight: '0.8rem' }}>
+  <DialogTitle sx={{ fontSize: '1rem' }}>Seleccionar Habitaciones Permitidas</DialogTitle>
+  <DialogContent
+    sx={{
+      fontSize: '0.4rem',
+      lineHeight: '0.6rem',
+      maxHeight: '600px', // Aumentar la altura máxima del contenido del dialog
+      overflowY: 'auto', // Habilitar el scroll vertical
+      '&::-webkit-scrollbar': {
+        width: '4px', // Hacer el scrollbar lo más fino posible
+      },
+      '&::-webkit-scrollbar-track': {
+        backgroundColor: 'white', // Fondo blanco para el track del scrollbar
+      },
+      '&::-webkit-scrollbar-thumb': {
+        backgroundColor: '#1976d2', // Barra del scrollbar de color azul
+        borderRadius: '10px', // Redondear un poco la barra
+      },
+    }}
+  >
+    <Box display="flex" flexDirection="column" sx={{ fontSize: '0.4rem', lineHeight: '0.6rem' }}>
       <FormControlLabel
         control={
           <Checkbox
             checked={selectAll}
             onChange={handleSelectAll}
-            sx={{ padding: '0px' }} // Reducir más el tamaño del checkbox
+            sx={{
+              padding: '0px',
+              '& .MuiCheckbox-root': {
+                transform: 'scale(0.6)', // Reducir tamaño del checkbox
+              },
+            }} // Reducir más el tamaño del checkbox
           />
         }
         label="Seleccionar/Deseleccionar todas"
         sx={{
           marginBottom: '0px', // Eliminar el espacio entre este checkbox y las habitaciones
-          fontSize: '0.5rem', // Reducir aún más el tamaño del texto
+          fontSize: '0.4rem', // Reducir aún más el tamaño del texto
         }}
       />
       {rooms.map((room) => (
@@ -473,23 +494,28 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             <Checkbox
               checked={selectedRooms.includes(room.id)}
               onChange={() => handleRoomChange(room.id)}
-              sx={{ padding: '0px' }} // Reducir más el tamaño del checkbox
+              sx={{
+                padding: '0px',
+                '& .MuiCheckbox-root': {
+                  transform: 'scale(0.6)', // Reducir tamaño del checkbox
+                },
+              }} // Reducir más el tamaño del checkbox
             />
           }
           label={room.nombre}
           sx={{
             marginBottom: '0px', // Eliminar el espacio entre los renglones de las habitaciones
-            fontSize: '0.5rem', // Reducir aún más el tamaño del texto
+            fontSize: '0.4rem', // Reducir aún más el tamaño del texto
           }}
         />
       ))}
     </Box>
   </DialogContent>
   <DialogActions>
-    <Button onClick={handleCloseDialog} color="secondary" sx={{ fontSize: '0.5rem' }}>
+    <Button onClick={handleCloseDialog} color="secondary" sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
       Cancelar
     </Button>
-    <Button onClick={handleSavePermissions} color="primary" sx={{ fontSize: '0.5rem' }}>
+    <Button onClick={handleSavePermissions} color="primary" sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
       Guardar
     </Button>
   </DialogActions>
