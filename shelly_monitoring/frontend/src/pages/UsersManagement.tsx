@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { createUser, getUsers, deleteUser, updateUserRole, getRooms, getUserPermissions, saveUserPermissions } from '../services/api'; // Línea corregida
+import { createUser, getUsers, deleteUser, updateUserRole, getRooms, getUserPermissions, saveUserPermissions } from '../services/api';
 import { checkPermission } from '../services/auth';
 import { Box, TextField, Button, MenuItem, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, FormControlLabel, Checkbox } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit'; // Línea corregida
-import DeleteIcon from '@mui/icons-material/Delete'; // Línea corregida
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface UsersManagementProps {
   user: {
@@ -37,12 +37,19 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRooms, setSelectedRooms] = useState<number[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [selectAll, setSelectAll] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
       const fetchedUsers = await getUsers();
       console.log('Fetched users:', fetchedUsers);
-      setUsers(fetchedUsers);
+      const usersWithPermissions = await Promise.all(
+        fetchedUsers.map(async (user: User) => {
+          const userPermissions = await getUserPermissions(user.id);
+          return { ...user, permissions: userPermissions.room_ids };
+        })
+      );
+      setUsers(usersWithPermissions);
     };
     fetchUsers();
   }, []);
@@ -71,7 +78,13 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         setPassword('');
         setRole('user'); // Reset role to 'user'
         const fetchedUsers = await getUsers();
-        setUsers(fetchedUsers);
+        const usersWithPermissions = await Promise.all(
+          fetchedUsers.map(async (user: User) => {
+            const userPermissions = await getUserPermissions(user.id);
+            return { ...user, permissions: userPermissions.room_ids };
+          })
+        );
+        setUsers(usersWithPermissions);
       } catch (error) {
         console.error('Error creating user:', error);
         setMessage('Error al crear el usuario');
@@ -106,7 +119,13 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         setEditUserId(null);
         setEditMode(false);
         const fetchedUsers = await getUsers();
-        setUsers(fetchedUsers);
+        const usersWithPermissions = await Promise.all(
+          fetchedUsers.map(async (user: User) => {
+            const userPermissions = await getUserPermissions(user.id);
+            return { ...user, permissions: userPermissions.room_ids };
+          })
+        );
+        setUsers(usersWithPermissions);
       } catch (error) {
         console.error('Error updating user:', error);
         setMessage('Error al actualizar el usuario');
@@ -121,7 +140,13 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
       try {
         await deleteUser(id);
         const fetchedUsers = await getUsers();
-        setUsers(fetchedUsers);
+        const usersWithPermissions = await Promise.all(
+          fetchedUsers.map(async (user: User) => {
+            const userPermissions = await getUserPermissions(user.id);
+            return { ...user, permissions: userPermissions.room_ids };
+          })
+        );
+        setUsers(usersWithPermissions);
       } catch (error) {
         console.error('Error deleting user:', error);
       }
@@ -134,6 +159,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
       const userPermissions = await getUserPermissions(id);
       console.log('User permissions:', userPermissions);
       setSelectedRooms(userPermissions.room_ids);
+      setSelectAll(userPermissions.room_ids.length === rooms.length);
       setOpen(true);
     } catch (error) {
       console.error('Error fetching user permissions:', error);
@@ -143,20 +169,40 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const handleCloseDialog = () => {
     setOpen(false);
     setSelectedRooms([]);
+    setSelectAll(false);
   };
 
   const handleRoomChange = (roomId: number) => {
-    setSelectedRooms((prevSelected) =>
-      prevSelected.includes(roomId)
-        ? prevSelected.filter((id) => id !== roomId)
-        : [...prevSelected, roomId]
-    );
+    const newSelectedRooms = selectedRooms.includes(roomId)
+      ? selectedRooms.filter((id) => id !== roomId)
+      : [...selectedRooms, roomId];
+    setSelectedRooms(newSelectedRooms);
+    setSelectAll(newSelectedRooms.length === rooms.length);
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedRooms([]);
+    } else {
+      setSelectedRooms(rooms.map((room) => room.id));
+    }
+    setSelectAll(!selectAll);
   };
 
   const handleSavePermissions = async () => {
     if (editUserId !== null) {
       try {
         await saveUserPermissions(editUserId, selectedRooms);
+        const updatedUsers = await Promise.all(
+          users.map(async (user) => {
+            if (user.id === editUserId) {
+              const userPermissions = await getUserPermissions(user.id);
+              return { ...user, permissions: userPermissions.room_ids };
+            }
+            return user;
+          })
+        );
+        setUsers(updatedUsers);
         handleCloseDialog();
       } catch (error) {
         console.error('Error saving user permissions:', error);
@@ -177,7 +223,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         <Typography variant="h6" mb={2} sx={{ fontSize: '1rem' }}>
           Gestión de Usuarios
         </Typography>
-        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0, mb: 2, width: '100%' }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0, mb: 1, width: '100%' }}>
           <TextField
             fullWidth
             variant="outlined"
@@ -327,7 +373,19 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
       </Box>
 
       {/* Box para la lista de usuarios */}
-      <Box sx={{ width: '100%', mt: 3 }}>
+      <Box
+        sx={{
+          width: '100%',
+          mt: 1,
+          flexGrow: 1,
+          overflowY: 'auto',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#1976d2 black',
+          '::-webkit-scrollbar': { width: '6px' },
+          '::-webkit-scrollbar-track': { background: 'black' },
+          '::-webkit-scrollbar-thumb': { background: '#1976d2' },
+        }}
+      >
         <Typography variant="h6" sx={{ mb: 2, fontSize: '1rem' }}>
           Lista de Usuarios
         </Typography>
@@ -352,7 +410,14 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
               <Typography>{user.username} - {user.email} - {user.role}</Typography>
               <Box>
-                <Button onClick={() => handleOpenDialog(user.id)} variant="outlined" color="primary">
+                <Button
+                  onClick={() => handleOpenDialog(user.id)}
+                  variant="contained"
+                  sx={{
+                    backgroundColor: '#1976d2', // Mismo color de fondo que el botón de crear usuario
+                    color: 'white', // Mismo color de letra que el botón de crear usuario
+                  }}
+                >
                   Permisos
                 </Button>
                 <IconButton onClick={() => handleEditUser(user.id)}>
@@ -364,13 +429,18 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               </Box>
             </Box>
             <Box sx={{ mt: 1, width: '100%' }}>
-              {user.role === 'admin' ? (
+              {user.role === 'admin' && user.permissions.length === rooms.length ? (
                 <Typography variant="body2" sx={{ color: 'lightgreen' }}>
                   Todas las habitaciones permitidas
                 </Typography>
               ) : (
-                <Typography variant="body2" sx={{ color: 'lightgray' }}>
-                  Habitaciones permitidas: {rooms && user.permissions && user.permissions.length > 0 ? user.permissions.map(id => rooms.find(room => room.id === id)?.nombre).filter(Boolean).join(', ') : 'Ninguna'}
+                <Typography variant="body2">
+                  <span style={{ color: '#1976d2' }}>Habitaciones permitidas:</span> 
+                  <span style={{ color: 'lightgreen' }}>
+                    {rooms && user.permissions && user.permissions.length > 0 
+                      ? user.permissions.map(id => rooms.find(room => room.id === id)?.nombre).filter(Boolean).join(' - ') 
+                      : 'Ninguna'}
+                  </span>
                 </Typography>
               )}
             </Box>
@@ -378,33 +448,53 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         ))}
       </Box>
 
-      <Dialog open={open} onClose={handleCloseDialog}>
-        <DialogTitle>Seleccionar Habitaciones Permitidas</DialogTitle>
-        <DialogContent>
-          <Box display="flex" flexDirection="column" sx={{ fontSize: '0.5rem', lineHeight: '1rem' }}>
-            {rooms.map((room) => (
-              <FormControlLabel
-                key={room.id}
-                control={
-                  <Checkbox
-                    checked={selectedRooms.includes(room.id)}
-                    onChange={() => handleRoomChange(room.id)}
-                  />
-                }
-                label={room.nombre}
-              />
-            ))}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={handleSavePermissions} color="primary">
-            Guardar
-          </Button>
-        </DialogActions>
-      </Dialog>
+<Dialog open={open} onClose={handleCloseDialog}>
+  <DialogTitle sx={{ fontSize: '0.75rem' }}>Seleccionar Habitaciones Permitidas</DialogTitle>
+  <DialogContent>
+    <Box display="flex" flexDirection="column" sx={{ fontSize: '0.5rem', lineHeight: '0.8rem' }}>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={selectAll}
+            onChange={handleSelectAll}
+            sx={{ padding: '0px' }} // Reducir más el tamaño del checkbox
+          />
+        }
+        label="Seleccionar/Deseleccionar todas"
+        sx={{
+          marginBottom: '0px', // Eliminar el espacio entre este checkbox y las habitaciones
+          fontSize: '0.5rem', // Reducir aún más el tamaño del texto
+        }}
+      />
+      {rooms.map((room) => (
+        <FormControlLabel
+          key={room.id}
+          control={
+            <Checkbox
+              checked={selectedRooms.includes(room.id)}
+              onChange={() => handleRoomChange(room.id)}
+              sx={{ padding: '0px' }} // Reducir más el tamaño del checkbox
+            />
+          }
+          label={room.nombre}
+          sx={{
+            marginBottom: '0px', // Eliminar el espacio entre los renglones de las habitaciones
+            fontSize: '0.5rem', // Reducir aún más el tamaño del texto
+          }}
+        />
+      ))}
+    </Box>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseDialog} color="secondary" sx={{ fontSize: '0.5rem' }}>
+      Cancelar
+    </Button>
+    <Button onClick={handleSavePermissions} color="primary" sx={{ fontSize: '0.5rem' }}>
+      Guardar
+    </Button>
+  </DialogActions>
+</Dialog>
+
     </Box>
   );
 };

@@ -506,21 +506,22 @@ def save_user_permissions():
     if not user_id or room_ids is None:
         return jsonify({'success': False, 'message': 'Missing fields'}), 400
 
-    # Si el usuario es admin, establecer todas las habitaciones permitidas por defecto
     user = User.query.get(user_id)
-    if user.role == 'admin':
-        habitaciones = Habitaciones.query.all()
-        room_ids = [habitacion.id for habitacion in habitaciones]
+    
+    if user:
+        # Eliminar todos los permisos existentes para el usuario
+        UserRoomPermission.query.filter_by(user_id=user_id).delete()
 
-    UserRoomPermission.query.filter_by(user_id=user_id).delete()
+        if room_ids:
+            # Agregar los permisos específicos para las habitaciones proporcionadas
+            for room_id in room_ids:
+                permission = UserRoomPermission(user_id=user_id, room_id=room_id)
+                db.session.add(permission)
+                
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Permissions saved successfully'}), 200
 
-    for room_id in room_ids:
-        permission = UserRoomPermission(user_id=user_id, room_id=room_id)
-        db.session.add(permission)
-
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Permissions saved successfully'}), 200
-
+    return jsonify({'success': False, 'message': 'User not found'}), 404
 
 
 # API: Obtener los permisos de habitaciones
@@ -551,4 +552,3 @@ if __name__ == '__main__':
     logging.info(f"📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.")
     context = (ssl_cert, ssl_key)
     app.run(host="0.0.0.0", port=8000, ssl_context=context)
-
