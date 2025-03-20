@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppBar, IconButton, Box, Tooltip, Menu, MenuItem, CircularProgress } from '@mui/material';
+import { AppBar, IconButton, Box, Menu, MenuItem, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import BoltIcon from '@mui/icons-material/Bolt';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -10,31 +10,44 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import RoomMatrix from '../components/RoomMatrix';
 import TabManager from '../components/TabManager';
 import DeviceList from '../components/DeviceList';
-import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros } from '../services/api';
+import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros, getHabitaciones } from '../services/api';
 import { checkPermission, setAuthToken } from '../services/auth';
+
+interface Habitacion {
+  id: number;
+  nombre: string;
+  tablero_id: number;
+}
 
 interface DashboardProps {
   user: {
     permissions: string[];
+    username: string;
+    role: string; // Asegúrate de que este campo 'role' esté disponible
   };
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [habitaciones, setHabitaciones] = useState<any[]>([]);
+  const [habitaciones, setHabitaciones] = useState<Habitacion[]>([]);
   const [tableros, setTableros] = useState<any[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [editMenuAnchorEl, setEditMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [settingsMenuAnchorEl, setSettingsMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteType, setDeleteType] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true); // Estado de carga
-  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null); // Estado del menú de usuario
+  const [loading, setLoading] = useState<boolean>(true);
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
+
+  // Usamos el campo 'role' para verificar si es admin
+  const isAdmin = user.role === 'admin';
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setAuthToken(token); // Set the token in axios headers
+    setAuthToken(token);
 
     const fetchTableros = async () => {
       try {
@@ -43,7 +56,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       } catch (error) {
         console.error("Error fetching tableros:", error);
       } finally {
-        setLoading(false); // Finaliza la carga
+        setLoading(false);
       }
     };
 
@@ -72,23 +85,23 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     setAnchorEl(null);
   };
 
-  const toggleEditMode = () => {
-    if (!checkPermission(user, 'edit_dashboard')) {
-      alert('No tienes permiso para editar el dashboard.');
-      return;
-    }
-    if (editMode) {
-      setDeleteMode(false);
-      setSelectedItems([]);
-    }
+  const toggleEditMode = (event: React.MouseEvent<HTMLButtonElement>) => {
     setEditMode(!editMode);
   };
 
+  const handleEditMenuClose = () => {
+    setEditMenuAnchorEl(null);
+  };
+
+  const handleSettingsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    navigate('/settings');
+  };
+
+  const handleSettingsMenuClose = () => {
+    setSettingsMenuAnchorEl(null);
+  };
+
   const handleDeleteAction = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!checkPermission(user, 'delete_dashboard')) {
-      alert('No tienes permiso para eliminar elementos del dashboard.');
-      return;
-    }
     if (deleteMode) {
       try {
         if (deleteType === 'Habitación') {
@@ -130,17 +143,21 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   };
 
   useEffect(() => {
+    const fetchHabitacionesPermitidas = async () => {
+      try {
+        const habitacionesPermitidas = await getHabitaciones();
+        const tableroId = tableros[selectedTab].id;
+        const habitacionesTablero = await getHabitacionesByTablero(tableroId);
+
+        const habitacionesFiltradas = habitacionesTablero.filter((hab: Habitacion) => habitacionesPermitidas.some((perm: Habitacion) => perm.id === hab.id));
+        setHabitaciones(habitacionesFiltradas);
+      } catch (error) {
+        console.error("Error fetching habitaciones:", error);
+      }
+    };
+
     if (tableros.length > 0 && tableros[selectedTab]) {
-      const fetchHabitaciones = async () => {
-        try {
-          const tableroId = tableros[selectedTab].id;
-          const data = await getHabitacionesByTablero(tableroId);
-          setHabitaciones(data);
-        } catch (error) {
-          console.error("Error fetching habitaciones:", error);
-        }
-      };
-      fetchHabitaciones();
+      fetchHabitacionesPermitidas();
     }
   }, [selectedTab, tableros]);
 
@@ -159,10 +176,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
-  };
-
-  const handleSettingsClick = () => {
-    navigate('/settings');
   };
 
   const handleBoltClick = () => {
@@ -198,11 +211,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         <Box display="flex" alignItems="center" sx={{ marginLeft: 'auto', justifyContent: 'flex-end', alignItems: 'center' }}>
           {editMode && (
             <>
-              <Tooltip title="Eliminar">
-                <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={handleDeleteAction}>
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
+              <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={handleDeleteAction}>
+                <DeleteIcon />
+              </IconButton>
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
@@ -213,30 +224,35 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
               </Menu>
             </>
           )}
-          <Tooltip title="Editar">
-            <IconButton color={editMode ? "primary" : "inherit"} onClick={toggleEditMode}>
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
-          <IconButton color="inherit" onClick={handleSettingsClick}>
-            <SettingsIcon />
-          </IconButton>
+          {isAdmin && (
+            <>
+              <IconButton color={editMode ? "primary" : "inherit"} onClick={toggleEditMode}>
+                <EditIcon />
+              </IconButton>
+              <IconButton color="inherit" onClick={handleSettingsClick}>
+                <SettingsIcon />
+              </IconButton>
+            </>
+          )}
           <IconButton color="inherit" onClick={handleBoltClick}>
             <BoltIcon />
           </IconButton>
           <IconButton color="inherit" onClick={handleBarChartClick}>
             <BarChartIcon />
           </IconButton>
-          <Tooltip title="Usuario">
+          <Box display="flex" flexDirection="column" alignItems="center">
             <IconButton color="inherit" onClick={handleUserMenuClick}>
               <AccountCircleIcon />
             </IconButton>
-          </Tooltip>
+            <Typography variant="caption" sx={{ color: 'white', fontSize: '0.7rem', marginTop: '-8px' }}>
+              {user.username}
+            </Typography>
+          </Box>
           <Menu
             anchorEl={userMenuAnchorEl}
             open={Boolean(userMenuAnchorEl)}
             onClose={handleUserMenuClose}
-            PaperProps={{ sx: { minWidth: '150px' } }} // Asegura que el menú de usuario tenga una anchura mínima
+            PaperProps={{ sx: { minWidth: '150px', backgroundColor: 'white', color: 'black' } }}
           >
             <MenuItem onClick={handleLogout} sx={{ height: '20px' }}>Cerrar sesión</MenuItem>
           </Menu>
