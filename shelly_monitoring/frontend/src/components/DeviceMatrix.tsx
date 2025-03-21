@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Card, Checkbox, Button, Dialog, DialogTitle, DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
-import { getDispositivos, asignarHabitacion } from '../services/api';
+import { getDispositivos, getHabitaciones, asignarHabitacion } from '../services/api';
 
 interface DeviceMatrixProps {
   user: {
@@ -14,6 +14,8 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
   const [dispositivos, setDispositivos] = useState<any[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
+  const [habitaciones, setHabitaciones] = useState<any[]>([]);
+  const [selectedHabitacion, setSelectedHabitacion] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchDispositivos = async () => {
@@ -36,21 +38,33 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
     );
   };
 
-  const handleAssignClick = () => {
-    setOpen(true);
+  const handleAssignClick = async () => {
+    try {
+      const habitacionesData = await getHabitaciones();
+      setHabitaciones(habitacionesData);
+      setOpen(true);
+    } catch (error) {
+      console.error('Error al obtener las habitaciones:', error);
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleAssign = async (habitacionId: number) => {
-    try {
-      await asignarHabitacion(selectedItems, habitacionId);
-      setSelectedItems([]);
-      setOpen(false);
-    } catch (error) {
-      console.error('Error al asignar habitación:', error);
+  const handleHabitacionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedHabitacion(Number(event.target.value));
+  };
+
+  const handleAssign = async () => {
+    if (selectedHabitacion !== null) {
+      try {
+        await asignarHabitacion(selectedItems, selectedHabitacion);
+        setSelectedItems([]);
+        setOpen(false);
+      } catch (error) {
+        console.error('Error al asignar habitación:', error);
+      }
     }
   };
 
@@ -155,18 +169,17 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Asignar a Habitación</DialogTitle>
         <DialogContent>
-          <RadioGroup>
-            {/* Aquí debes mapear las habitaciones disponibles */}
-            <FormControlLabel value="1" control={<Radio />} label="Habitación 1" />
-            <FormControlLabel value="2" control={<Radio />} label="Habitación 2" />
-            {/* Añade más habitaciones según sea necesario */}
+          <RadioGroup value={selectedHabitacion?.toString()} onChange={handleHabitacionChange}>
+            {habitaciones.map((habitacion) => (
+              <FormControlLabel key={habitacion.id} value={habitacion.id.toString()} control={<Radio />} label={habitacion.nombre} />
+            ))}
           </RadioGroup>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancelar
           </Button>
-          <Button onClick={() => handleAssign(1)} color="primary">
+          <Button onClick={handleAssign} color="primary">
             Asignar
           </Button>
         </DialogActions>

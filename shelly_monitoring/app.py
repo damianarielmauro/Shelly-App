@@ -533,6 +533,27 @@ def get_user_permissions(user_id):
     return jsonify({'room_ids': room_ids})
 
 
+# API: Asignar dispositivos a una habitación
+@app.route('/api/asignar_habitacion', methods=['POST'])
+@require_jwt
+def asignar_habitacion():
+    data = request.get_json()
+    device_ids = data.get('device_ids')
+    habitacion_id = data.get('habitacion_id')
+
+    if not device_ids or not habitacion_id:
+        return jsonify({'success': False, 'message': 'Missing fields'}), 400
+
+    try:
+        dispositivos = Dispositivos.query.filter(Dispositivos.id.in_(device_ids)).all()
+        for dispositivo in dispositivos:
+            dispositivo.habitacion_id = habitacion_id
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Devices assigned successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 # API: Endpoint de prueba de conexión
 @app.route('/api/test', methods=['GET'])
 def test_connection():

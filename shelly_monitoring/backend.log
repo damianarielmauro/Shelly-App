@@ -432,3 +432,10 @@ AttributeError: 'NoneType' object has no attribute 'role'
 2025-03-21 14:57:11,074 - DEBUG - Intento de inicio de sesión: admin@shelly.local
 2025-03-21 14:57:11,079 - DEBUG - Usuario encontrado en la base de datos
 2025-03-21 14:57:11,418 - DEBUG - Contraseña correcta
+2025-03-21 17:19:04,634 - INFO - 🔧 Backend Flask iniciado.
+2025-03-21 17:21:18,685 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-21 17:21:18,701 - DEBUG - Usuario encontrado en la base de datos
+2025-03-21 17:21:19,041 - DEBUG - Contraseña correcta
+2025-03-21 20:16:59,600 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-21 20:16:59,606 - DEBUG - Usuario encontrado en la base de datos
+2025-03-21 20:16:59,948 - DEBUG - Contraseña correcta

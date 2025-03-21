@@ -95,6 +95,7 @@ export const deleteHabitacion = async (id: number): Promise<any> => {
   }
 };
 
+// Asignar dispositivos a una habitación
 export const asignarHabitacion = async (dispositivosIds: number[], habitacionId: number): Promise<any> => {
   try {
     const response = await api.post('/asignar_habitacion', {
