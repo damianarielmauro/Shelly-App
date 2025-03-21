@@ -49,6 +49,13 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           return { ...user, permissions: userPermissions.room_ids };
         })
       );
+      // Ordenar los usuarios: admin primero y luego user, ambos alfabéticamente
+      usersWithPermissions.sort((a, b) => {
+        if (a.role === b.role) {
+          return a.username.localeCompare(b.username);
+        }
+        return a.role === 'admin' ? -1 : 1;
+      });
       setUsers(usersWithPermissions);
     };
     fetchUsers();
@@ -84,6 +91,13 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             return { ...user, permissions: userPermissions.room_ids };
           })
         );
+        // Ordenar los usuarios: admin primero y luego user, ambos alfabéticamente
+        usersWithPermissions.sort((a, b) => {
+          if (a.role === b.role) {
+            return a.username.localeCompare(b.username);
+          }
+          return a.role === 'admin' ? -1 : 1;
+        });
         setUsers(usersWithPermissions);
       } catch (error) {
         console.error('Error creating user:', error);
@@ -125,6 +139,13 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             return { ...user, permissions: userPermissions.room_ids };
           })
         );
+        // Ordenar los usuarios: admin primero y luego user, ambos alfabéticamente
+        usersWithPermissions.sort((a, b) => {
+          if (a.role === b.role) {
+            return a.username.localeCompare(b.username);
+          }
+          return a.role === 'admin' ? -1 : 1;
+        });
         setUsers(usersWithPermissions);
       } catch (error) {
         console.error('Error updating user:', error);
@@ -146,6 +167,13 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             return { ...user, permissions: userPermissions.room_ids };
           })
         );
+        // Ordenar los usuarios: admin primero y luego user, ambos alfabéticamente
+        usersWithPermissions.sort((a, b) => {
+          if (a.role === b.role) {
+            return a.username.localeCompare(b.username);
+          }
+          return a.role === 'admin' ? -1 : 1;
+        });
         setUsers(usersWithPermissions);
       } catch (error) {
         console.error('Error deleting user:', error);
@@ -410,16 +438,18 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
               <Typography>{user.username} - {user.email} - {user.role}</Typography>
               <Box>
-                <Button
-                  onClick={() => handleOpenDialog(user.id)}
-                  variant="contained"
-                  sx={{
-                    backgroundColor: '#1976d2', // Mismo color de fondo que el botón de crear usuario
-                    color: 'white', // Mismo color de letra que el botón de crear usuario
-                  }}
-                >
-                  Permisos
-                </Button>
+                {user.role !== 'admin' && (
+                  <Button
+                    onClick={() => handleOpenDialog(user.id)}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: '#1976d2', // Mismo color de fondo que el botón de crear usuario
+                      color: 'white', // Mismo color de letra que el botón de crear usuario
+                    }}
+                  >
+                    Permisos
+                  </Button>
+                )}
                 <IconButton onClick={() => handleEditUser(user.id)}>
                   <EditIcon sx={{ color: 'white' }} />
                 </IconButton>
@@ -525,4 +555,4 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   );
 };
 
-export default UsersManagement;
+export default UsersManagement; 

@@ -95,6 +95,20 @@ export const deleteHabitacion = async (id: number): Promise<any> => {
   }
 };
 
+export const asignarHabitacion = async (dispositivosIds: number[], habitacionId: number): Promise<any> => {
+  try {
+    const response = await api.post('/asignar_habitacion', {
+      dispositivos_ids: dispositivosIds,
+      habitacion_id: habitacionId,
+    });
+    console.log('asignarHabitacion response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('asignarHabitacion error:', error);
+    throw error;
+  }
+};
+
 // Tableros
 export const getTableros = async (): Promise<any> => {
   try {
