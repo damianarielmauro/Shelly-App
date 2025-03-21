@@ -96,10 +96,10 @@ export const deleteHabitacion = async (id: number): Promise<any> => {
 };
 
 // Asignar dispositivos a una habitación
-export const asignarHabitacion = async (dispositivosIds: number[], habitacionId: number): Promise<any> => {
+export const asignarHabitacion = async (deviceIds: number[], habitacionId: number): Promise<any> => {
   try {
     const response = await api.post('/asignar_habitacion', {
-      dispositivos_ids: dispositivosIds,
+      device_ids: deviceIds,  // Cambiar el nombre del campo a 'device_ids'
       habitacion_id: habitacionId,
     });
     console.log('asignarHabitacion response:', response);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Card, Checkbox, Button, Dialog, DialogTitle, DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getDispositivos, getHabitaciones, asignarHabitacion } from '../services/api';
 
 interface DeviceMatrixProps {
@@ -17,11 +18,21 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
   const [selectedHabitacion, setSelectedHabitacion] = useState<number | null>(null);
 
+  const [contadorAsignados, setContadorAsignados] = useState(0);
+  const [contadorSinAsignar, setContadorSinAsignar] = useState(0);
+
   useEffect(() => {
     const fetchDispositivos = async () => {
       try {
         const data = await getDispositivos();
-        setDispositivos(data);
+        const sortedData = data.sort((a: any, b: any) => {
+          if (a.habitacion_id && !b.habitacion_id) return 1;
+          if (!a.habitacion_id && b.habitacion_id) return -1;
+          return a.nombre.localeCompare(b.nombre);
+        });
+        setDispositivos(sortedData);
+        setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
+        setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
       } catch (error) {
         console.error('Error al obtener los dispositivos:', error);
       }
@@ -62,6 +73,16 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
         await asignarHabitacion(selectedItems, selectedHabitacion);
         setSelectedItems([]);
         setOpen(false);
+        // Refetch dispositivos after assignment
+        const data = await getDispositivos();
+        const sortedData = data.sort((a: any, b: any) => {
+          if (a.habitacion_id && !b.habitacion_id) return 1;
+          if (!a.habitacion_id && b.habitacion_id) return -1;
+          return a.nombre.localeCompare(b.nombre);
+        });
+        setDispositivos(sortedData);
+        setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
+        setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
       } catch (error) {
         console.error('Error al asignar habitación:', error);
       }
@@ -71,8 +92,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
   return (
     <Box
       display="flex"
-      flexWrap="wrap"
-      gap={1}
+      flexDirection="column"
       sx={{
         overflowY: 'scroll',
         height: 'calc(100vh - 85px)', // Ajustar la altura para el scroll
@@ -87,75 +107,106 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
         },
       }}
     >
-      {dispositivos.map((dispositivo) => {
-        const consumo =
-          dispositivo.consumo < 1000
-            ? `${dispositivo.consumo} W`
-            : `${(dispositivo.consumo / 1000).toFixed(2)} kW`;
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        sx={{ mb: 2, pr: 4 }} // Ajustar justificación y padding-right para mover el contador a la izquierda
+      >
+        <Typography variant="body1" sx={{ color: '#00FF00' }}> {/* Cambiar a verde brillante */}
+          Asignados: {contadorAsignados}
+        </Typography>
+        <Typography variant="body1" sx={{ color: 'white', mx: 1 }}>
+          - Sin Asignar: {contadorSinAsignar}
+        </Typography>
+        <Typography variant="body1" sx={{ color: '#1976d2', fontWeight: 'bold' }}> {/* Cambiar a azul usado en otros lugares de la página */}
+          - Totales: {dispositivos.length}
+        </Typography>
+      </Box>
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        gap={1}
+      >
+        {dispositivos.map((dispositivo) => {
+          const consumo =
+            dispositivo.consumo < 1000
+              ? `${dispositivo.consumo} W`
+              : `${(dispositivo.consumo / 1000).toFixed(2)} kW`;
 
-        return (
-          <Card
-            key={dispositivo.id}
-            sx={{
-              m: 1,
-              p: 2,
-              backgroundColor: '#333',
-              color: 'white',
-              width: '240px', // Doble de ancho
-              height: '50px', // Mitad de alto
-              textAlign: 'center',
-              borderRadius: '8px',
-              position: 'relative',
-            }}
-          >
-            {editMode && (
-              <Checkbox
-                checked={selectedItems.includes(dispositivo.id)}
-                onChange={() => handleCheckboxChange(dispositivo.id)}
-                sx={{
-                  position: 'absolute',
-                  bottom: '-5px',
-                  right: '-5px',
-                  color: 'red',
-                  '& .MuiSvgIcon-root': {
-                    color: selectedItems.includes(dispositivo.id) ? 'red' : 'red',
-                  },
-                  '&.Mui-checked': {
-                    backgroundColor: 'none',
-                  },
-                }}
-              />
-            )}
-            <Typography
-              variant="body2"
+          return (
+            <Card
+              key={dispositivo.id}
               sx={{
-                fontSize: '0.6rem', // Reducir tamaño del texto
-                fontWeight: 'bold',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '50%',
-                mb: 0.5,
+                m: 1,
+                p: 2,
+                backgroundColor: '#333',
+                color: 'white',
+                width: '240px', // Doble de ancho
+                height: '50px', // Mitad de alto
+                textAlign: 'center',
+                borderRadius: '8px',
+                position: 'relative',
               }}
             >
-              {dispositivo.nombre}
-            </Typography>
-            <Box display="flex" alignItems="center" justifyContent="center">
-              <BoltIcon sx={{ fontSize: '0.75rem', color: '#1976d2', mr: 0.5 }} />
+              {dispositivo.habitacion_id && (
+                <CheckCircleIcon
+                  sx={{
+                    position: 'absolute',
+                    top: '2px', // Ajustar posición superior
+                    right: '2px', // Ajustar posición derecha
+                    color: '#00FF00', // Cambiar a un verde más brillante
+                  }}
+                />
+              )}
+              {editMode && (
+                <Checkbox
+                  checked={selectedItems.includes(dispositivo.id)}
+                  onChange={() => handleCheckboxChange(dispositivo.id)}
+                  sx={{
+                    position: 'absolute',
+                    bottom: '-5px',
+                    right: '-5px',
+                    color: 'red',
+                    '& .MuiSvgIcon-root': {
+                      color: selectedItems.includes(dispositivo.id) ? 'red' : 'red',
+                    },
+                    '&.Mui-checked': {
+                      backgroundColor: 'none',
+                    },
+                  }}
+                />
+              )}
               <Typography
                 variant="body2"
                 sx={{
                   fontSize: '0.6rem', // Reducir tamaño del texto
                   fontWeight: 'bold',
-                  color: '#1976d2',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '50%',
+                  mb: 0.5,
                 }}
               >
-                {consumo}
+                {dispositivo.nombre}
               </Typography>
-            </Box>
-          </Card>
-        );
-      })}
+              <Box display="flex" alignItems="center" justifyContent="center">
+                <BoltIcon sx={{ fontSize: '0.75rem', color: '#1976d2', mr: 0.5 }} />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: '0.6rem', // Reducir tamaño del texto
+                    fontWeight: 'bold',
+                    color: '#1976d2',
+                  }}
+                >
+                  {consumo}
+                </Typography>
+              </Box>
+            </Card>
+          );
+        })}
+      </Box>
       {editMode && selectedItems.length > 0 && (
         <Button
           variant="contained"
