@@ -217,24 +217,51 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
           Asignar a Habitación
         </Button>
       )}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Asignar a Habitación</DialogTitle>
-        <DialogContent>
-          <RadioGroup value={selectedHabitacion?.toString()} onChange={handleHabitacionChange}>
-            {habitaciones.map((habitacion) => (
-              <FormControlLabel key={habitacion.id} value={habitacion.id.toString()} control={<Radio />} label={habitacion.nombre} />
-            ))}
-          </RadioGroup>
-        </DialogContent>
+<Dialog open={open} onClose={handleClose}>
+  <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
+  <DialogContent
+    sx={{
+      fontSize: '0.4rem',
+      lineHeight: '0.6rem',
+      maxHeight: '600px', // Aumentar la altura máxima del contenido del dialog
+      overflowY: 'auto', // Habilitar el scroll vertical
+      '&::-webkit-scrollbar': {
+        width: '4px', // Hacer el scrollbar lo más fino posible
+      },
+      '&::-webkit-scrollbar-track': {
+        backgroundColor: 'white', // Fondo blanco para el track del scrollbar
+      },
+      '&::-webkit-scrollbar-thumb': {
+        backgroundColor: '#1976d2', // Barra del scrollbar de color azul
+        borderRadius: '10px', // Redondear un poco la barra
+      },
+    }}
+  >
+    <RadioGroup value={selectedHabitacion?.toString()} onChange={handleHabitacionChange}>
+      {habitaciones.map((habitacion) => (
+        <FormControlLabel 
+          key={habitacion.id} 
+          value={habitacion.id.toString()} 
+          control={<Radio sx={{ padding: '2px' }} />} 
+          label={
+            <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+              {habitacion.nombre}
+            </Box>
+          }
+        />
+      ))}
+    </RadioGroup>
+  </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancelar
           </Button>
           <Button onClick={handleAssign} color="primary">
             Asignar
-          </Button>
-        </DialogActions>
-      </Dialog>
+    </Button>
+  </DialogActions>
+</Dialog>
+
     </Box>
   );
 };
