@@ -40,6 +40,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [deleteType, setDeleteType] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [roomMatrixView, setRoomMatrixView] = useState<boolean>(true); // Nuevo estado
   const navigate = useNavigate();
 
   // Usamos el campo 'role' para verificar si es admin
@@ -207,6 +208,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           setSelectedItems={setSelectedItems} 
           deleteType={deleteType} 
           user={user}
+          setRoomMatrixView={setRoomMatrixView} // Pasamos setRoomMatrixView
         />
         <Box display="flex" alignItems="center" sx={{ marginLeft: 'auto', justifyContent: 'flex-end', alignItems: 'center' }}>
           {editMode && (
@@ -266,6 +268,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             deleteMode={deleteMode && deleteType === 'Habitación'} 
             selectedItems={selectedItems} 
             handleDeleteSelectionChange={handleDeleteSelectionChange} 
+            editMode={editMode}
+            roomMatrixView={roomMatrixView}
+            setRoomMatrixView={setRoomMatrixView}
           />
         </Box>
         <Box sx={{ width: '300px', overflow: 'auto', p: 2 }}>

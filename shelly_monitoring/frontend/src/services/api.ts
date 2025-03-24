@@ -110,6 +110,12 @@ export const asignarHabitacion = async (deviceIds: number[], habitacionId: numbe
   }
 };
 
+// Obtener dispositivos por habitación
+export const getDispositivosByHabitacion = async (habitacionId: number): Promise<any> => {
+  const response = await api.get(`/habitaciones/${habitacionId}/dispositivos`);
+  return response.data;
+};
+
 // Tableros
 export const getTableros = async (): Promise<any> => {
   try {

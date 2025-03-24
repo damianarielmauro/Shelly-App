@@ -458,3 +458,28 @@ AttributeError: 'NoneType' object has no attribute 'role'
 2025-03-24 03:08:26,711 - DEBUG - Intento de inicio de sesión: admin@shelly.local
 2025-03-24 03:08:26,717 - DEBUG - Usuario encontrado en la base de datos
 2025-03-24 03:08:27,061 - DEBUG - Contraseña correcta
+2025-03-24 20:49:26,164 - INFO - 🔧 Backend Flask iniciado.
+2025-03-24 20:51:54,019 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-24 20:51:54,036 - DEBUG - Usuario encontrado en la base de datos
+2025-03-24 20:51:54,373 - DEBUG - Contraseña correcta
+2025-03-24 21:06:48,930 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-24 21:06:48,933 - DEBUG - Usuario encontrado en la base de datos
+2025-03-24 21:06:49,271 - DEBUG - Contraseña correcta
+2025-03-24 21:17:42,809 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-24 21:17:42,820 - DEBUG - Usuario encontrado en la base de datos
+2025-03-24 21:17:43,161 - DEBUG - Contraseña correcta
+2025-03-24 21:25:09,472 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-24 21:25:09,475 - DEBUG - Usuario encontrado en la base de datos
+2025-03-24 21:25:09,815 - DEBUG - Contraseña correcta
+2025-03-24 21:40:42,322 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-24 21:40:42,325 - DEBUG - Usuario encontrado en la base de datos
+2025-03-24 21:40:42,665 - DEBUG - Contraseña correcta
+2025-03-24 21:52:36,118 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-24 21:52:36,124 - DEBUG - Usuario encontrado en la base de datos
+2025-03-24 21:52:36,466 - DEBUG - Contraseña correcta
+2025-03-24 22:09:43,696 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-24 22:09:43,699 - DEBUG - Usuario encontrado en la base de datos
+2025-03-24 22:09:44,038 - DEBUG - Contraseña correcta
+2025-03-24 22:35:47,012 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-24 22:35:47,019 - DEBUG - Usuario encontrado en la base de datos
+2025-03-24 22:35:47,358 - DEBUG - Contraseña correcta

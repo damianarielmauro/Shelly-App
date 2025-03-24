@@ -28,12 +28,13 @@ interface TabManagerProps {
   setSelectedItems: React.Dispatch<React.SetStateAction<number[]>>;
   deleteType: string;
   user: User;
+  setRoomMatrixView: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const TabManager: React.FC<TabManagerProps> = ({
   selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones,
   setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect,
-  selectedItems, setSelectedItems, deleteType, user
+  selectedItems, setSelectedItems, deleteType, user, setRoomMatrixView
 }) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [habitaciones, setHabitacionesState] = useState<any[]>([]);
@@ -76,6 +77,7 @@ const TabManager: React.FC<TabManagerProps> = ({
 
   const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
     setSelectedTab(newValue);
+    setRoomMatrixView(true); // Volver a la vista de la matriz de habitaciones
   };
 
   const handleCreateTablero = async (nombre: string) => {

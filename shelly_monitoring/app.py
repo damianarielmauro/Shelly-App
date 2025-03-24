@@ -555,6 +555,14 @@ def asignar_habitacion():
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
+# API: Obtener dispositivos por habitación
+@app.route('/api/habitaciones/<int:habitacion_id>/dispositivos', methods=['GET'])
+@require_jwt
+def get_dispositivos_by_habitacion(habitacion_id):
+    dispositivos = Dispositivos.query.filter_by(habitacion_id=habitacion_id).all()
+    return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado } for d in dispositivos])
+
+
 # API: Endpoint de prueba de conexión
 @app.route('/api/test', methods=['GET'])
 def test_connection():
