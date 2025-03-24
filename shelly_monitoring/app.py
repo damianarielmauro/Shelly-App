@@ -539,9 +539,9 @@ def get_user_permissions(user_id):
 def asignar_habitacion():
     data = request.get_json()
     device_ids = data.get('device_ids')
-    habitacion_id = data.get('habitacion_id')
+    habitacion_id = data.get('habitacion_id')  # Puede ser null
 
-    if not device_ids or not habitacion_id:
+    if not device_ids:
         return jsonify({'success': False, 'message': 'Missing fields'}), 400
 
     try:
@@ -553,6 +553,7 @@ def asignar_habitacion():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
+
 
 # API: Endpoint de prueba de conexión
 @app.route('/api/test', methods=['GET'])

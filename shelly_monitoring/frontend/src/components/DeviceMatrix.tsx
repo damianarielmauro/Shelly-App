@@ -16,7 +16,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
-  const [selectedHabitacion, setSelectedHabitacion] = useState<number | null>(null);
+  const [selectedHabitacion, setSelectedHabitacion] = useState<string>("null");
 
   const [contadorAsignados, setContadorAsignados] = useState(0);
   const [contadorSinAsignar, setContadorSinAsignar] = useState(0);
@@ -64,28 +64,27 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
   };
 
   const handleHabitacionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedHabitacion(Number(event.target.value));
+    setSelectedHabitacion(event.target.value);
   };
 
   const handleAssign = async () => {
-    if (selectedHabitacion !== null) {
-      try {
-        await asignarHabitacion(selectedItems, selectedHabitacion);
-        setSelectedItems([]);
-        setOpen(false);
-        // Refetch dispositivos after assignment
-        const data = await getDispositivos();
-        const sortedData = data.sort((a: any, b: any) => {
-          if (a.habitacion_id && !b.habitacion_id) return 1;
-          if (!a.habitacion_id && b.habitacion_id) return -1;
-          return a.nombre.localeCompare(b.nombre);
-        });
-        setDispositivos(sortedData);
-        setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
-        setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
-      } catch (error) {
-        console.error('Error al asignar habitación:', error);
-      }
+    try {
+      const habitacionId = selectedHabitacion === "null" ? null : parseInt(selectedHabitacion as string);
+      await asignarHabitacion(selectedItems, habitacionId);
+      setSelectedItems([]);
+      setOpen(false);
+      // Refetch dispositivos after assignment
+      const data = await getDispositivos();
+      const sortedData = data.sort((a: any, b: any) => {
+        if (a.habitacion_id && !b.habitacion_id) return 1;
+        if (!a.habitacion_id && b.habitacion_id) return -1;
+        return a.nombre.localeCompare(b.nombre);
+      });
+      setDispositivos(sortedData);
+      setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
+      setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
+    } catch (error) {
+      console.error('Error al asignar habitación:', error);
     }
   };
 
@@ -217,51 +216,60 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
           Asignar a Habitación
         </Button>
       )}
-<Dialog open={open} onClose={handleClose}>
-  <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
-  <DialogContent
-    sx={{
-      fontSize: '0.4rem',
-      lineHeight: '0.6rem',
-      maxHeight: '600px', // Aumentar la altura máxima del contenido del dialog
-      overflowY: 'auto', // Habilitar el scroll vertical
-      '&::-webkit-scrollbar': {
-        width: '4px', // Hacer el scrollbar lo más fino posible
-      },
-      '&::-webkit-scrollbar-track': {
-        backgroundColor: 'white', // Fondo blanco para el track del scrollbar
-      },
-      '&::-webkit-scrollbar-thumb': {
-        backgroundColor: '#1976d2', // Barra del scrollbar de color azul
-        borderRadius: '10px', // Redondear un poco la barra
-      },
-    }}
-  >
-    <RadioGroup value={selectedHabitacion?.toString()} onChange={handleHabitacionChange}>
-      {habitaciones.map((habitacion) => (
-        <FormControlLabel 
-          key={habitacion.id} 
-          value={habitacion.id.toString()} 
-          control={<Radio sx={{ padding: '2px' }} />} 
-          label={
-            <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
-              {habitacion.nombre}
-            </Box>
-          }
-        />
-      ))}
-    </RadioGroup>
-  </DialogContent>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
+        <DialogContent
+          sx={{
+            fontSize: '0.4rem',
+            lineHeight: '0.6rem',
+            maxHeight: '600px', // Aumentar la altura máxima del contenido del dialog
+            overflowY: 'auto', // Habilitar el scroll vertical
+            '&::-webkit-scrollbar': {
+              width: '4px', // Hacer el scrollbar lo más fino posible
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'white', // Fondo blanco para el track del scrollbar
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#1976d2', // Barra del scrollbar de color azul
+              borderRadius: '10px', // Redondear un poco la barra
+            },
+          }}
+        >
+          <RadioGroup value={selectedHabitacion} onChange={handleHabitacionChange}>
+            <FormControlLabel 
+              key="ninguna" 
+              value="null" 
+              control={<Radio sx={{ padding: '2px' }} />} 
+              label={
+                <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                  Ninguna
+                </Box>
+              }
+            />
+            {habitaciones.map((habitacion) => (
+              <FormControlLabel 
+                key={habitacion.id} 
+                value={habitacion.id.toString()} 
+                control={<Radio sx={{ padding: '2px' }} />} 
+                label={
+                  <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                    {habitacion.nombre}
+                  </Box>
+                }
+              />
+            ))}
+          </RadioGroup>
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancelar
           </Button>
           <Button onClick={handleAssign} color="primary">
             Asignar
-    </Button>
-  </DialogActions>
-</Dialog>
-
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
