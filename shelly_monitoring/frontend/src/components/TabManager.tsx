@@ -76,8 +76,9 @@ const TabManager: React.FC<TabManagerProps> = ({
   }, [selectedTab, tabs]);
 
   const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
+    // Ya sea el mismo tablero u otro diferente, siempre establecemos roomMatrixView a true
+    setRoomMatrixView(true);
     setSelectedTab(newValue);
-    setRoomMatrixView(true); // Volver a la vista de la matriz de habitaciones
   };
 
   const handleCreateTablero = async (nombre: string) => {
@@ -221,6 +222,7 @@ const TabManager: React.FC<TabManagerProps> = ({
                 </div>
               }
               value={index}
+              onClick={() => setRoomMatrixView(true)} // Asegurar que también se establezca al hacer clic directamente
             />
           ))}
         </Tabs>
