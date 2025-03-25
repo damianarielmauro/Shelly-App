@@ -13,6 +13,23 @@ import DeviceList from '../components/DeviceList';
 import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros, getHabitaciones } from '../services/api';
 import { checkPermission, setAuthToken } from '../services/auth';
 
+// Estilos de barra de desplazamiento consistentes para toda la aplicación
+const scrollbarStyle = {
+  '&::-webkit-scrollbar': {
+    width: '6px',
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: '#000', // Fondo negro
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#1ECAFF', // Color azul para el "thumb" (parte deslizable)
+    borderRadius: '3px', // Bordes redondeados para el thumb
+  },
+  // Firefox scrollbar
+  scrollbarWidth: 'thin',
+  scrollbarColor: '#1ECAFF #000', // thumb y track
+};
+
 interface Habitacion {
   id: number;
   nombre: string;
@@ -260,9 +277,15 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           </Menu>
         </Box>
       </Box>
-      <Box sx={{ borderBottom: 1, borderColor: '#1976d2', width: '100%', flexShrink: 0 }} />
+      <Box sx={{ borderBottom: 1, borderColor: '#1ECAFF', width: '100%', flexShrink: 0 }} />
       <Box display="flex" sx={{ flexGrow: 1, overflow: 'hidden' }}>
-        <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
+        <Box sx={{ 
+          flexGrow: 1, 
+          overflow: 'auto', 
+          p: 2,
+          // Aplicamos los estilos de barra de desplazamiento al panel de habitaciones
+          ...scrollbarStyle
+        }}>
           <RoomMatrix 
             habitaciones={habitaciones} 
             deleteMode={deleteMode && deleteType === 'Habitación'} 
@@ -273,7 +296,13 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             setRoomMatrixView={setRoomMatrixView}
           />
         </Box>
-        <Box sx={{ width: '300px', overflow: 'auto', p: 2 }}>
+        <Box sx={{ 
+          width: '300px', 
+          minWidth: '300px',
+          flexShrink: 0,
+          overflow: 'hidden',
+          p: 2 
+        }}>
           <DeviceList />
         </Box>
       </Box>

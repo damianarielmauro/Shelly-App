@@ -48,7 +48,7 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ habitacionId, editM
           backgroundColor: 'black',
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#1976d2',
+          backgroundColor: '#1ECAFF',
         },
       }}
     >
@@ -111,13 +111,13 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ habitacionId, editM
                 {dispositivo.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '0.75rem', color: '#1976d2', mr: 0.5 }} />
+                <BoltIcon sx={{ fontSize: '0.75rem', color: '#1ECAFF', mr: 0.5 }} />
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: '0.6rem', // Reducir tamaño del texto
                     fontWeight: 'bold',
-                    color: '#1976d2',
+                    color: '#1ECAFF',
                   }}
                 >
                   {consumo}

@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Checkbox, Box, Typography, Card } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import RoomDeviceMatrix from './RoomDeviceMatrix';
+import { 
+  obtenerDispositivosConConsumo, 
+  calcularConsumoHabitacion, 
+  formatearConsumo,
+  DispositivoConConsumo
+} from '../services/consumptionService';
 
 interface RoomMatrixProps {
   habitaciones: any[];
@@ -23,6 +29,40 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
   setRoomMatrixView
 }) => {
   const [selectedHabitacion, setSelectedHabitacion] = useState<number | null>(null);
+  const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
+  const [habitacionesConConsumo, setHabitacionesConConsumo] = useState<any[]>([]);
+
+  // Función para cargar dispositivos y calcular consumos
+  const cargarConsumosHabitaciones = async () => {
+    try {
+      const dispositivosData = await obtenerDispositivosConConsumo();
+      setDispositivos(dispositivosData);
+      
+      // Calcular consumo por habitación
+      const habitacionesActualizadas = habitaciones.map(habitacion => {
+        const consumoTotal = calcularConsumoHabitacion(habitacion.id, dispositivosData);
+        return {
+          ...habitacion,
+          consumo: consumoTotal
+        };
+      });
+      
+      setHabitacionesConConsumo(habitacionesActualizadas);
+    } catch (error) {
+      console.error('Error al cargar consumos de habitaciones:', error);
+    }
+  };
+
+  useEffect(() => {
+    cargarConsumosHabitaciones();
+    
+    // Actualizar cada 2 segundos
+    const intervalo = setInterval(() => {
+      cargarConsumosHabitaciones();
+    }, 2000);
+    
+    return () => clearInterval(intervalo);
+  }, [habitaciones]);
 
   useEffect(() => {
     setSelectedHabitacion(null);
@@ -38,11 +78,10 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
   return (
     <Box display="flex" flexWrap="wrap" gap={0}>
       {roomMatrixView ? (
-        habitaciones.map((habitacion) => {
-          const consumo =
-            habitacion.consumo < 1000
-              ? `${habitacion.consumo} W`
-              : `${(habitacion.consumo / 1000).toFixed(2)} kW`;
+        habitacionesConConsumo.map((habitacion) => {
+          // Determinar color basado en el valor de consumo
+          const consumoColor = habitacion.consumo < 0 ? 'red' : '#1ECAFF';
+          const consumoFormateado = formatearConsumo(habitacion.consumo);
 
           return (
             <Card
@@ -94,16 +133,16 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
                 {habitacion.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '1rem', color: '#1976d2', mr: 0.5 }} />
+                <BoltIcon sx={{ fontSize: '1rem', color: consumoColor, mr: 0.5 }} />
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: '0.8rem',
                     fontWeight: 'bold',
-                    color: '#1976d2',
+                    color: consumoColor,
                   }}
                 >
-                  {consumo}
+                  {consumoFormateado}
                 </Typography>
               </Box>
             </Card>

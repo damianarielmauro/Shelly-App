@@ -3,9 +3,30 @@ import { Box, List, ListItem, Typography } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import { getDispositivos } from '../services/api';
 
-const DeviceList = () => {
-  const [dispositivos, setDispositivos] = useState<any[]>([]);
+// Definimos una interfaz para nuestros dispositivos
+interface Dispositivo {
+  id: number;
+  nombre: string;
+  habitacion_id?: number | null;
+  consumo?: number;
+  // Otros campos que pueda tener el dispositivo
+}
+
+// Definimos la interfaz de propiedades para el componente
+interface DeviceListProps {
+  // Propiedades opcionales
+  habitaciones?: any[];
+  deleteMode?: boolean;
+  selectedItems?: number[];
+  handleDeleteSelectionChange?: (id: number) => void;
+  // Agregar cualquier otra propiedad que pueda necesitar
+  [key: string]: any; // Esto permite propiedades adicionales
+}
+
+const DeviceList: React.FC<DeviceListProps> = (props) => {
+  const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
   const [totalDispositivos, setTotalDispositivos] = useState(0);
+  const [dispositivosConConsumo, setDispositivosConConsumo] = useState<Dispositivo[]>([]);
 
   useEffect(() => {
     const fetchDispositivos = async () => {
@@ -13,6 +34,24 @@ const DeviceList = () => {
         const data = await getDispositivos();
         setDispositivos(data);
         setTotalDispositivos(data.length);
+
+        // Generar consumos aleatorios y asignar un valor específico a "Garage_Tomas"
+        const dispositivosConValores = data.map((dispositivo: Dispositivo) => {
+          let consumo;
+          if (dispositivo.nombre === "Garage_Tomas") {
+            consumo = -12800; // -12.80kW para Garage_Tomas
+          } else {
+            consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7; // Valor aleatorio entre 7W y 3578W
+          }
+          return { ...dispositivo, consumo };
+        });
+
+        // Ordenar dispositivos por consumo de mayor a menor (considerando valores absolutos para comparación)
+        const dispositivosOrdenados = dispositivosConValores.sort((a: Dispositivo, b: Dispositivo) => 
+          Math.abs(b.consumo || 0) - Math.abs(a.consumo || 0)
+        );
+
+        setDispositivosConConsumo(dispositivosOrdenados);
       } catch (error) {
         console.error('Error al obtener los dispositivos:', error);
       }
@@ -21,17 +60,51 @@ const DeviceList = () => {
     fetchDispositivos();
   }, []);
 
-  const totalConsumo = -12800; // Ejemplo en W (-12.8 kW)
-  const consumoColor = totalConsumo >= 0 ? '#1E8FFF' : '#00ff00'; // Verde más intenso y brillante
-  const formattedConsumo = totalConsumo < 1000 && totalConsumo > -1000 ? `${totalConsumo} W` : `${(totalConsumo / 1000).toFixed(2)} kW`;
-  const consumoLabel = totalConsumo >= 0 ? 'Consumo Total' : 'Generación Total';
+  // Valor fijo para el consumo total: -12.80kW
+  const totalConsumo = -12800; // -12.80kW en W
+  
+  const consumoColor = totalConsumo >= 0 ? '#1ECAFF' : '#00ff00'; // Verde para valores negativos
+  const formattedConsumo = "-12.80 kW"; // Valor fijo formateado
+  const consumoLabel = "Generación Total"; // Como es negativo, será "Generación Total"
 
   const getColorForConsumo = (consumo: number) => {
-    return consumo >= 0 ? '#1E8FFF' : '#00ff00'; // Azul intenso para valores positivos, verde para negativos
+    return consumo >= 0 ? '#1ECAFF' : '#00ff00'; // Nuevo color azul para positivos
+  };
+
+  // Estilos de la barra de desplazamiento
+  const scrollbarStyle = {
+    '&::-webkit-scrollbar': {
+      width: '6px',
+    },
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: '#000', // Fondo negro
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: '#2392ff', // Cambiado al nuevo color azul
+      borderRadius: '3px', // Bordes redondeados para el thumb
+    },
+    // Firefox scrollbar
+    scrollbarWidth: 'thin',
+    scrollbarColor: '#2392ff #000', // thumb y track
   };
 
   return (
-    <Box className="device-list" sx={{ backgroundColor: '#333', borderRadius: '8px', color: 'white', maxWidth: '300px', height: 'calc(100vh - 85px)', overflowY: 'auto', overflowX: 'hidden', padding: '8px', margin: '0 auto', boxSizing: 'border-box' }}>
+    <Box 
+      className="device-list" 
+      sx={{ 
+        backgroundColor: '#333', 
+        borderRadius: '8px', 
+        color: 'white', 
+        width: '280px', 
+        minWidth: '280px', 
+        height: 'calc(100vh - 85px)', 
+        overflowY: 'auto', 
+        overflowX: 'hidden', 
+        padding: '10px',
+        flexShrink: 0,
+        ...scrollbarStyle
+      }}
+    >
       <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', mb: 1 }}>
         <BoltIcon sx={{ color: consumoColor }} />
         <Typography sx={{ color: consumoColor, fontSize: '1rem', fontWeight: 'bold' }}>{formattedConsumo}</Typography>
@@ -48,14 +121,53 @@ const DeviceList = () => {
         </Box>
       </Box>
       <List sx={{ padding: 0 }}>
-        {dispositivos.map((dispositivo) => {
-          const consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7; // Valor aleatorio entre 7W y 3578W
-          const formattedConsumo = consumo < 1000 ? `${consumo} W` : `${(consumo / 1000).toFixed(2)} kW`;
+        {dispositivosConConsumo.map((dispositivo, index) => {
+          const consumo = dispositivo.consumo || 0;
+          const formattedConsumo = consumo < 1000 && consumo > -1000 
+            ? `${consumo} W` 
+            : `${(consumo / 1000).toFixed(2)} kW`;
           const consumoColor = getColorForConsumo(consumo);
+          
+          // Determinar si este dispositivo debe estar en negrita (primeros 10)
+          const estaEnNegrita = index < 10;
+          
           return (
-            <ListItem key={dispositivo.id} sx={{ display: 'flex', justifyContent: 'space-between', py: 0.2, px: 0.5 }} className="device-list-item">
-              <Typography sx={{ fontSize: '0.75rem', mr: 1, flexShrink: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '65%' }}>{dispositivo.nombre}</Typography>
-              <Typography sx={{ fontSize: '0.75rem', color: consumoColor, flexShrink: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '35%' }}>{formattedConsumo}</Typography>
+            <ListItem 
+              key={dispositivo.id} 
+              sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                py: 0.2, 
+                px: 0.5,
+                width: '100%',
+              }} 
+              className="device-list-item"
+            >
+              <Typography sx={{ 
+                fontSize: '0.75rem', 
+                mr: 1, 
+                flexGrow: 1, 
+                flexShrink: 1, 
+                whiteSpace: 'nowrap', 
+                textOverflow: 'ellipsis', 
+                overflow: 'hidden', 
+                maxWidth: '65%',
+                fontWeight: estaEnNegrita ? 'bold' : 'normal'
+              }}>
+                {dispositivo.nombre}
+              </Typography>
+              <Typography sx={{ 
+                fontSize: '0.75rem', 
+                color: consumoColor, 
+                flexShrink: 0, 
+                whiteSpace: 'nowrap', 
+                textOverflow: 'ellipsis', 
+                overflow: 'hidden',
+                maxWidth: '35%',
+                fontWeight: estaEnNegrita ? 'bold' : 'normal'
+              }}>
+                {formattedConsumo}
+              </Typography>
             </ListItem>
           );
         })}

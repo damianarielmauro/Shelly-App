@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Card, Checkbox, Button, Dialog, DialogTitle, DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { getDispositivos, getHabitaciones, asignarHabitacion } from '../services/api';
+import { getHabitaciones, asignarHabitacion } from '../services/api';
+import { 
+  obtenerDispositivosConConsumo, 
+  formatearConsumo,
+  DispositivoConConsumo
+} from '../services/consumptionService';
 
 interface DeviceMatrixProps {
   user: {
@@ -12,7 +17,7 @@ interface DeviceMatrixProps {
 }
 
 const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
-  const [dispositivos, setDispositivos] = useState<any[]>([]);
+  const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
@@ -20,25 +25,30 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
 
   const [contadorAsignados, setContadorAsignados] = useState(0);
   const [contadorSinAsignar, setContadorSinAsignar] = useState(0);
-
+  
   useEffect(() => {
     const fetchDispositivos = async () => {
       try {
-        const data = await getDispositivos();
-        const sortedData = data.sort((a: any, b: any) => {
+        const data = await obtenerDispositivosConConsumo();
+        const sortedData = [...data].sort((a, b) => {
           if (a.habitacion_id && !b.habitacion_id) return 1;
           if (!a.habitacion_id && b.habitacion_id) return -1;
           return a.nombre.localeCompare(b.nombre);
         });
         setDispositivos(sortedData);
-        setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
-        setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
+        setContadorAsignados(data.filter(d => d.habitacion_id).length);
+        setContadorSinAsignar(data.filter(d => !d.habitacion_id).length);
       } catch (error) {
         console.error('Error al obtener los dispositivos:', error);
       }
     };
 
     fetchDispositivos();
+    
+    // Actualizar datos cada 2 segundos
+    const intervalo = setInterval(fetchDispositivos, 2000);
+    
+    return () => clearInterval(intervalo);
   }, []);
 
   const handleCheckboxChange = (id: number) => {
@@ -73,19 +83,25 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
       await asignarHabitacion(selectedItems, habitacionId);
       setSelectedItems([]);
       setOpen(false);
+      
       // Refetch dispositivos after assignment
-      const data = await getDispositivos();
-      const sortedData = data.sort((a: any, b: any) => {
+      const data = await obtenerDispositivosConConsumo();
+      const sortedData = [...data].sort((a, b) => {
         if (a.habitacion_id && !b.habitacion_id) return 1;
         if (!a.habitacion_id && b.habitacion_id) return -1;
         return a.nombre.localeCompare(b.nombre);
       });
       setDispositivos(sortedData);
-      setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
-      setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
+      setContadorAsignados(data.filter(d => d.habitacion_id).length);
+      setContadorSinAsignar(data.filter(d => !d.habitacion_id).length);
     } catch (error) {
       console.error('Error al asignar habitación:', error);
     }
+  };
+
+  // Función para obtener el color según el consumo (usado en DeviceList.tsx)
+  const getColorForConsumo = (consumo: number) => {
+    return consumo >= 0 ? '#1ECAFF' : '#00ff00'; // Azul para positivos, verde para negativos
   };
 
   return (
@@ -94,7 +110,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
       flexDirection="column"
       sx={{
         overflowY: 'scroll',
-        height: 'calc(100vh - 85px)', // Ajustar la altura para el scroll
+        height: 'calc(100vh - 85px)',
         '&::-webkit-scrollbar': {
           width: '6px',
         },
@@ -102,22 +118,22 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
           backgroundColor: 'black',
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#1976d2',
+          backgroundColor: '#1ECAFF',
         },
       }}
     >
       <Box
         display="flex"
         justifyContent="flex-end"
-        sx={{ mb: 2, pr: 4 }} // Ajustar justificación y padding-right para mover el contador a la izquierda
+        sx={{ mb: 2, pr: 4 }}
       >
-        <Typography variant="body1" sx={{ color: '#00FF00' }}> {/* Cambiar a verde brillante */}
+        <Typography variant="body1" sx={{ color: '#00FF00' }}>
           Asignados: {contadorAsignados}
         </Typography>
         <Typography variant="body1" sx={{ color: 'white', mx: 1 }}>
           - Sin Asignar: {contadorSinAsignar}
         </Typography>
-        <Typography variant="body1" sx={{ color: '#1976d2', fontWeight: 'bold' }}> {/* Cambiar a azul usado en otros lugares de la página */}
+        <Typography variant="body1" sx={{ color: '#1ECAFF', fontWeight: 'bold' }}>
           - Totales: {dispositivos.length}
         </Typography>
       </Box>
@@ -127,10 +143,10 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
         gap={1}
       >
         {dispositivos.map((dispositivo) => {
-          const consumo =
-            dispositivo.consumo < 1000
-              ? `${dispositivo.consumo} W`
-              : `${(dispositivo.consumo / 1000).toFixed(2)} kW`;
+          const consumoFormateado = formatearConsumo(dispositivo.consumo);
+          
+          // Determinar color basado en el valor de consumo (azul para positivo, verde para negativo)
+          const consumoColor = getColorForConsumo(dispositivo.consumo);
 
           return (
             <Card
@@ -140,8 +156,8 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
                 p: 2,
                 backgroundColor: '#333',
                 color: 'white',
-                width: '240px', // Doble de ancho
-                height: '50px', // Mitad de alto
+                width: '240px',
+                height: '50px',
                 textAlign: 'center',
                 borderRadius: '8px',
                 position: 'relative',
@@ -151,9 +167,9 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
                 <CheckCircleIcon
                   sx={{
                     position: 'absolute',
-                    top: '2px', // Ajustar posición superior
-                    right: '2px', // Ajustar posición derecha
-                    color: '#00FF00', // Cambiar a un verde más brillante
+                    top: '2px',
+                    right: '2px',
+                    color: '#00FF00',
                   }}
                 />
               )}
@@ -178,7 +194,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
               <Typography
                 variant="body2"
                 sx={{
-                  fontSize: '0.6rem', // Reducir tamaño del texto
+                  fontSize: '0.6rem',
                   fontWeight: 'bold',
                   display: 'flex',
                   justifyContent: 'center',
@@ -190,22 +206,24 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
                 {dispositivo.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '0.75rem', color: '#1976d2', mr: 0.5 }} />
+                <BoltIcon sx={{ fontSize: '0.75rem', color: consumoColor, mr: 0.5 }} />
                 <Typography
                   variant="body2"
                   sx={{
-                    fontSize: '0.6rem', // Reducir tamaño del texto
+                    fontSize: '0.6rem',
                     fontWeight: 'bold',
-                    color: '#1976d2',
+                    color: consumoColor,
                   }}
                 >
-                  {consumo}
+                  {consumoFormateado}
                 </Typography>
               </Box>
             </Card>
           );
         })}
       </Box>
+
+      {/* Botón para asignar y diálogo */}
       {editMode && selectedItems.length > 0 && (
         <Button
           variant="contained"
@@ -216,23 +234,24 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
           Asignar a Habitación
         </Button>
       )}
+
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
         <DialogContent
           sx={{
             fontSize: '0.4rem',
             lineHeight: '0.6rem',
-            maxHeight: '600px', // Aumentar la altura máxima del contenido del dialog
-            overflowY: 'auto', // Habilitar el scroll vertical
+            maxHeight: '600px',
+            overflowY: 'auto',
             '&::-webkit-scrollbar': {
-              width: '4px', // Hacer el scrollbar lo más fino posible
+              width: '4px',
             },
             '&::-webkit-scrollbar-track': {
-              backgroundColor: 'white', // Fondo blanco para el track del scrollbar
+              backgroundColor: 'white',
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#1976d2', // Barra del scrollbar de color azul
-              borderRadius: '10px', // Redondear un poco la barra
+              backgroundColor: '#1ECAFF',
+              borderRadius: '10px',
             },
           }}
         >

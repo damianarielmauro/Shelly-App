@@ -79,7 +79,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
       try {
         await createUser(username, email, password, role);
         setMessage('Usuario creado correctamente');
-        setMessageColor('#1976d2'); // Set success message color to blue
+        setMessageColor('#1ECAFF'); // Set success message color to blue
         setUsername('');
         setEmail('');
         setPassword('');
@@ -126,7 +126,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
       try {
         await updateUserRole(editUserId, role);
         setMessage('Usuario actualizado correctamente');
-        setMessageColor('#1976d2'); // Set success message color to blue
+        setMessageColor('#1ECAFF'); // Set success message color to blue
         setUsername('');
         setEmail('');
         setRole('user'); // Reset role to 'user'
@@ -267,7 +267,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: 'none' },
                 '&:hover fieldset': { borderColor: 'none' },
-                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1976d2' },
+                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
               },
               '& input': {
                 color: 'white',
@@ -295,7 +295,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: 'none' },
                 '&:hover fieldset': { borderColor: 'none' },
-                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1976d2' },
+                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
               },
               '& input': {
                 color: 'white',
@@ -324,7 +324,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: 'none' },
                 '&:hover fieldset': { borderColor: 'none' },
-                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1976d2' },
+                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
               },
               '& input': {
                 color: 'white',
@@ -354,7 +354,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: 'none' },
                 '&:hover fieldset': { borderColor: 'none' },
-                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1976d2' },
+                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
               },
               '& .MuiSelect-select': {
                 color: 'white',
@@ -373,7 +373,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             color="primary"
             onClick={editMode ? handleUpdateUser : handleCreateUser}
             sx={{
-              backgroundColor: '#1976d2',
+              backgroundColor: '#1ECAFF',
               fontSize: '10px',
               height: '40px', // Altura igual a los campos
               marginLeft: '18px',
@@ -408,10 +408,10 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           flexGrow: 1,
           overflowY: 'auto',
           scrollbarWidth: 'thin',
-          scrollbarColor: '#1976d2 black',
+          scrollbarColor: '#1ECAFF black',
           '::-webkit-scrollbar': { width: '6px' },
           '::-webkit-scrollbar-track': { background: 'black' },
-          '::-webkit-scrollbar-thumb': { background: '#1976d2' },
+          '::-webkit-scrollbar-thumb': { background: '#1ECAFF' },
         }}
       >
         <Typography variant="h6" sx={{ mb: 2, fontSize: '1rem' }}>
@@ -443,7 +443,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                     onClick={() => handleOpenDialog(user.id)}
                     variant="contained"
                     sx={{
-                      backgroundColor: '#1976d2', // Mismo color de fondo que el botón de crear usuario
+                      backgroundColor: '#1ECAFF', // Mismo color de fondo que el botón de crear usuario
                       color: 'white', // Mismo color de letra que el botón de crear usuario
                     }}
                   >
@@ -465,7 +465,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                 </Typography>
               ) : (
                 <Typography variant="body2">
-                  <span style={{ color: '#1976d2' }}>Habitaciones permitidas:</span> 
+                  <span style={{ color: '#1ECAFF' }}>Habitaciones permitidas:</span> 
                   <span style={{ color: 'lightgreen' }}>
                     {rooms && user.permissions && user.permissions.length > 0 
                       ? user.permissions.map(id => rooms.find(room => room.id === id)?.nombre).filter(Boolean).join(' - ') 
@@ -492,7 +492,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         backgroundColor: 'white', // Fondo blanco para el track del scrollbar
       },
       '&::-webkit-scrollbar-thumb': {
-        backgroundColor: '#1976d2', // Barra del scrollbar de color azul
+        backgroundColor: '#1ECAFF', // Barra del scrollbar de color azul
         borderRadius: '10px', // Redondear un poco la barra
       },
     }}

@@ -11,7 +11,7 @@
   margin: 0 auto; /* Centrado horizontal */
   box-sizing: border-box; /* Incluir padding y border en el ancho y alto */
   scrollbar-width: thin; /* Scrollbar más fino */
-  scrollbar-color: #1976d2 #000; /* Color del thumb y el fondo de la barra de desplazamiento */
+  scrollbar-color: #1ECAFF #000; /* Color del thumb y el fondo de la barra de desplazamiento */
 }
 
 .device-list-header {
@@ -89,7 +89,7 @@
 }
 
 .device-list::-webkit-scrollbar-thumb {
-  background-color: #1976d2; /* Color del thumb de la barra */
+  background-color: #1ECAFF; /* Color del thumb de la barra */
   border-radius: 4px;
 }
 

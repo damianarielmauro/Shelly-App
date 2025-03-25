@@ -103,7 +103,7 @@ const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
             '& .MuiOutlinedInput-root': {
               '& fieldset': { borderColor: 'none' },
               '&:hover fieldset': { borderColor: 'none' },
-              '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1976d2' },
+              '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
             },
             '& input': {
               color: 'white',
@@ -122,7 +122,7 @@ const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
           onClick={handleDiscovery}
           disabled={isDiscovering}
           sx={{
-            backgroundColor: '#1976d2',
+            backgroundColor: '#1ECAFF',
             fontSize: '10px',
             height: '40px',  // Asegura que el botón tenga la misma altura que el campo de texto
             marginLeft: '18px',
@@ -137,7 +137,7 @@ const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
         </Button>
       </Box>
       {isDiscovering && <LinearProgress />}
-      <Box mt={2} p={2} bgcolor="#333" borderRadius={4} overflow="auto" sx={{ flexGrow: 1, scrollbarWidth: 'thin', scrollbarColor: '#1976d2 #333' }}>
+      <Box mt={2} p={2} bgcolor="#333" borderRadius={4} overflow="auto" sx={{ flexGrow: 1, scrollbarWidth: 'thin', scrollbarColor: '#1ECAFF #333' }}>
         <div ref={terminalRef} style={{ height: '100%', width: '100%' }} />
       </Box>
       <Typography variant="body2" sx={{ color: 'white', mt: 2, flexShrink: 0 }}>
