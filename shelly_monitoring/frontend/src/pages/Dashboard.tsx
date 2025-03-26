@@ -36,18 +36,23 @@ interface Habitacion {
   tablero_id: number;
 }
 
+interface Tablero {
+  id: number;
+  nombre: string;
+}
+
 interface DashboardProps {
   user: {
     permissions: string[];
     username: string;
-    role: string; // Asegúrate de que este campo 'role' esté disponible
+    role: string;
   };
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [habitaciones, setHabitaciones] = useState<Habitacion[]>([]);
-  const [tableros, setTableros] = useState<any[]>([]);
+  const [tableros, setTableros] = useState<Tablero[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [deleteMode, setDeleteMode] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -57,10 +62,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [deleteType, setDeleteType] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [roomMatrixView, setRoomMatrixView] = useState<boolean>(true); // Nuevo estado
-  // Nuevo estado para el diálogo de confirmación de cierre de sesión
+  const [roomMatrixView, setRoomMatrixView] = useState<boolean>(true);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
-  // Este estado ahora contendrá TODAS las habitaciones permitidas, no solo las del tablero actual
   const [todasHabitacionesPermitidasIds, setTodasHabitacionesPermitidasIds] = useState<number[]>([]);
   
   const navigate = useNavigate();
@@ -74,8 +77,56 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
 
     const fetchTableros = async () => {
       try {
-        const data = await getTableros();
-        setTableros(data);
+        // Primero cargamos todos los tableros
+        const allTableros = await getTableros();
+        
+        // Para administradores, mostrar todos los tableros sin filtrar
+        if (isAdmin) {
+          setTableros(allTableros);
+          setLoading(false);
+          return;
+        }
+        
+        // Para usuarios no-admin, filtramos los tableros basados en permisos
+        // 1. Obtener todas las habitaciones a las que el usuario tiene permiso
+        const habitacionesPermitidas = await getHabitaciones();
+        
+        // Si no hay habitaciones permitidas, no mostrar ningún tablero
+        if (!habitacionesPermitidas || habitacionesPermitidas.length === 0) {
+          console.log("Usuario sin habitaciones permitidas");
+          setTableros([]);
+          setLoading(false);
+          return;
+        }
+        
+        // 2. Crear un mapa de habitaciones permitidas por ID para búsqueda rápida
+        const habitacionesPermitidasMap = new Map();
+        habitacionesPermitidas.forEach((hab: Habitacion) => {
+          habitacionesPermitidasMap.set(hab.id, hab);
+        });
+        
+        // 3. Comprobar tablero por tablero cuáles tienen habitaciones permitidas
+        const tablerosConPermiso = [];
+        
+        for (const tablero of allTableros) {
+          const habitacionesTablero = await getHabitacionesByTablero(tablero.id);
+          
+          // Verificar si alguna habitación del tablero está en las permitidas
+          const tienePermiso = habitacionesTablero.some((hab: any) => 
+            habitacionesPermitidasMap.has(hab.id)
+          );
+          
+          if (tienePermiso) {
+            tablerosConPermiso.push(tablero);
+          }
+        }
+        
+        console.log("Tableros con permiso:", tablerosConPermiso.length);
+        console.log("Habitaciones permitidas:", habitacionesPermitidas.length);
+        
+        // 4. Actualizar estado con los tableros filtrados
+        setTableros(tablerosConPermiso);
+        
       } catch (error) {
         console.error("Error fetching tableros:", error);
       } finally {
@@ -84,22 +135,78 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     };
 
     fetchTableros();
-
+    
     // Cargar todas las habitaciones permitidas al iniciar
     const fetchTodasHabitacionesPermitidas = async () => {
       try {
-        const todasHabitaciones = await getHabitaciones();
-        // Para el admin, todas las habitaciones están permitidas
-        // Para usuarios normales, solo las que devuelve la API (que ya están filtradas)
-        const habitacionesIds = todasHabitaciones.map((hab: Habitacion) => hab.id);
-        setTodasHabitacionesPermitidasIds(habitacionesIds);
+        if (isAdmin) {
+          // Para administradores, obtener todas las habitaciones de todos los tableros
+          const allTableros = await getTableros();
+          let allHabitaciones: Habitacion[] = [];
+          
+          // Recopilamos todas las habitaciones de todos los tableros
+          for (const tablero of allTableros) {
+            const habitacionesTablero = await getHabitacionesByTablero(tablero.id);
+            allHabitaciones = [...allHabitaciones, ...habitacionesTablero];
+          }
+          
+          // Eliminar duplicados y obtener solo los IDs
+          const habitacionesIds = Array.from(new Set(allHabitaciones.map(hab => hab.id)));
+          console.log("Admin: Cargadas todas las habitaciones:", habitacionesIds.length);
+          setTodasHabitacionesPermitidasIds(habitacionesIds);
+        } else {
+          // Para usuarios normales, solo las habitaciones permitidas
+          const habitacionesPermitidas = await getHabitaciones();
+          const habitacionesIds = habitacionesPermitidas.map((hab: Habitacion) => hab.id);
+          console.log("Usuario: Cargadas habitaciones permitidas:", habitacionesIds.length);
+          setTodasHabitacionesPermitidasIds(habitacionesIds);
+        }
       } catch (error) {
         console.error("Error fetching todas las habitaciones permitidas:", error);
       }
     };
 
     fetchTodasHabitacionesPermitidas();
-  }, []);
+  }, [isAdmin]); // Solo se ejecuta una vez al cargar y cuando cambia isAdmin
+
+  useEffect(() => {
+    const fetchHabitacionesPermitidas = async () => {
+      try {
+        // Verificar que exista un tablero seleccionado
+        if (!tableros || tableros.length === 0 || selectedTab >= tableros.length) {
+          setHabitaciones([]);
+          return;
+        }
+        
+        const tableroId = tableros[selectedTab].id;
+        console.log(`Fetching habitaciones for tablero ${tableroId}...`);
+        
+        const habitacionesTablero = await getHabitacionesByTablero(tableroId);
+        
+        // Para administradores, mostrar todas las habitaciones del tablero
+        if (isAdmin) {
+          console.log(`Admin user: showing all ${habitacionesTablero.length} habitaciones`);
+          setHabitaciones(habitacionesTablero);
+          return;
+        }
+        
+        // Para usuarios normales, filtrar por permisos
+        const habitacionesPermitidas = await getHabitaciones();
+        const habitacionesFiltradas = habitacionesTablero.filter((hab: Habitacion) => 
+          habitacionesPermitidas.some((perm: Habitacion) => perm.id === hab.id)
+        );
+        
+        console.log(`Regular user: showing ${habitacionesFiltradas.length} of ${habitacionesTablero.length} habitaciones`);
+        setHabitaciones(habitacionesFiltradas);
+        
+      } catch (error) {
+        console.error("Error fetching habitaciones:", error);
+        setHabitaciones([]);
+      }
+    };
+
+    fetchHabitacionesPermitidas();
+  }, [selectedTab, tableros, isAdmin]); // Ejecutar cuando cambia selectedTab, tableros o isAdmin
 
   const handleDeleteSelectionChange = (id: number) => {
     setSelectedItems((prevSelected) =>
@@ -152,9 +259,29 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           setDeleteMode(false);
           
           // Actualizar la lista de todas las habitaciones permitidas
-          const todasHabitaciones = await getHabitaciones();
-          const habitacionesIds = todasHabitaciones.map((hab: Habitacion) => hab.id);
-          setTodasHabitacionesPermitidasIds(habitacionesIds);
+          const fetchActualizarHabitaciones = async () => {
+            if (isAdmin) {
+              // Para administradores, recargamos todas las habitaciones
+              const allTableros = await getTableros();
+              let allHabitaciones: Habitacion[] = [];
+              
+              for (const tablero of allTableros) {
+                const habitacionesTablero = await getHabitacionesByTablero(tablero.id);
+                allHabitaciones = [...allHabitaciones, ...habitacionesTablero];
+              }
+              
+              const habitacionesIds = Array.from(new Set(allHabitaciones.map(hab => hab.id)));
+              setTodasHabitacionesPermitidasIds(habitacionesIds);
+            } else {
+              // Para usuarios normales, solo las habitaciones permitidas
+              const habitacionesPermitidas = await getHabitaciones();
+              const habitacionesIds = habitacionesPermitidas.map((hab: Habitacion) => hab.id);
+              setTodasHabitacionesPermitidasIds(habitacionesIds);
+            }
+          };
+          
+          fetchActualizarHabitaciones();
+          
         } else if (deleteType === 'Tablero') {
           const tablerosConHabitaciones = await Promise.all(selectedItems.map(async (id) => {
             const habitacionesAsignadas = await getHabitacionesByTablero(id);
@@ -172,8 +299,37 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           for (const id of tablerosSinHabitaciones) {
             await deleteTablero(id);
           }
-          const data = await getTableros();
-          setTableros(data);
+          
+          // Recargar los tableros
+          if (isAdmin) {
+            const data = await getTableros();
+            setTableros(data);
+          } else {
+            // Para usuarios normales, filtrar tableros según permisos
+            const allTableros = await getTableros();
+            const habitacionesPermitidas = await getHabitaciones();
+            
+            const habitacionesPermitidasMap = new Map();
+            habitacionesPermitidas.forEach((hab: Habitacion) => {
+              habitacionesPermitidasMap.set(hab.id, hab);
+            });
+            
+            const tablerosConPermiso = [];
+            
+            for (const tablero of allTableros) {
+              const habitacionesTablero = await getHabitacionesByTablero(tablero.id);
+              const tienePermiso = habitacionesTablero.some((hab: any) => 
+                habitacionesPermitidasMap.has(hab.id)
+              );
+              
+              if (tienePermiso) {
+                tablerosConPermiso.push(tablero);
+              }
+            }
+            
+            setTableros(tablerosConPermiso);
+          }
+          
           setSelectedItems([]);
           setDeleteMode(false);
         }
@@ -185,30 +341,52 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     }
   };
 
-  useEffect(() => {
-    const fetchHabitacionesPermitidas = async () => {
-      try {
-        const habitacionesPermitidas = await getHabitaciones();
-        const tableroId = tableros[selectedTab].id;
-        const habitacionesTablero = await getHabitacionesByTablero(tableroId);
-
-        const habitacionesFiltradas = habitacionesTablero.filter((hab: Habitacion) => 
-          habitacionesPermitidas.some((perm: Habitacion) => perm.id === hab.id)
-        );
-        
-        setHabitaciones(habitacionesFiltradas);
-      } catch (error) {
-        console.error("Error fetching habitaciones:", error);
-      }
-    };
-
-    if (tableros.length > 0 && tableros[selectedTab]) {
-      fetchHabitacionesPermitidas();
-    }
-  }, [selectedTab, tableros]);
-
   if (loading) {
     return <CircularProgress />;
+  }
+
+  // Manejo de caso cuando el usuario no tiene acceso a ningún tablero
+  if (tableros.length === 0) {
+    return (
+      <Box 
+        sx={{ 
+          backgroundColor: 'black', 
+          color: 'white', 
+          height: '100vh', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          textAlign: 'center',
+          padding: 2
+        }}
+      >
+        <Typography variant="h5" sx={{ marginBottom: 2 }}>
+          No tienes acceso a ningún tablero
+        </Typography>
+        <Typography variant="body1">
+          Contacta al administrador para solicitar acceso a tableros y habitaciones
+        </Typography>
+        <Button 
+          variant="contained" 
+          sx={{ 
+            backgroundColor: '#1ECAFF', 
+            color: 'black',
+            fontWeight: 'bold',
+            marginTop: 4,
+            '&:hover': {
+              backgroundColor: '#18b2e1',
+            }
+          }}
+          onClick={() => {
+            localStorage.removeItem('token');
+            navigate('/login');
+          }}
+        >
+          Cerrar sesión
+        </Button>
+      </Box>
+    );
   }
 
   const handleUserMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -266,7 +444,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           setSelectedItems={setSelectedItems} 
           deleteType={deleteType} 
           user={user}
-          setRoomMatrixView={setRoomMatrixView} // Pasamos setRoomMatrixView
+          setRoomMatrixView={setRoomMatrixView} 
+          tableros={tableros} // Pasamos explícitamente los tableros filtrados
         />
         <Box display="flex" alignItems="center" sx={{ marginLeft: 'auto', justifyContent: 'flex-end', alignItems: 'center' }}>
           {editMode && (
@@ -378,8 +557,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           overflow: 'hidden',
           p: 2 
         }}>
-          {/* Pasamos todas las habitaciones permitidas, no solo las del tablero actual */}
-          <DeviceList habitacionesPermitidas={todasHabitacionesPermitidasIds} />
+          {/* Pasamos todas las habitaciones permitidas y la flag isAdmin */}
+          <DeviceList 
+            habitacionesPermitidas={todasHabitacionesPermitidasIds} 
+            isAdmin={isAdmin} 
+          />
         </Box>
       </Box>
 

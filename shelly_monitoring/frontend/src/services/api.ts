@@ -183,6 +183,35 @@ export const getHabitacionesByTablero = async (tableroId: number): Promise<any> 
   }
 };
 
+// Añadir esta función junto a las otras funciones de API existentes
+
+/**
+ * Actualiza un tablero existente
+ * @param id ID del tablero a actualizar
+ * @param data Datos para actualizar (nombre del tablero)
+ * @returns El tablero actualizado
+ */
+export const updateTablero = async (id: number, data: { nombre: string }) => {
+  try {
+    const response = await fetch(`/api/tableros/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error updating tablero: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error in updateTablero:', error);
+    throw error;
+  }
+};
+
 // Descubrimiento
 export const startDiscovery = async (subredes: string[]): Promise<any> => {
   try {

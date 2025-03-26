@@ -12,6 +12,7 @@ interface Tab {
 
 interface User {
   permissions: string[];
+  role?: string;
 }
 
 interface TabManagerProps {
@@ -29,12 +30,14 @@ interface TabManagerProps {
   deleteType: string;
   user: User;
   setRoomMatrixView: React.Dispatch<React.SetStateAction<boolean>>;
+  tableros?: any[]; // Usar los tableros filtrados que recibimos de Dashboard
 }
 
 const TabManager: React.FC<TabManagerProps> = ({
   selectedTab, setSelectedTab, editMode, setEditMode, setHabitaciones,
   setTableros, deleteMode, setDeleteMode, handleDeleteOptionSelect,
-  selectedItems, setSelectedItems, deleteType, user, setRoomMatrixView
+  selectedItems, setSelectedItems, deleteType, user, setRoomMatrixView,
+  tableros = [] // Usar los tableros filtrados que recibimos de Dashboard
 }) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [habitaciones, setHabitacionesState] = useState<any[]>([]);
@@ -44,26 +47,54 @@ const TabManager: React.FC<TabManagerProps> = ({
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<string>('');
   const [newItemName, setNewItemName] = useState<string>('');
+  const isAdmin = user.role === 'admin';
 
+  // Usar los tableros filtrados que recibimos como prop
+  useEffect(() => {
+    if (tableros && tableros.length > 0) {
+      setTabs(tableros);
+    }
+  }, [tableros]);
+
+  // Si no recibimos tableros filtrados (compatibilidad con versiones anteriores),
+  // cargar todos los tableros y filtrarlos aquí
   useEffect(() => {
     const fetchTableros = async () => {
-      try {
-        const data = await getTableros();
-        setTabs(data);
-      } catch (error) {
-        console.error('Error fetching tableros:', error);
+      // Solo cargar si no recibimos tableros como prop
+      if (!tableros || tableros.length === 0) {
+        try {
+          const data = await getTableros();
+          setTabs(data);
+        } catch (error) {
+          console.error('Error fetching tableros:', error);
+        }
       }
     };
 
     fetchTableros();
-  }, []);
+  }, [tableros]);
 
   useEffect(() => {
     const fetchHabitaciones = async () => {
-      if (tabs.length > 0 && tabs[selectedTab]) {
+      if (tabs.length > 0 && selectedTab < tabs.length) {
         try {
-          const data = await getHabitaciones();
-          const filteredHabitaciones = data.filter((hab: any) => hab.tablero_id === tabs[selectedTab]?.id);
+          // Para administradores, mostrar todas las habitaciones del tablero
+          if (isAdmin) {
+            const tableroHabitaciones = await getHabitacionesByTablero(tabs[selectedTab].id);
+            setHabitaciones(tableroHabitaciones);
+            setHabitacionesState(tableroHabitaciones);
+            return;
+          }
+          
+          // Para usuarios regulares, filtrar por permisos
+          const allHabitaciones = await getHabitaciones();
+          const tableroHabitaciones = await getHabitacionesByTablero(tabs[selectedTab].id);
+          
+          // Filtrar las habitaciones del tablero que el usuario tiene permitidas
+          const filteredHabitaciones = tableroHabitaciones.filter((tabHab: any) => 
+            allHabitaciones.some((permHab: any) => permHab.id === tabHab.id)
+          );
+          
           setHabitaciones(filteredHabitaciones);
           setHabitacionesState(filteredHabitaciones);
         } catch (error) {
@@ -73,7 +104,7 @@ const TabManager: React.FC<TabManagerProps> = ({
     };
 
     fetchHabitaciones();
-  }, [selectedTab, tabs]);
+  }, [selectedTab, tabs, isAdmin]);
 
   const handleTabChange = (event: React.SyntheticEvent | null, newValue: number) => {
     // Ya sea el mismo tablero u otro diferente, siempre establecemos roomMatrixView a true
@@ -89,6 +120,7 @@ const TabManager: React.FC<TabManagerProps> = ({
     await createTablero(nombre);
     const data = await getTableros();
     setTabs(data);
+    setTableros(data); // Actualizar los tableros en el Dashboard también
     setSelectedTab(data.length - 1);
   };
 
@@ -104,6 +136,7 @@ const TabManager: React.FC<TabManagerProps> = ({
     setHabitacionesState(filteredHabitaciones);
     const updatedTableros = await getTableros();
     setTabs(updatedTableros);
+    setTableros(updatedTableros); // Actualizar los tableros en el Dashboard también
   };
 
   const handleRenameTablero = async (id: number, nombre: string) => {
@@ -114,6 +147,7 @@ const TabManager: React.FC<TabManagerProps> = ({
     await updateTableroName(id, nombre);
     const data = await getTableros();
     setTabs(data);
+    setTableros(data); // Actualizar los tableros en el Dashboard también
     setRenamingTab(null);
   };
 
@@ -130,6 +164,7 @@ const TabManager: React.FC<TabManagerProps> = ({
     await deleteTablero(id);
     const data = await getTableros();
     setTabs(data);
+    setTableros(data); // Actualizar los tableros en el Dashboard también
     if (selectedTab >= data.length) {
       setSelectedTab(data.length - 1);
     }
@@ -146,7 +181,6 @@ const TabManager: React.FC<TabManagerProps> = ({
   const handleDialogOpen = (type: string) => {
     setDialogType(type);
     setDialogOpen(true);
-    handleMenuClose(); // Cerrar el menú después de seleccionar
   };
 
   const handleDialogClose = () => {
@@ -167,7 +201,7 @@ const TabManager: React.FC<TabManagerProps> = ({
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
         <Tabs
-          value={selectedTab}
+          value={selectedTab < tabs.length ? selectedTab : 0}
           onChange={handleTabChange}
           aria-label="tabs"
           sx={{
@@ -177,13 +211,14 @@ const TabManager: React.FC<TabManagerProps> = ({
               alignItems: 'center',
             },
             '& .Mui-selected': {
-              color: 'blue',
+              color: '#1ECAFF',
               fontWeight: 'bold',
             },
             flexGrow: 1
           }}
           variant="scrollable"
           scrollButtons="auto"
+          TabIndicatorProps={{ style: { backgroundColor: '#1ECAFF' } }}
         >
           {tabs.map((tab, index) => (
             <Tab
@@ -230,67 +265,23 @@ const TabManager: React.FC<TabManagerProps> = ({
         {editMode && (
           <Tooltip title="Agregar" sx={{ marginLeft: 'auto' }}>
             <IconButton color="inherit" onClick={handleMenuClick}>
-              <AddIcon sx={{ color: 'white' }} />
+              <AddIcon />
             </IconButton>
           </Tooltip>
         )}
       </Box>
-
-      {/* Menú de AddIcon estilizado */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
-        PaperProps={{ 
-          sx: { 
-            minWidth: '150px', 
-            backgroundColor: '#333',
-            color: 'white',
-            borderRadius: '4px',
-          }
-        }}
       >
-        <MenuItem 
-          onClick={() => handleDialogOpen('Tablero')} 
-          sx={{ 
-            color: '#1ECAFF',
-            '&:hover': {
-              backgroundColor: 'rgba(30, 202, 255, 0.1)',
-            }
-          }}
-        >
-          Tablero
-        </MenuItem>
-        <MenuItem 
-          onClick={() => handleDialogOpen('Habitación')} 
-          sx={{ 
-            color: '#1ECAFF',
-            '&:hover': {
-              backgroundColor: 'rgba(30, 202, 255, 0.1)',
-            }
-          }}
-        >
-          Habitación
-        </MenuItem>
+        <MenuItem onClick={() => handleDialogOpen('Tablero')}>Tablero</MenuItem>
+        <MenuItem onClick={() => handleDialogOpen('Habitación')}>Habitación</MenuItem>
       </Menu>
-
-      {/* Diálogo para crear tablero/habitación estilizado */}
-      <Dialog 
-        open={dialogOpen} 
-        onClose={handleDialogClose}
-        PaperProps={{
-          style: {
-            backgroundColor: '#333',
-            color: 'white',
-            borderRadius: '10px',
-          }
-        }}
-      >
-        <DialogTitle sx={{ color: '#1ECAFF', fontWeight: 'bold' }}>
-          Agregar {dialogType}
-        </DialogTitle>
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>Agregar {dialogType}</DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ color: 'white' }}>
+          <DialogContentText>
             Por favor ingresa el nombre del {dialogType.toLowerCase()}.
           </DialogContentText>
           <TextField
@@ -301,52 +292,14 @@ const TabManager: React.FC<TabManagerProps> = ({
             fullWidth
             value={newItemName}
             onChange={(e) => setNewItemName(e.target.value)}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': { borderColor: 'gray' },
-                '&:hover fieldset': { borderColor: '#1ECAFF' },
-                '&.Mui-focused fieldset': { borderColor: '#1ECAFF' },
-                '& input': { color: 'white' },
-              },
-              '& .MuiInputLabel-root': { 
-                color: 'gray',
-                '&.Mui-focused': {
-                  color: '#1ECAFF'
-                }
-              }
-            }}
           />
         </DialogContent>
-        <DialogActions sx={{ padding: '16px' }}>
-          <Button 
-            onClick={handleDialogClose} 
-            sx={{ 
-              color: '#1ECAFF',
-              '&:hover': {
-                backgroundColor: 'rgba(30, 202, 255, 0.1)',
-              }
-            }}
-          >
-            CANCELAR
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancelar
           </Button>
-          <Button 
-            onClick={handleDialogSubmit} 
-            variant="contained" 
-            disabled={!newItemName.trim()}
-            sx={{ 
-              backgroundColor: '#1ECAFF', 
-              color: 'black',
-              fontWeight: 'bold',
-              '&:hover': {
-                backgroundColor: '#18b2e1',
-              },
-              '&.Mui-disabled': {
-                backgroundColor: 'rgba(30, 202, 255, 0.3)',
-                color: 'rgba(0, 0, 0, 0.5)',
-              }
-            }}
-          >
-            AGREGAR
+          <Button onClick={handleDialogSubmit} color="primary">
+            Agregar
           </Button>
         </DialogActions>
       </Dialog>
