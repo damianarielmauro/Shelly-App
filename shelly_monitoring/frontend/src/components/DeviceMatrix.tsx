@@ -2,32 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Card, Checkbox, Button, Dialog, DialogTitle, DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { getHabitaciones, asignarHabitacion } from '../services/api';
-import { 
-  obtenerDispositivosConConsumo, 
-  formatearConsumo,
-  DispositivoConConsumo
-} from '../services/consumptionService';
+import { getDispositivos, getHabitaciones, asignarHabitacion } from '../services/api';
 
 interface DeviceMatrixProps {
   user: {
     permissions: string[];
   };
   editMode: boolean;
-  // Nuevas props para comunicación con Settings.tsx
-  onSelectedItemsChange?: (items: number[]) => void;
-  showRoomDialog?: boolean;
-  setShowRoomDialog?: React.Dispatch<React.SetStateAction<boolean>>;
+  // Nuevas propiedades para manejar la comunicación con el componente padre
+  onSelectedItemsChange?: (devices: number[]) => void; // Función para notificar cambios en los dispositivos seleccionados
+  showRoomDialog?: boolean; // Controla si se muestra el diálogo de habitaciones
+  setShowRoomDialog?: React.Dispatch<React.SetStateAction<boolean>>; // Actualiza el estado del diálogo
 }
 
 const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ 
   user, 
-  editMode,
-  onSelectedItemsChange,
-  showRoomDialog = false,
-  setShowRoomDialog
+  editMode, 
+  onSelectedItemsChange, 
+  showRoomDialog = false, 
+  setShowRoomDialog 
 }) => {
-  const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
+  const [dispositivos, setDispositivos] = useState<any[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
@@ -35,42 +30,38 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
 
   const [contadorAsignados, setContadorAsignados] = useState(0);
   const [contadorSinAsignar, setContadorSinAsignar] = useState(0);
-  
+
+  // Efecto para obtener los dispositivos
   useEffect(() => {
     const fetchDispositivos = async () => {
       try {
-        const data = await obtenerDispositivosConConsumo();
-        const sortedData = [...data].sort((a, b) => {
+        const data = await getDispositivos();
+        const sortedData = data.sort((a: any, b: any) => {
           if (a.habitacion_id && !b.habitacion_id) return 1;
           if (!a.habitacion_id && b.habitacion_id) return -1;
           return a.nombre.localeCompare(b.nombre);
         });
         setDispositivos(sortedData);
-        setContadorAsignados(data.filter(d => d.habitacion_id).length);
-        setContadorSinAsignar(data.filter(d => !d.habitacion_id).length);
+        setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
+        setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
       } catch (error) {
         console.error('Error al obtener los dispositivos:', error);
       }
     };
 
     fetchDispositivos();
-    
-    // Actualizar datos cada 2 segundos
-    const intervalo = setInterval(fetchDispositivos, 2000);
-    
-    return () => clearInterval(intervalo);
   }, []);
 
-  // Enviar los dispositivos seleccionados a Settings.tsx
+  // Efecto para notificar al componente padre sobre cambios en los elementos seleccionados
   useEffect(() => {
     if (onSelectedItemsChange) {
       onSelectedItemsChange(selectedItems);
     }
   }, [selectedItems, onSelectedItemsChange]);
 
-  // Responder al cambio de showRoomDialog desde Settings.tsx
+  // Efecto para controlar el diálogo desde el componente padre
   useEffect(() => {
-    if (showRoomDialog) {
+    if (showRoomDialog && !open) {
       handleAssignClick();
     }
   }, [showRoomDialog]);
@@ -95,7 +86,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
 
   const handleClose = () => {
     setOpen(false);
-    // Notificar a Settings.tsx que el diálogo se cerró
+    // Si el diálogo se está controlando desde el componente padre, actualizamos su estado
     if (setShowRoomDialog) {
       setShowRoomDialog(false);
     }
@@ -111,29 +102,24 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
       await asignarHabitacion(selectedItems, habitacionId);
       setSelectedItems([]);
       setOpen(false);
-      // Notificar a Settings.tsx que el diálogo se cerró
+      // Si el diálogo se está controlando desde el componente padre, actualizamos su estado
       if (setShowRoomDialog) {
         setShowRoomDialog(false);
       }
       
       // Refetch dispositivos after assignment
-      const data = await obtenerDispositivosConConsumo();
-      const sortedData = [...data].sort((a, b) => {
+      const data = await getDispositivos();
+      const sortedData = data.sort((a: any, b: any) => {
         if (a.habitacion_id && !b.habitacion_id) return 1;
         if (!a.habitacion_id && b.habitacion_id) return -1;
         return a.nombre.localeCompare(b.nombre);
       });
       setDispositivos(sortedData);
-      setContadorAsignados(data.filter(d => d.habitacion_id).length);
-      setContadorSinAsignar(data.filter(d => !d.habitacion_id).length);
+      setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
+      setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
     } catch (error) {
       console.error('Error al asignar habitación:', error);
     }
-  };
-
-  // Función para obtener el color según el consumo (usado en DeviceList.tsx)
-  const getColorForConsumo = (consumo: number) => {
-    return consumo >= 0 ? '#1ECAFF' : '#00ff00'; // Azul para positivos, verde para negativos
   };
 
   return (
@@ -150,7 +136,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
           backgroundColor: 'black',
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#1ECAFF',
+          backgroundColor: '#1976d2',
         },
       }}
     >
@@ -165,27 +151,27 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
         <Typography variant="body1" sx={{ color: 'white', mx: 1 }}>
           - Sin Asignar: {contadorSinAsignar}
         </Typography>
-        <Typography variant="body1" sx={{ color: '#1ECAFF', fontWeight: 'bold' }}>
+        <Typography variant="body1" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
           - Totales: {dispositivos.length}
         </Typography>
       </Box>
       <Box
         display="flex"
         flexWrap="wrap"
-        gap={1}
+        gap={0.5} // Reducido de 1 a 0.5 (de 8px a 4px)
       >
         {dispositivos.map((dispositivo) => {
-          const consumoFormateado = formatearConsumo(dispositivo.consumo);
-          
-          // Determinar color basado en el valor de consumo (azul para positivo, verde para negativo)
-          const consumoColor = getColorForConsumo(dispositivo.consumo);
+          const consumo =
+            dispositivo.consumo < 1000
+              ? `${dispositivo.consumo} W`
+              : `${(dispositivo.consumo / 1000).toFixed(2)} kW`;
 
           return (
             <Card
               key={dispositivo.id}
               sx={{
-                m: 1,
-                p: 2,
+                m: 0.5, // Reducido de 1 a 0.5 (de 8px a 4px)
+                p: 1.5, // Reducido de 2 a 1.5 (de 16px a 12px)
                 backgroundColor: '#333',
                 color: 'white',
                 width: '240px',
@@ -238,80 +224,59 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
                 {dispositivo.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '0.75rem', color: consumoColor, mr: 0.5 }} />
+                <BoltIcon sx={{ fontSize: '0.75rem', color: '#1976d2', mr: 0.5 }} />
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: '0.6rem',
                     fontWeight: 'bold',
-                    color: consumoColor,
+                    color: '#1976d2',
                   }}
                 >
-                  {consumoFormateado}
+                  {consumo}
                 </Typography>
               </Box>
             </Card>
           );
         })}
       </Box>
-
-      {/* Diálogo para asignar habitación con estilo mejorado */}
-      <Dialog 
-        open={open} 
-        onClose={handleClose}
-        PaperProps={{
-          style: {
-            backgroundColor: '#333',
-            color: 'white',
-            borderRadius: '10px',
-            minWidth: '300px'
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          color: '#1ECAFF', 
-          fontSize: '1.1rem',
-          fontWeight: 'bold'
-        }}>
+      {editMode && selectedItems.length > 0 && !showRoomDialog && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAssignClick}
+          sx={{ position: 'fixed', bottom: '725px', right: '98px', height: '25px', zIndex: 1000 }}
+        >
           Asignar a Habitación
-        </DialogTitle>
+        </Button>
+      )}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
         <DialogContent
           sx={{
-            maxHeight: '600px',
+            fontSize: '0.4rem',
+            lineHeight: '0.6rem',
+            maxHeight: '600px', 
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               width: '4px',
             },
             '&::-webkit-scrollbar-track': {
-              backgroundColor: '#222',
+              backgroundColor: 'white',
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#1ECAFF',
+              backgroundColor: '#1976d2',
               borderRadius: '10px',
             },
-            pt: 1
           }}
         >
           <RadioGroup value={selectedHabitacion} onChange={handleHabitacionChange}>
             <FormControlLabel 
               key="ninguna" 
               value="null" 
-              control={
-                <Radio 
-                  sx={{ 
-                    color: 'white',
-                    '&.Mui-checked': {
-                      color: '#1ECAFF',
-                    },
-                  }} 
-                />
-              } 
+              control={<Radio sx={{ padding: '2px' }} />} 
               label={
-                <Box sx={{ 
-                  fontSize: '0.9rem', 
-                  fontWeight: 'bold',
-                  color: 'white' 
-                }}>
+                <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
                   Ninguna
                 </Box>
               }
@@ -320,22 +285,9 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
               <FormControlLabel 
                 key={habitacion.id} 
                 value={habitacion.id.toString()} 
-                control={
-                  <Radio 
-                    sx={{ 
-                      color: 'white',
-                      '&.Mui-checked': {
-                        color: '#1ECAFF',
-                      },
-                    }} 
-                  />
-                } 
+                control={<Radio sx={{ padding: '2px' }} />} 
                 label={
-                  <Box sx={{ 
-                    fontSize: '0.9rem', 
-                    fontWeight: 'bold',
-                    color: 'white' 
-                  }}>
+                  <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
                     {habitacion.nombre}
                   </Box>
                 }
@@ -343,31 +295,12 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
             ))}
           </RadioGroup>
         </DialogContent>
-        <DialogActions sx={{ padding: '16px' }}>
-          <Button 
-            onClick={handleClose} 
-            sx={{ 
-              color: '#1ECAFF',
-              '&:hover': {
-                backgroundColor: 'rgba(30, 202, 255, 0.1)',
-              }
-            }}
-          >
-            CANCELAR
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancelar
           </Button>
-          <Button 
-            onClick={handleAssign} 
-            variant="contained" 
-            sx={{ 
-              backgroundColor: '#1ECAFF', 
-              color: 'black',
-              fontWeight: 'bold',
-              '&:hover': {
-                backgroundColor: '#18b2e1',
-              }
-            }}
-          >
-            ASIGNAR
+          <Button onClick={handleAssign} color="primary">
+            Asignar
           </Button>
         </DialogActions>
       </Dialog>
@@ -375,5 +308,4 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
   );
 };
 
-// Aseguramos que el componente se exporte como default
 export default DeviceMatrix;
