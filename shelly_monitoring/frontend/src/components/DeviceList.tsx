@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, List, ListItem, Typography } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import { getDispositivos } from '../services/api';
+import { obtenerDispositivosConConsumo } from '../services/consumptionService';
 
 // Definimos una interfaz para nuestros dispositivos
 interface Dispositivo {
@@ -27,27 +28,21 @@ const DeviceList: React.FC<DeviceListProps> = (props) => {
   const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
   const [totalDispositivos, setTotalDispositivos] = useState(0);
   const [dispositivosConConsumo, setDispositivosConConsumo] = useState<Dispositivo[]>([]);
+  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchDispositivos = async () => {
       try {
+        // Obtenemos la lista base de dispositivos solo la primera vez
         const data = await getDispositivos();
         setDispositivos(data);
         setTotalDispositivos(data.length);
 
-        // Generar consumos aleatorios y asignar un valor específico a "Garage_Tomas"
-        const dispositivosConValores = data.map((dispositivo: Dispositivo) => {
-          let consumo;
-          if (dispositivo.nombre === "Garage_Tomas") {
-            consumo = -12800; // -12.80kW para Garage_Tomas
-          } else {
-            consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7; // Valor aleatorio entre 7W y 3578W
-          }
-          return { ...dispositivo, consumo };
-        });
+        // Obtener los dispositivos con consumos actualizados
+        const dispositivosActualizados = await obtenerDispositivosConConsumo();
 
         // Ordenar dispositivos por consumo de mayor a menor (considerando valores absolutos para comparación)
-        const dispositivosOrdenados = dispositivosConValores.sort((a: Dispositivo, b: Dispositivo) => 
+        const dispositivosOrdenados = dispositivosActualizados.sort((a: Dispositivo, b: Dispositivo) => 
           Math.abs(b.consumo || 0) - Math.abs(a.consumo || 0)
         );
 
@@ -57,7 +52,33 @@ const DeviceList: React.FC<DeviceListProps> = (props) => {
       }
     };
 
+    // Obtener datos iniciales
     fetchDispositivos();
+    
+    // Actualizar datos cada 2 segundos
+    const interval = setInterval(async () => {
+      try {
+        const dispositivosActualizados = await obtenerDispositivosConConsumo();
+        
+        // Ordenar dispositivos por consumo de mayor a menor (considerando valores absolutos)
+        const dispositivosOrdenados = dispositivosActualizados.sort((a: Dispositivo, b: Dispositivo) => 
+          Math.abs(b.consumo || 0) - Math.abs(a.consumo || 0)
+        );
+
+        setDispositivosConConsumo(dispositivosOrdenados);
+      } catch (error) {
+        console.error('Error al actualizar dispositivos:', error);
+      }
+    }, 2000);
+    
+    setRefreshInterval(interval);
+    
+    // Limpieza al desmontar
+    return () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    };
   }, []);
 
   // Valor fijo para el consumo total: -12.80kW
@@ -80,12 +101,12 @@ const DeviceList: React.FC<DeviceListProps> = (props) => {
       backgroundColor: '#000', // Fondo negro
     },
     '&::-webkit-scrollbar-thumb': {
-      backgroundColor: '#2392ff', // Cambiado al nuevo color azul
+      backgroundColor: '#1ECAFF', // Cambiado al nuevo color azul
       borderRadius: '3px', // Bordes redondeados para el thumb
     },
     // Firefox scrollbar
     scrollbarWidth: 'thin',
-    scrollbarColor: '#2392ff #000', // thumb y track
+    scrollbarColor: '#1ECAFF #000', // thumb y track
   };
 
   return (

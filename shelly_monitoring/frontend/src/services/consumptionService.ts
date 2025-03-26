@@ -1,54 +1,54 @@
 import { getDispositivos, getHabitaciones } from './api';
 
-// Interface para los datos de consumo
+// Interfaces para tipar los datos
 export interface DispositivoConConsumo {
   id: number;
   nombre: string;
-  habitacion_id: number | null;
-  habitacion_nombre?: string;
+  habitacion_id?: number | null;
   consumo: number;
-  // otros campos que pueda tener el dispositivo
+  [key: string]: any;
+}
+
+// Interfaz para dispositivo sin consumo (como llega de la API)
+interface Dispositivo {
+  id: number;
+  nombre: string;
+  habitacion_id?: number | null;
+  [key: string]: any;
 }
 
 export interface HabitacionConConsumo {
   id: number;
   nombre: string;
-  consumo: number;
   tablero_id: number;
-  // otros campos que pueda tener la habitación
+  consumo: number;
+  [key: string]: any;
 }
 
-// Cache de datos de consumo
-let dispositivosCache: DispositivoConConsumo[] = [];
-let habitacionesCache: HabitacionConConsumo[] = [];
-let ultimaActualizacion: number = 0;
-const INTERVALO_REFRESCO = 2000; // 2 segundos en ms
+// Interfaz para habitación sin consumo (como llega de la API)
+interface Habitacion {
+  id: number;
+  nombre: string;
+  tablero_id: number;
+  [key: string]: any;
+}
 
-/**
- * Obtiene dispositivos con sus datos de consumo
- * Esta función simula la obtención de datos de consumo, pero está diseñada
- * para ser fácilmente reemplazable por una implementación que obtenga datos reales
- */
+// Función para obtener todos los dispositivos con sus consumos actualizados
 export const obtenerDispositivosConConsumo = async (): Promise<DispositivoConConsumo[]> => {
-  const ahora = Date.now();
-  
-  // Si han pasado menos de 2 segundos y tenemos datos en cache, devolver la cache
-  if (ahora - ultimaActualizacion < INTERVALO_REFRESCO && dispositivosCache.length > 0) {
-    return dispositivosCache;
-  }
-  
   try {
-    // Obtener lista base de dispositivos
+    // Obtener la lista base de dispositivos
     const dispositivos = await getDispositivos();
     
-    // Asignar valores de consumo simulados
-    // ESTE ES EL PUNTO DONDE SE REEMPLAZARÁ LA LÓGICA PARA OBTENER DATOS REALES
-    dispositivosCache = dispositivos.map((dispositivo: any) => {
-      let consumo;
+    // Generar/actualizar consumos para cada dispositivo
+    return dispositivos.map((dispositivo: Dispositivo) => {
+      let consumo: number;
+      
+      // Asignación especial para dispositivo Garage_Tomas (generación)
       if (dispositivo.nombre === "Garage_Tomas") {
-        consumo = -12800; // -12.80kW para Garage_Tomas
+        consumo = -12800; // -12.80kW
       } else {
-        consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7; // Valor entre 7W y 3578W
+        // Valores aleatorios para el resto de dispositivos entre 7W y 3578W
+        consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
       }
       
       return {
@@ -57,26 +57,36 @@ export const obtenerDispositivosConConsumo = async (): Promise<DispositivoConCon
       };
     });
     
-    ultimaActualizacion = ahora;
-    return dispositivosCache;
+    // Cuando implementemos la obtención de datos reales, 
+    // simplemente reemplazaremos esta lógica sin afectar al resto de la aplicación
+    
   } catch (error) {
-    console.error('Error al obtener dispositivos con consumo:', error);
-    throw error;
+    console.error("Error al obtener dispositivos con consumo:", error);
+    return [];
   }
 };
 
-/**
- * Obtiene habitaciones con el consumo total calculado
- */
+// Función para obtener habitaciones con consumos calculados
 export const obtenerHabitacionesConConsumo = async (): Promise<HabitacionConConsumo[]> => {
   try {
-    // Obtener habitaciones y dispositivos con consumo
-    const habitacionesData = await getHabitaciones();
+    // Obtener la lista base de habitaciones
+    const habitaciones = await getHabitaciones();
+    
+    // Obtener dispositivos con consumos
     const dispositivos = await obtenerDispositivosConConsumo();
     
-    // Calcular consumo por habitación
-    const habitacionesConConsumo = habitacionesData.map((habitacion: any) => {
-      const consumoTotal = calcularConsumoHabitacion(habitacion.id, dispositivos);
+    // Calcular el consumo total para cada habitación
+    return habitaciones.map((habitacion: Habitacion) => {
+      // Filtrar dispositivos que pertenecen a esta habitación
+      const dispositivosHabitacion = dispositivos.filter(
+        (dispositivo: DispositivoConConsumo) => dispositivo.habitacion_id === habitacion.id
+      );
+      
+      // Calcular la suma de consumos
+      const consumoTotal = dispositivosHabitacion.reduce(
+        (suma: number, dispositivo: DispositivoConConsumo) => suma + (dispositivo.consumo || 0), 
+        0
+      );
       
       return {
         ...habitacion,
@@ -84,36 +94,24 @@ export const obtenerHabitacionesConConsumo = async (): Promise<HabitacionConCons
       };
     });
     
-    habitacionesCache = habitacionesConConsumo;
-    return habitacionesConConsumo;
   } catch (error) {
-    console.error('Error al obtener habitaciones con consumo:', error);
-    throw error;
+    console.error("Error al obtener habitaciones con consumo:", error);
+    return [];
   }
 };
 
-/**
- * Calcula el consumo total de una habitación sumando los consumos de sus dispositivos
- * @param habitacionId ID de la habitación
- * @param dispositivos Lista de dispositivos con consumo
- */
-export const calcularConsumoHabitacion = (
-  habitacionId: number, 
-  dispositivos: DispositivoConConsumo[]
-): number => {
-  return dispositivos
-    .filter(d => d.habitacion_id === habitacionId)
-    .reduce((total, dispositivo) => total + dispositivo.consumo, 0);
-};
-
-/**
- * Formatea un valor de consumo para mostrarlo (W o kW)
- * @param consumo Valor de consumo en watts
- */
+// Función para formatear valores de consumo
 export const formatearConsumo = (consumo: number): string => {
-  if (consumo < 1000 && consumo > -1000) {
+  const absConsumo = Math.abs(consumo);
+  
+  if (absConsumo < 1000) {
     return `${consumo} W`;
   } else {
     return `${(consumo / 1000).toFixed(2)} kW`;
   }
+};
+
+// Función para determinar el color según el valor de consumo
+export const getColorForConsumo = (consumo: number): string => {
+  return consumo >= 0 ? '#1ECAFF' : '#00ff00'; // Azul claro para consumo, verde para generación
 };

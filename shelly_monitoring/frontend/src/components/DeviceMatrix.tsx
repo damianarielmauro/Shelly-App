@@ -14,9 +14,19 @@ interface DeviceMatrixProps {
     permissions: string[];
   };
   editMode: boolean;
+  // Nuevas props para comunicación con Settings.tsx
+  onSelectedItemsChange?: (items: number[]) => void;
+  showRoomDialog?: boolean;
+  setShowRoomDialog?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
+const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ 
+  user, 
+  editMode,
+  onSelectedItemsChange,
+  showRoomDialog = false,
+  setShowRoomDialog
+}) => {
   const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
@@ -51,6 +61,20 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
     return () => clearInterval(intervalo);
   }, []);
 
+  // Enviar los dispositivos seleccionados a Settings.tsx
+  useEffect(() => {
+    if (onSelectedItemsChange) {
+      onSelectedItemsChange(selectedItems);
+    }
+  }, [selectedItems, onSelectedItemsChange]);
+
+  // Responder al cambio de showRoomDialog desde Settings.tsx
+  useEffect(() => {
+    if (showRoomDialog) {
+      handleAssignClick();
+    }
+  }, [showRoomDialog]);
+
   const handleCheckboxChange = (id: number) => {
     setSelectedItems((prevSelected) =>
       prevSelected.includes(id)
@@ -71,6 +95,10 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
 
   const handleClose = () => {
     setOpen(false);
+    // Notificar a Settings.tsx que el diálogo se cerró
+    if (setShowRoomDialog) {
+      setShowRoomDialog(false);
+    }
   };
 
   const handleHabitacionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,6 +111,10 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
       await asignarHabitacion(selectedItems, habitacionId);
       setSelectedItems([]);
       setOpen(false);
+      // Notificar a Settings.tsx que el diálogo se cerró
+      if (setShowRoomDialog) {
+        setShowRoomDialog(false);
+      }
       
       // Refetch dispositivos after assignment
       const data = await obtenerDispositivosConConsumo();
@@ -223,45 +255,63 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
         })}
       </Box>
 
-      {/* Botón para asignar y diálogo */}
-      {editMode && selectedItems.length > 0 && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAssignClick}
-          sx={{ position: 'fixed', bottom: '725px', right: '98px', height: '25px', zIndex: 1000 }}
-        >
+      {/* Diálogo para asignar habitación con estilo mejorado */}
+      <Dialog 
+        open={open} 
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '10px',
+            minWidth: '300px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: '#1ECAFF', 
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}>
           Asignar a Habitación
-        </Button>
-      )}
-
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
+        </DialogTitle>
         <DialogContent
           sx={{
-            fontSize: '0.4rem',
-            lineHeight: '0.6rem',
             maxHeight: '600px',
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               width: '4px',
             },
             '&::-webkit-scrollbar-track': {
-              backgroundColor: 'white',
+              backgroundColor: '#222',
             },
             '&::-webkit-scrollbar-thumb': {
               backgroundColor: '#1ECAFF',
               borderRadius: '10px',
             },
+            pt: 1
           }}
         >
           <RadioGroup value={selectedHabitacion} onChange={handleHabitacionChange}>
             <FormControlLabel 
               key="ninguna" 
               value="null" 
-              control={<Radio sx={{ padding: '2px' }} />} 
+              control={
+                <Radio 
+                  sx={{ 
+                    color: 'white',
+                    '&.Mui-checked': {
+                      color: '#1ECAFF',
+                    },
+                  }} 
+                />
+              } 
               label={
-                <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                <Box sx={{ 
+                  fontSize: '0.9rem', 
+                  fontWeight: 'bold',
+                  color: 'white' 
+                }}>
                   Ninguna
                 </Box>
               }
@@ -270,9 +320,22 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
               <FormControlLabel 
                 key={habitacion.id} 
                 value={habitacion.id.toString()} 
-                control={<Radio sx={{ padding: '2px' }} />} 
+                control={
+                  <Radio 
+                    sx={{ 
+                      color: 'white',
+                      '&.Mui-checked': {
+                        color: '#1ECAFF',
+                      },
+                    }} 
+                  />
+                } 
                 label={
-                  <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                  <Box sx={{ 
+                    fontSize: '0.9rem', 
+                    fontWeight: 'bold',
+                    color: 'white' 
+                  }}>
                     {habitacion.nombre}
                   </Box>
                 }
@@ -280,12 +343,31 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
             ))}
           </RadioGroup>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancelar
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button 
+            onClick={handleClose} 
+            sx={{ 
+              color: '#1ECAFF',
+              '&:hover': {
+                backgroundColor: 'rgba(30, 202, 255, 0.1)',
+              }
+            }}
+          >
+            CANCELAR
           </Button>
-          <Button onClick={handleAssign} color="primary">
-            Asignar
+          <Button 
+            onClick={handleAssign} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#1ECAFF', 
+              color: 'black',
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#18b2e1',
+              }
+            }}
+          >
+            ASIGNAR
           </Button>
         </DialogActions>
       </Dialog>
@@ -293,4 +375,5 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ user, editMode }) => {
   );
 };
 
+// Aseguramos que el componente se exporte como default
 export default DeviceMatrix;

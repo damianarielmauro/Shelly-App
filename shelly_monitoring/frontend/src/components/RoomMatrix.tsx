@@ -2,15 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Checkbox, Box, Typography, Card } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import RoomDeviceMatrix from './RoomDeviceMatrix';
-import { 
-  obtenerDispositivosConConsumo, 
-  calcularConsumoHabitacion, 
-  formatearConsumo,
-  DispositivoConConsumo
-} from '../services/consumptionService';
+import { obtenerHabitacionesConConsumo, formatearConsumo } from '../services/consumptionService';
+
+// Definir interfaces para los tipos
+interface Habitacion {
+  id: number;
+  nombre: string;
+  consumo?: number;
+  tablero_id: number;
+  [key: string]: any;
+}
 
 interface RoomMatrixProps {
-  habitaciones: any[];
+  habitaciones: Habitacion[];
   deleteMode: boolean;
   selectedItems: number[];
   handleDeleteSelectionChange: (id: number) => void;
@@ -29,43 +33,48 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
   setRoomMatrixView
 }) => {
   const [selectedHabitacion, setSelectedHabitacion] = useState<number | null>(null);
-  const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
-  const [habitacionesConConsumo, setHabitacionesConConsumo] = useState<any[]>([]);
+  const [habitacionesConConsumo, setHabitacionesConConsumo] = useState<Habitacion[]>([]);
+  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
 
-  // Función para cargar dispositivos y calcular consumos
-  const cargarConsumosHabitaciones = async () => {
-    try {
-      const dispositivosData = await obtenerDispositivosConConsumo();
-      setDispositivos(dispositivosData);
-      
-      // Calcular consumo por habitación
-      const habitacionesActualizadas = habitaciones.map(habitacion => {
-        const consumoTotal = calcularConsumoHabitacion(habitacion.id, dispositivosData);
-        return {
-          ...habitacion,
-          consumo: consumoTotal
-        };
-      });
-      
-      setHabitacionesConConsumo(habitacionesActualizadas);
-    } catch (error) {
-      console.error('Error al cargar consumos de habitaciones:', error);
-    }
+  // Función para determinar color según el valor de consumo
+  const getColorForConsumo = (consumo: number) => {
+    return consumo >= 0 ? '#1ECAFF' : '#00ff00';
   };
 
   useEffect(() => {
-    cargarConsumosHabitaciones();
-    
-    // Actualizar cada 2 segundos
-    const intervalo = setInterval(() => {
-      cargarConsumosHabitaciones();
-    }, 2000);
-    
-    return () => clearInterval(intervalo);
-  }, [habitaciones]);
-
-  useEffect(() => {
     setSelectedHabitacion(null);
+    
+    // Función para actualizar consumos de habitaciones
+    const actualizarConsumos = async () => {
+      try {
+        // Obtener habitaciones con consumos actualizados
+        const habitacionesActualizadas = await obtenerHabitacionesConConsumo();
+        
+        // Filtrar para mostrar solo las habitaciones que nos interesan
+        const habitacionesActualizadasFiltradas = habitaciones.map((hab: Habitacion) => {
+          const habitacionConConsumo = habitacionesActualizadas.find((h: Habitacion) => h.id === hab.id);
+          return habitacionConConsumo || hab;
+        });
+        
+        setHabitacionesConConsumo(habitacionesActualizadasFiltradas);
+      } catch (error) {
+        console.error('Error al obtener habitaciones con consumo:', error);
+      }
+    };
+
+    // Obtener datos iniciales
+    actualizarConsumos();
+    
+    // Configurar actualización periódica
+    const interval = setInterval(actualizarConsumos, 2000);
+    setRefreshInterval(interval);
+    
+    // Limpieza al desmontar
+    return () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    };
   }, [habitaciones]);
 
   const handleRoomClick = (habitacionId: number) => {
@@ -78,10 +87,11 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
   return (
     <Box display="flex" flexWrap="wrap" gap={0}>
       {roomMatrixView ? (
-        habitacionesConConsumo.map((habitacion) => {
-          // Determinar color basado en el valor de consumo
-          const consumoColor = habitacion.consumo < 0 ? 'red' : '#1ECAFF';
-          const consumoFormateado = formatearConsumo(habitacion.consumo);
+        (habitacionesConConsumo.length > 0 ? habitacionesConConsumo : habitaciones).map((habitacion) => {
+          // Formatear el consumo usando la función auxiliar
+          const consumoActual = habitacion.consumo || 0;
+          const consumoFormateado = formatearConsumo(consumoActual);
+          const consumoColor = getColorForConsumo(consumoActual);
 
           return (
             <Card

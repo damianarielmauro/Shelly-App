@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppBar, IconButton, Box, Menu, MenuItem, CircularProgress, Typography } from '@mui/material';
+import { AppBar, IconButton, Box, Menu, MenuItem, CircularProgress, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import BoltIcon from '@mui/icons-material/Bolt';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -58,6 +58,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [roomMatrixView, setRoomMatrixView] = useState<boolean>(true); // Nuevo estado
+  // Nuevo estado para el diálogo de confirmación de cierre de sesión
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
   // Usamos el campo 'role' para verificar si es admin
@@ -191,9 +193,22 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     setUserMenuAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  // Modificado para abrir el diálogo de confirmación en lugar de cerrar sesión directamente
+  const handleLogoutClick = () => {
+    setUserMenuAnchorEl(null);
+    setLogoutDialogOpen(true);
+  };
+
+  // Función para confirmar el cierre de sesión
+  const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
     navigate('/login');
+    setLogoutDialogOpen(false);
+  };
+
+  // Función para cancelar el cierre de sesión
+  const handleLogoutCancel = () => {
+    setLogoutDialogOpen(false);
   };
 
   const handleBoltClick = () => {
@@ -231,15 +246,43 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           {editMode && (
             <>
               <IconButton color={deleteMode && selectedItems.length > 0 ? "error" : "inherit"} onClick={handleDeleteAction}>
-                <DeleteIcon />
+                <DeleteIcon sx={{ color: deleteMode && selectedItems.length > 0 ? "red" : "white" }} />
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
+                PaperProps={{ 
+                  sx: { 
+                    minWidth: '150px', 
+                    backgroundColor: '#333',
+                    color: 'white',
+                    borderRadius: '4px',
+                  }
+                }}
               >
-                <MenuItem onClick={() => handleDeleteOptionSelect('Tablero')}>Tablero</MenuItem>
-                <MenuItem onClick={() => handleDeleteOptionSelect('Habitación')}>Habitación</MenuItem>
+                <MenuItem 
+                  onClick={() => handleDeleteOptionSelect('Tablero')} 
+                  sx={{ 
+                    color: '#1ECAFF',
+                    '&:hover': {
+                      backgroundColor: 'rgba(30, 202, 255, 0.1)',
+                    }
+                  }}
+                >
+                  Tablero
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleDeleteOptionSelect('Habitación')} 
+                  sx={{ 
+                    color: '#1ECAFF',
+                    '&:hover': {
+                      backgroundColor: 'rgba(30, 202, 255, 0.1)',
+                    }
+                  }}
+                >
+                  Habitación
+                </MenuItem>
               </Menu>
             </>
           )}
@@ -271,9 +314,15 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             anchorEl={userMenuAnchorEl}
             open={Boolean(userMenuAnchorEl)}
             onClose={handleUserMenuClose}
-            PaperProps={{ sx: { minWidth: '150px', backgroundColor: 'white', color: 'black' } }}
+            PaperProps={{ 
+              sx: { 
+                minWidth: '150px', 
+                backgroundColor: '#333',
+                color: 'white'
+              }
+            }}
           >
-            <MenuItem onClick={handleLogout} sx={{ height: '20px' }}>Cerrar sesión</MenuItem>
+            <MenuItem onClick={handleLogoutClick} sx={{ height: '20px', color: '#1ECAFF' }}>Cerrar sesión</MenuItem>
           </Menu>
         </Box>
       </Box>
@@ -306,6 +355,60 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           <DeviceList />
         </Box>
       </Box>
+
+      {/* Diálogo de confirmación de cierre de sesión */}
+      <Dialog 
+        open={logoutDialogOpen}
+        onClose={handleLogoutCancel}
+        PaperProps={{
+          style: {
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '10px',
+            minWidth: '300px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: '#1ECAFF', 
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}>
+          Cerrar sesión
+        </DialogTitle>
+        <DialogContent sx={{ paddingTop: '8px' }}>
+          <Typography sx={{ color: 'white' }}>
+            ¿Estás seguro de que deseas cerrar la sesión?
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button 
+            onClick={handleLogoutCancel} 
+            sx={{ 
+              color: '#1ECAFF',
+              '&:hover': {
+                backgroundColor: 'rgba(30, 202, 255, 0.1)',
+              }
+            }}
+          >
+            CANCELAR
+          </Button>
+          <Button 
+            onClick={handleLogoutConfirm} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#1ECAFF', 
+              color: 'black',
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#18b2e1',
+              }
+            }}
+          >
+            CERRAR SESIÓN
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

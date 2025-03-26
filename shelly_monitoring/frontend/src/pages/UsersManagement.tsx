@@ -36,8 +36,11 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const [editUserId, setEditUserId] = useState<number | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedRooms, setSelectedRooms] = useState<number[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [selectAll, setSelectAll] = useState<boolean>(false);
+  // Nuevo estado para el diálogo de confirmación de eliminación
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [userToDelete, setUserToDelete] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -155,11 +158,17 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
     }
   };
 
-  const handleDeleteUser = async (id: number) => {
-    const confirmed = window.confirm('¿Estás seguro de que deseas eliminar este usuario?');
-    if (confirmed) {
+  // Nuevo método para abrir el diálogo de confirmación de eliminación
+  const confirmDeleteUser = (id: number) => {
+    setUserToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  // Método actualizado para eliminar usuario después de confirmación
+  const handleDeleteUser = async () => {
+    if (userToDelete !== null) {
       try {
-        await deleteUser(id);
+        await deleteUser(userToDelete);
         const fetchedUsers = await getUsers();
         const usersWithPermissions = await Promise.all(
           fetchedUsers.map(async (user: User) => {
@@ -178,7 +187,15 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
       } catch (error) {
         console.error('Error deleting user:', error);
       }
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
     }
+  };
+
+  // Método para cancelar la eliminación
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setUserToDelete(null);
   };
 
   const handleOpenDialog = async (id: number) => {
@@ -188,14 +205,14 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
       console.log('User permissions:', userPermissions);
       setSelectedRooms(userPermissions.room_ids);
       setSelectAll(userPermissions.room_ids.length === rooms.length);
-      setOpen(true);
+      setDialogOpen(true);
     } catch (error) {
       console.error('Error fetching user permissions:', error);
     }
   };
 
   const handleCloseDialog = () => {
-    setOpen(false);
+    setDialogOpen(false);
     setSelectedRooms([]);
     setSelectAll(false);
   };
@@ -443,30 +460,35 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                     onClick={() => handleOpenDialog(user.id)}
                     variant="contained"
                     sx={{
-                      backgroundColor: '#1ECAFF', // Mismo color de fondo que el botón de crear usuario
-                      color: 'white', // Mismo color de letra que el botón de crear usuario
+                      backgroundColor: '#1ECAFF',
+                      color: 'black',
+                      fontWeight: 'bold',
+                      fontSize: '0.75rem',
+                      '&:hover': {
+                        backgroundColor: '#18b2e1',
+                      }
                     }}
                   >
                     Permisos
                   </Button>
                 )}
                 <IconButton onClick={() => handleEditUser(user.id)}>
-                  <EditIcon sx={{ color: 'white' }} />
+                  <EditIcon sx={{ color: '#1ECAFF' }} />
                 </IconButton>
-                <IconButton onClick={() => handleDeleteUser(user.id)}>
-                  <DeleteIcon sx={{ color: 'white' }} />
+                <IconButton onClick={() => confirmDeleteUser(user.id)}>
+                  <DeleteIcon sx={{ color: 'white' }} /> {/* Cambiado a color blanco */}
                 </IconButton>
               </Box>
             </Box>
             <Box sx={{ mt: 1, width: '100%' }}>
               {user.role === 'admin' && user.permissions.length === rooms.length ? (
-                <Typography variant="body2" sx={{ color: 'lightgreen' }}>
+                <Typography variant="body2" sx={{ color: '#00FF00' }}> {/* Cambiado a #00FF00 (verde corporativo) */}
                   Todas las habitaciones permitidas
                 </Typography>
               ) : (
                 <Typography variant="body2">
-                  <span style={{ color: '#1ECAFF' }}>Habitaciones permitidas:</span> 
-                  <span style={{ color: 'lightgreen' }}>
+                  <span style={{ color: '#1ECAFF' }}>Habitaciones permitidas: </span> {/* Añadido espacio después de los dos puntos */}
+                  <span style={{ color: '#00FF00' }}> {/* Cambiado a #00FF00 (verde corporativo) */}
                     {rooms && user.permissions && user.permissions.length > 0 
                       ? user.permissions.map(id => rooms.find(room => room.id === id)?.nombre).filter(Boolean).join(' - ') 
                       : 'Ninguna'}
@@ -477,82 +499,172 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           </Box>
         ))}
       </Box>
-<Dialog open={open} onClose={handleCloseDialog}>
-  <DialogTitle sx={{ fontSize: '1rem' }}>Seleccionar Habitaciones Permitidas</DialogTitle>
-  <DialogContent
-    sx={{
-      fontSize: '0.4rem',
-      lineHeight: '0.6rem',
-      maxHeight: '600px', // Aumentar la altura máxima del contenido del dialog
-      overflowY: 'auto', // Habilitar el scroll vertical
-      '&::-webkit-scrollbar': {
-        width: '4px', // Hacer el scrollbar lo más fino posible
-      },
-      '&::-webkit-scrollbar-track': {
-        backgroundColor: 'white', // Fondo blanco para el track del scrollbar
-      },
-      '&::-webkit-scrollbar-thumb': {
-        backgroundColor: '#1ECAFF', // Barra del scrollbar de color azul
-        borderRadius: '10px', // Redondear un poco la barra
-      },
-    }}
-  >
-    <Box display="flex" flexDirection="column" sx={{ fontSize: '0.4rem', lineHeight: '0.6rem' }}>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={selectAll}
-            onChange={handleSelectAll}
-            sx={{
-              padding: '0px',
-              '& .MuiCheckbox-root': {
-                transform: 'scale(0.6)', // Reducir tamaño del checkbox
-              },
-            }} // Reducir más el tamaño del checkbox
-          />
-        }
-        label="Seleccionar/Deseleccionar todas"
-        sx={{
-          marginBottom: '0px', // Eliminar el espacio entre este checkbox y las habitaciones
-          fontSize: '0.4rem', // Reducir aún más el tamaño del texto
-        }}
-      />
-      {rooms.map((room) => (
-        <FormControlLabel
-          key={room.id}
-          control={
-            <Checkbox
-              checked={selectedRooms.includes(room.id)}
-              onChange={() => handleRoomChange(room.id)}
-              sx={{
-                padding: '0px',
-                '& .MuiCheckbox-root': {
-                  transform: 'scale(0.6)', // Reducir tamaño del checkbox
-                },
-              }} // Reducir más el tamaño del checkbox
-            />
-          }
-          label={room.nombre}
-          sx={{
-            marginBottom: '0px', // Eliminar el espacio entre los renglones de las habitaciones
-            fontSize: '0.4rem', // Reducir aún más el tamaño del texto
-          }}
-        />
-      ))}
-    </Box>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseDialog} color="secondary" sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
-      Cancelar
-    </Button>
-    <Button onClick={handleSavePermissions} color="primary" sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
-      Guardar
-    </Button>
-  </DialogActions>
-</Dialog>
 
+      {/* Diálogo rediseñado para seleccionar habitaciones */}
+      <Dialog 
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        PaperProps={{
+          style: {
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '10px',
+            minWidth: '300px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: '#1ECAFF', 
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}>
+          Seleccionar habitaciones permitidas
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            maxHeight: '600px',
+            overflowY: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '4px',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: '#222',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#1ECAFF',
+              borderRadius: '10px',
+            },
+            pt: 1
+          }}
+        >
+          <Box display="flex" flexDirection="column">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  sx={{
+                    color: 'white',
+                    '&.Mui-checked': {
+                      color: '#1ECAFF',
+                    }
+                  }}
+                />
+              }
+              label={
+                <Typography sx={{ color: 'white', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                  Seleccionar todas
+                </Typography>
+              }
+            />
+            {rooms.map((room) => (
+              <FormControlLabel
+                key={room.id}
+                control={
+                  <Checkbox
+                    checked={selectedRooms.includes(room.id)}
+                    onChange={() => handleRoomChange(room.id)}
+                    sx={{
+                      color: 'white',
+                      '&.Mui-checked': {
+                        color: '#1ECAFF',
+                      }
+                    }}
+                  />
+                }
+                label={
+                  <Typography sx={{ color: 'white', fontSize: '0.9rem' }}>
+                    {room.nombre}
+                  </Typography>
+                }
+              />
+            ))}
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button 
+            onClick={handleCloseDialog} 
+            sx={{ 
+              color: '#1ECAFF',
+              '&:hover': {
+                backgroundColor: 'rgba(30, 202, 255, 0.1)',
+              }
+            }}
+          >
+            CANCELAR
+          </Button>
+          <Button 
+            onClick={handleSavePermissions} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#1ECAFF', 
+              color: 'black',
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#18b2e1',
+              }
+            }}
+          >
+            GUARDAR
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Nuevo diálogo de confirmación para eliminar usuario */}
+      <Dialog 
+        open={deleteDialogOpen}
+        onClose={handleCancelDelete}
+        PaperProps={{
+          style: {
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '10px',
+            minWidth: '300px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: '#1ECAFF', 
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}>
+          Confirmar eliminación
+        </DialogTitle>
+        <DialogContent sx={{ paddingTop: '8px' }}>
+          <Typography sx={{ color: 'white' }}>
+            ¿Estás seguro de que deseas eliminar este usuario?
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button 
+            onClick={handleCancelDelete} 
+            sx={{ 
+              color: '#1ECAFF',
+              '&:hover': {
+                backgroundColor: 'rgba(30, 202, 255, 0.1)',
+              }
+            }}
+          >
+            CANCELAR
+          </Button>
+          <Button 
+            onClick={handleDeleteUser} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#ff4444', 
+              color: 'white',
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#cc3333',
+              }
+            }}
+          >
+            ELIMINAR
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
-export default UsersManagement; 
+export default UsersManagement;
