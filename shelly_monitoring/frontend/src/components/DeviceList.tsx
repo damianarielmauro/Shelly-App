@@ -88,12 +88,11 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
       setDispositivos(prevDispositivos => {
         if (prevDispositivos.length === 0) return prevDispositivos;
         
-        // Ordenar dispositivos actuales por consumo
+        // Actualizar top 10 sin modificar el array original
         const dispositivosOrdenados = [...prevDispositivos].sort((a, b) => 
           (consumosDispositivos[b.id] || 0) - (consumosDispositivos[a.id] || 0)
         );
         
-        // Actualizar top 10
         setTop10Ids(dispositivosOrdenados.slice(0, 10).map(d => d.id));
         
         return prevDispositivos; // No cambiar los dispositivos, solo su ordenación para el top 10
@@ -120,6 +119,10 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
     return consumo >= 0 ? '#1E8FFF' : '#00ff00'; // Azul para positivos, verde para negativos
   };
 
+  // Ordenar dispositivos por consumo antes de renderizar
+  const dispositivosOrdenados = [...dispositivos]
+    .sort((a, b) => (consumosDispositivos[b.id] || 0) - (consumosDispositivos[a.id] || 0));
+
   return (
     <Box className="device-list" sx={{ 
       backgroundColor: '#333', 
@@ -140,11 +143,12 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
         mb: 1,
         height: 'auto' // Ajuste automático de altura
       }}>
-        {/* Primer renglón: texto "Entregando/Consumiendo de Red" */}
+        {/* Primer renglón: texto "Entregando/Consumiendo de Red" en color PERO SIN NEGRITA */}
         <Typography sx={{ 
           fontSize: '0.85rem', 
-          fontWeight: 'bold',
-          mb: 0.5
+          fontWeight: 'normal', // Sin negrita
+          mb: 0.5,
+          color: consumoColor
         }}>
           {consumoLabel}
         </Typography>
@@ -181,11 +185,11 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
       </Box>
       
       <List sx={{ padding: 0 }}>
-        {dispositivos.map((dispositivo) => {
+        {dispositivosOrdenados.map((dispositivo, index) => {
           const consumo = consumosDispositivos[dispositivo.id] || 0;
           const formattedConsumo = consumo < 1000 ? `${consumo} W` : `${(consumo / 1000).toFixed(2)} kW`;
           const consumoColor = getColorForConsumo(consumo);
-          const isTop10 = top10Ids.includes(dispositivo.id);
+          const isTop10 = index < 10; // Los primeros 10 de la lista ordenada
           
           return (
             <ListItem 
@@ -207,7 +211,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
                   textOverflow: 'ellipsis', 
                   overflow: 'hidden', 
                   maxWidth: '65%',
-                  fontWeight: isTop10 ? 'bold' : 'normal' // Negrita para top 10
+                  fontWeight: isTop10 ? 'bold' : 'normal' // Nombre en negrita para top 10
                 }}
               >
                 {dispositivo.nombre}
@@ -221,7 +225,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
                   textOverflow: 'ellipsis', 
                   overflow: 'hidden', 
                   maxWidth: '35%',
-                  fontWeight: isTop10 ? 'bold' : 'normal' // Negrita para top 10
+                  fontWeight: isTop10 ? 'bold' : 'normal' // Consumo en negrita para top 10
                 }}
               >
                 {formattedConsumo}
