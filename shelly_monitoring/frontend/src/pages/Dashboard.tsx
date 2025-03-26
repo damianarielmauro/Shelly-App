@@ -60,6 +60,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [roomMatrixView, setRoomMatrixView] = useState<boolean>(true); // Nuevo estado
   // Nuevo estado para el diálogo de confirmación de cierre de sesión
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
+  // Este estado ahora contendrá TODAS las habitaciones permitidas, no solo las del tablero actual
+  const [todasHabitacionesPermitidasIds, setTodasHabitacionesPermitidasIds] = useState<number[]>([]);
+  
   const navigate = useNavigate();
 
   // Usamos el campo 'role' para verificar si es admin
@@ -81,6 +84,21 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     };
 
     fetchTableros();
+
+    // Cargar todas las habitaciones permitidas al iniciar
+    const fetchTodasHabitacionesPermitidas = async () => {
+      try {
+        const todasHabitaciones = await getHabitaciones();
+        // Para el admin, todas las habitaciones están permitidas
+        // Para usuarios normales, solo las que devuelve la API (que ya están filtradas)
+        const habitacionesIds = todasHabitaciones.map((hab: Habitacion) => hab.id);
+        setTodasHabitacionesPermitidasIds(habitacionesIds);
+      } catch (error) {
+        console.error("Error fetching todas las habitaciones permitidas:", error);
+      }
+    };
+
+    fetchTodasHabitacionesPermitidas();
   }, []);
 
   const handleDeleteSelectionChange = (id: number) => {
@@ -132,6 +150,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           setHabitaciones(newHabitaciones);
           setSelectedItems([]);
           setDeleteMode(false);
+          
+          // Actualizar la lista de todas las habitaciones permitidas
+          const todasHabitaciones = await getHabitaciones();
+          const habitacionesIds = todasHabitaciones.map((hab: Habitacion) => hab.id);
+          setTodasHabitacionesPermitidasIds(habitacionesIds);
         } else if (deleteType === 'Tablero') {
           const tablerosConHabitaciones = await Promise.all(selectedItems.map(async (id) => {
             const habitacionesAsignadas = await getHabitacionesByTablero(id);
@@ -169,7 +192,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         const tableroId = tableros[selectedTab].id;
         const habitacionesTablero = await getHabitacionesByTablero(tableroId);
 
-        const habitacionesFiltradas = habitacionesTablero.filter((hab: Habitacion) => habitacionesPermitidas.some((perm: Habitacion) => perm.id === hab.id));
+        const habitacionesFiltradas = habitacionesTablero.filter((hab: Habitacion) => 
+          habitacionesPermitidas.some((perm: Habitacion) => perm.id === hab.id)
+        );
+        
         setHabitaciones(habitacionesFiltradas);
       } catch (error) {
         console.error("Error fetching habitaciones:", error);
@@ -352,7 +378,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           overflow: 'hidden',
           p: 2 
         }}>
-          <DeviceList />
+          {/* Pasamos todas las habitaciones permitidas, no solo las del tablero actual */}
+          <DeviceList habitacionesPermitidas={todasHabitacionesPermitidasIds} />
         </Box>
       </Box>
 
