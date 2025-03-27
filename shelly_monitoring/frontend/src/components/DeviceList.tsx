@@ -109,14 +109,14 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
   }, [habitacionesPermitidas, isAdmin]);
 
   // Estilos y formateo
-  const consumoColor = totalConsumo >= 0 ? '#1E8FFF' : '#00ff00';
+  const consumoColor = totalConsumo >= 0 ? '#1ECAFF' : '#00ff00';
   const formattedConsumo = totalConsumo < 1000 && totalConsumo > -1000 
     ? `${Math.abs(totalConsumo)} W` 
     : `${(Math.abs(totalConsumo) / 1000).toFixed(2)} kW`;
   const consumoLabel = totalConsumo >= 0 ? 'Consumiendo de Red' : 'Entregando a la Red';
 
   const getColorForConsumo = (consumo: number) => {
-    return consumo >= 0 ? '#1E8FFF' : '#00ff00'; // Azul para positivos, verde para negativos
+    return consumo >= 0 ? '#1ECAFF' : '#00ff00'; // Azul para positivos, verde para negativos
   };
 
   // Ordenar dispositivos por consumo antes de renderizar

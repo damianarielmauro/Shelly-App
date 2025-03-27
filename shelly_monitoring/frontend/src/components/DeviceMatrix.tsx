@@ -30,6 +30,9 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
 
   const [contadorAsignados, setContadorAsignados] = useState(0);
   const [contadorSinAsignar, setContadorSinAsignar] = useState(0);
+  
+  // Nuevo estado para manejar los consumos de los dispositivos
+  const [consumosDispositivos, setConsumosDispositivos] = useState<{[key: number]: number}>({});
 
   // Efecto para obtener los dispositivos
   useEffect(() => {
@@ -44,12 +47,34 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
         setDispositivos(sortedData);
         setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
         setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
+        
+        // Inicializar consumos aleatorios para cada dispositivo
+        const consumos: {[key: number]: number} = {};
+        sortedData.forEach((dispositivo: any) => {
+          consumos[dispositivo.id] = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
+        });
+        setConsumosDispositivos(consumos);
       } catch (error) {
         console.error('Error al obtener los dispositivos:', error);
       }
     };
 
     fetchDispositivos();
+    
+    // Actualizar consumos cada 2 segundos, similar a DeviceList
+    const intervalo = setInterval(() => {
+      // Actualizar consumos individuales
+      setConsumosDispositivos(prev => {
+        const nuevosConsumos: {[key: number]: number} = {};
+        Object.keys(prev).forEach(id => {
+          nuevosConsumos[Number(id)] = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
+        });
+        return nuevosConsumos;
+      });
+    }, 2000);
+    
+    // Limpiar el intervalo al desmontar
+    return () => clearInterval(intervalo);
   }, []);
 
   // Efecto para notificar al componente padre sobre cambios en los elementos seleccionados
@@ -136,8 +161,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
           backgroundColor: 'black',
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#1ECAFF', // Actualizado para coincidir con el tema
-          borderRadius: '3px',
+          backgroundColor: '#1ECAFF',
         },
       }}
     >
@@ -162,10 +186,15 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
         gap={0.5} // Reducido de 1 a 0.5 (de 8px a 4px)
       >
         {dispositivos.map((dispositivo) => {
-          const consumo =
-            dispositivo.ultimo_consumo < 1000
-              ? `${dispositivo.ultimo_consumo} W`
-              : `${(dispositivo.ultimo_consumo / 1000).toFixed(2)} kW`;
+          // Usar el consumo del estado en lugar del dispositivo directamente
+          const consumo = consumosDispositivos[dispositivo.id] || 0;
+          const formattedConsumo = 
+            consumo < 1000
+              ? `${consumo} W`
+              : `${(consumo / 1000).toFixed(2)} kW`;
+          
+          // Determinar el color según el consumo
+          const consumoColor = consumo >= 0 ? '#1ECAFF' : '#00ff00';
 
           return (
             <Card
@@ -225,129 +254,83 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
                 {dispositivo.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '0.75rem', color: '#1ECAFF', mr: 0.5 }} />
+                <BoltIcon sx={{ fontSize: '0.75rem', color: consumoColor, mr: 0.5 }} />
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: '0.6rem',
                     fontWeight: 'bold',
-                    color: '#1ECAFF',
+                    color: consumoColor,
                   }}
                 >
-                  {consumo}
+                  {formattedConsumo}
                 </Typography>
               </Box>
             </Card>
           );
         })}
       </Box>
-      {/* Diálogo rediseñado para coincidir con el estilo de UsersManagement */}
-      <Dialog 
-        open={open} 
-        onClose={handleClose}
-        PaperProps={{
-          style: {
-            backgroundColor: '#333',
-            color: 'white',
-            borderRadius: '10px',
-            minWidth: '300px'
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          color: '#1ECAFF', 
-          fontSize: '1.1rem',
-          fontWeight: 'bold'
-        }}>
+      {editMode && selectedItems.length > 0 && !showRoomDialog && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAssignClick}
+          sx={{ position: 'fixed', bottom: '725px', right: '98px', height: '25px', zIndex: 1000 }}
+        >
           Asignar a Habitación
-        </DialogTitle>
+        </Button>
+      )}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
         <DialogContent
           sx={{
-            maxHeight: '600px',
+            fontSize: '0.4rem',
+            lineHeight: '0.6rem',
+            maxHeight: '600px', 
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               width: '4px',
             },
             '&::-webkit-scrollbar-track': {
-              backgroundColor: '#222',
+              backgroundColor: 'white',
             },
             '&::-webkit-scrollbar-thumb': {
               backgroundColor: '#1ECAFF',
               borderRadius: '10px',
             },
-            pt: 1
           }}
         >
-          <Box display="flex" flexDirection="column">
-            <RadioGroup value={selectedHabitacion} onChange={handleHabitacionChange}>
+          <RadioGroup value={selectedHabitacion} onChange={handleHabitacionChange}>
+            <FormControlLabel 
+              key="ninguna" 
+              value="null" 
+              control={<Radio sx={{ padding: '2px' }} />} 
+              label={
+                <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                  Ninguna
+                </Box>
+              }
+            />
+            {habitaciones.map((habitacion) => (
               <FormControlLabel 
-                key="ninguna" 
-                value="null" 
-                control={
-                  <Radio 
-                    sx={{
-                      color: 'white',
-                      '&.Mui-checked': {
-                        color: '#1ECAFF',
-                      }
-                    }} 
-                  />
-                } 
+                key={habitacion.id} 
+                value={habitacion.id.toString()} 
+                control={<Radio sx={{ padding: '2px' }} />} 
                 label={
-                  <Typography sx={{ color: 'white', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                    Ninguna
-                  </Typography>
+                  <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                    {habitacion.nombre}
+                  </Box>
                 }
               />
-              {habitaciones.map((habitacion) => (
-                <FormControlLabel 
-                  key={habitacion.id} 
-                  value={habitacion.id.toString()} 
-                  control={
-                    <Radio 
-                      sx={{
-                        color: 'white',
-                        '&.Mui-checked': {
-                          color: '#1ECAFF',
-                        }
-                      }} 
-                    />
-                  } 
-                  label={
-                    <Typography sx={{ color: 'white', fontSize: '0.9rem' }}>
-                      {habitacion.nombre}
-                    </Typography>
-                  }
-                />
-              ))}
-            </RadioGroup>
-          </Box>
+            ))}
+          </RadioGroup>
         </DialogContent>
-        <DialogActions sx={{ padding: '16px' }}>
-          <Button 
-            onClick={handleClose} 
-            sx={{ 
-              color: '#1ECAFF',
-              '&:hover': {
-                backgroundColor: 'rgba(30, 202, 255, 0.1)',
-              }
-            }}
-          >
-            CANCELAR
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancelar
           </Button>
-          <Button 
-            onClick={handleAssign} 
-            variant="contained" 
-            sx={{ 
-              backgroundColor: '#1ECAFF', 
-              color: 'black',
-              fontWeight: 'bold',
-              '&:hover': {
-                backgroundColor: '#18b2e1',
-              }
-            }}
-          >
-            GUARDAR
+          <Button onClick={handleAssign} color="primary">
+            Asignar
           </Button>
         </DialogActions>
       </Dialog>
