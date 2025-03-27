@@ -2,7 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Checkbox, Box, Typography, Card } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import RoomDeviceMatrix from './RoomDeviceMatrix';
-import { getDispositivosByHabitacion } from '../services/api';
+import {
+  HabitacionConConsumo,
+  obtenerHabitacionesConConsumo,
+  formatearConsumo,
+  getColorForConsumo,
+  suscribirseAHabitacionesActualizadas,
+  iniciarActualizacionPeriodica
+} from '../services/consumptionService';
 
 interface RoomMatrixProps {
   habitaciones: any[];
@@ -12,6 +19,8 @@ interface RoomMatrixProps {
   editMode: boolean;
   roomMatrixView: boolean;
   setRoomMatrixView: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedHabitacion: number | null;
+  setSelectedHabitacion: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const RoomMatrix: React.FC<RoomMatrixProps> = ({
@@ -21,65 +30,51 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
   handleDeleteSelectionChange,
   editMode,
   roomMatrixView,
-  setRoomMatrixView
+  setRoomMatrixView,
+  selectedHabitacion,
+  setSelectedHabitacion
 }) => {
-  const [selectedHabitacion, setSelectedHabitacion] = useState<number | null>(null);
-  // Nuevo estado para almacenar los consumos calculados de cada habitación
-  const [habitacionesConsumos, setHabitacionesConsumos] = useState<{[key: number]: number}>({});
+  // Estado para almacenar las habitaciones con sus consumos actualizados
+  const [habitacionesConConsumo, setHabitacionesConConsumo] = useState<HabitacionConConsumo[]>([]);
 
-  // Reset de selectedHabitacion cuando cambian las habitaciones
   useEffect(() => {
-    setSelectedHabitacion(null);
+    // Iniciar el servicio de actualización periódica cuando se monta el componente
+    iniciarActualizacionPeriodica();
     
-    // Inicializamos el cálculo de consumos para cada habitación
-    const initConsumos = async () => {
-      const consumos: {[key: number]: number} = {};
-      
-      // Para cada habitación, obtenemos sus dispositivos y calculamos la suma de consumos
-      await Promise.all(habitaciones.map(async (habitacion) => {
-        try {
-          const dispositivos = await getDispositivosByHabitacion(habitacion.id);
-          
-          // Inicializar consumos aleatorios para cada dispositivo
-          const consumoHabitacion = dispositivos.reduce((total: number, dispositivo: any) => {
-            // Generar un consumo aleatorio para cada dispositivo (entre 7W y 3578W)
-            const consumoDispositivo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
-            return total + consumoDispositivo;
-          }, 0);
-          
-          consumos[habitacion.id] = consumoHabitacion;
-        } catch (error) {
-          console.error(`Error al obtener dispositivos de habitación ${habitacion.id}:`, error);
-          consumos[habitacion.id] = 0;
-        }
-      }));
-      
-      setHabitacionesConsumos(consumos);
-    };
-    
-    // Iniciar el cálculo de consumos
-    initConsumos();
-    
-    // Actualizar los consumos cada 2 segundos
-    const intervalo = setInterval(() => {
-      setHabitacionesConsumos(prev => {
-        const nuevosConsumos: {[key: number]: number} = {};
+    // Cargar las habitaciones con sus consumos
+    const cargarHabitacionesConConsumo = async () => {
+      try {
+        const data = await obtenerHabitacionesConConsumo();
         
-        // Para cada habitación calculamos un nuevo consumo basado en el anterior
-        // Simulando una variación natural de ±10%
-        Object.keys(prev).forEach(id => {
-          const habitacionId = Number(id);
-          const consumoActual = prev[habitacionId];
-          const variacion = consumoActual * 0.1 * (Math.random() > 0.5 ? 1 : -1);
-          nuevosConsumos[habitacionId] = Math.max(0, Math.round(consumoActual + variacion));
+        // Aplicar los consumos a las habitaciones recibidas por props
+        const habitacionesActualizadas = habitaciones.map(habitacion => {
+          const habitacionConConsumo = data.find(h => h.id === habitacion.id);
+          return {
+            ...habitacion,
+            consumo: habitacionConConsumo?.consumo || 0
+          };
         });
         
-        return nuevosConsumos;
-      });
-    }, 2000);
+        setHabitacionesConConsumo(habitacionesActualizadas);
+      } catch (error) {
+        console.error('Error al cargar habitaciones con consumo:', error);
+      }
+    };
     
-    return () => clearInterval(intervalo);
-  }, [habitaciones]);
+    cargarHabitacionesConConsumo();
+    
+    // Suscribirse a las actualizaciones de consumos de habitaciones
+    const unsuscribir = suscribirseAHabitacionesActualizadas(() => {
+      cargarHabitacionesConConsumo();
+    });
+    
+    // Reset de selectedHabitacion cuando cambian las habitaciones
+    setSelectedHabitacion(null);
+    
+    return () => {
+      unsuscribir(); // Cancelar la suscripción cuando se desmonta el componente
+    };
+  }, [habitaciones, setSelectedHabitacion]);
 
   const handleRoomClick = (habitacionId: number) => {
     // Solo cambiar vista si no estamos en modo de borrado
@@ -95,15 +90,11 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
   return (
     <Box display="flex" flexWrap="wrap" gap={0.5}>
       {roomMatrixView ? (
-        habitaciones.map((habitacion) => {
-          // Obtener el consumo calculado para esta habitación o usar 0 si no está disponible
-          const consumoValue = habitacionesConsumos[habitacion.id] || 0;
-          
-          // Formatear el consumo como en los otros componentes
-          const consumo = 
-            consumoValue < 1000
-              ? `${consumoValue} W`
-              : `${(consumoValue / 1000).toFixed(2)} kW`;
+        habitacionesConConsumo.map((habitacion) => {
+          // Usar función de formateo del servicio
+          const consumo = formatearConsumo(habitacion.consumo);
+          // Obtener el color adecuado para el consumo
+          const colorConsumo = getColorForConsumo(habitacion.consumo);
 
           return (
             <Card

@@ -3,16 +3,24 @@ import { Box, Typography, Card, Checkbox, Button, Dialog, DialogTitle, DialogCon
 import BoltIcon from '@mui/icons-material/Bolt';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getDispositivos, getHabitaciones, asignarHabitacion } from '../services/api';
+import {
+  DispositivoConConsumo,
+  obtenerDispositivosConConsumo,
+  formatearConsumo,
+  getColorForConsumo,
+  iniciarActualizacionPeriodica,
+  suscribirseADispositivosActualizados
+} from '../services/consumptionService';
 
 interface DeviceMatrixProps {
   user: {
     permissions: string[];
   };
   editMode: boolean;
-  // Nuevas propiedades para manejar la comunicación con el componente padre
-  onSelectedItemsChange?: (devices: number[]) => void; // Función para notificar cambios en los dispositivos seleccionados
-  showRoomDialog?: boolean; // Controla si se muestra el diálogo de habitaciones
-  setShowRoomDialog?: React.Dispatch<React.SetStateAction<boolean>>; // Actualiza el estado del diálogo
+  // Propiedades para manejar la comunicación con el componente padre
+  onSelectedItemsChange?: (devices: number[]) => void;
+  showRoomDialog?: boolean;
+  setShowRoomDialog?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const DeviceMatrix: React.FC<DeviceMatrixProps> = ({ 
@@ -22,59 +30,50 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
   showRoomDialog = false, 
   setShowRoomDialog 
 }) => {
-  const [dispositivos, setDispositivos] = useState<any[]>([]);
+  const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
   const [selectedHabitacion, setSelectedHabitacion] = useState<string>("null");
-
   const [contadorAsignados, setContadorAsignados] = useState(0);
   const [contadorSinAsignar, setContadorSinAsignar] = useState(0);
-  
-  // Nuevo estado para manejar los consumos de los dispositivos
-  const [consumosDispositivos, setConsumosDispositivos] = useState<{[key: number]: number}>({});
 
-  // Efecto para obtener los dispositivos
+  // Efecto para obtener los dispositivos usando el servicio centralizado
   useEffect(() => {
+    // Iniciar el servicio de actualización periódica
+    iniciarActualizacionPeriodica();
+
     const fetchDispositivos = async () => {
       try {
-        const data = await getDispositivos();
-        const sortedData = data.sort((a: any, b: any) => {
+        // Obtener dispositivos con sus consumos del servicio centralizado
+        const data = await obtenerDispositivosConConsumo();
+        
+        // Ordenar los dispositivos como antes
+        const sortedData = data.sort((a, b) => {
           if (a.habitacion_id && !b.habitacion_id) return 1;
           if (!a.habitacion_id && b.habitacion_id) return -1;
           return a.nombre.localeCompare(b.nombre);
         });
-        setDispositivos(sortedData);
-        setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
-        setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
         
-        // Inicializar consumos aleatorios para cada dispositivo
-        const consumos: {[key: number]: number} = {};
-        sortedData.forEach((dispositivo: any) => {
-          consumos[dispositivo.id] = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
-        });
-        setConsumosDispositivos(consumos);
+        setDispositivos(sortedData);
+        setContadorAsignados(data.filter((d) => d.habitacion_id).length);
+        setContadorSinAsignar(data.filter((d) => !d.habitacion_id).length);
       } catch (error) {
         console.error('Error al obtener los dispositivos:', error);
       }
     };
 
     fetchDispositivos();
-    
-    // Actualizar consumos cada 2 segundos, similar a DeviceList
-    const intervalo = setInterval(() => {
-      // Actualizar consumos individuales
-      setConsumosDispositivos(prev => {
-        const nuevosConsumos: {[key: number]: number} = {};
-        Object.keys(prev).forEach(id => {
-          nuevosConsumos[Number(id)] = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
-        });
-        return nuevosConsumos;
-      });
-    }, 2000);
-    
-    // Limpiar el intervalo al desmontar
-    return () => clearInterval(intervalo);
+
+    // Suscribirse a actualizaciones de dispositivos
+    const unsuscribir = suscribirseADispositivosActualizados(async () => {
+      await fetchDispositivos();
+    });
+
+    return () => {
+      // Limpiar suscripción al desmontar
+      unsuscribir();
+    };
   }, []);
 
   // Efecto para notificar al componente padre sobre cambios en los elementos seleccionados
@@ -127,21 +126,24 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
       await asignarHabitacion(selectedItems, habitacionId);
       setSelectedItems([]);
       setOpen(false);
+      
       // Si el diálogo se está controlando desde el componente padre, actualizamos su estado
       if (setShowRoomDialog) {
         setShowRoomDialog(false);
       }
       
       // Refetch dispositivos after assignment
-      const data = await getDispositivos();
-      const sortedData = data.sort((a: any, b: any) => {
+      const data = await obtenerDispositivosConConsumo(true); // Forzar refresco
+      
+      const sortedData = data.sort((a, b) => {
         if (a.habitacion_id && !b.habitacion_id) return 1;
         if (!a.habitacion_id && b.habitacion_id) return -1;
         return a.nombre.localeCompare(b.nombre);
       });
+      
       setDispositivos(sortedData);
-      setContadorAsignados(data.filter((d: any) => d.habitacion_id).length);
-      setContadorSinAsignar(data.filter((d: any) => !d.habitacion_id).length);
+      setContadorAsignados(data.filter((d) => d.habitacion_id).length);
+      setContadorSinAsignar(data.filter((d) => !d.habitacion_id).length);
     } catch (error) {
       console.error('Error al asignar habitación:', error);
     }
@@ -183,25 +185,19 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
       <Box
         display="flex"
         flexWrap="wrap"
-        gap={0.5} // Reducido de 1 a 0.5 (de 8px a 4px)
+        gap={0.5}
       >
         {dispositivos.map((dispositivo) => {
-          // Usar el consumo del estado en lugar del dispositivo directamente
-          const consumo = consumosDispositivos[dispositivo.id] || 0;
-          const formattedConsumo = 
-            consumo < 1000
-              ? `${consumo} W`
-              : `${(consumo / 1000).toFixed(2)} kW`;
-          
-          // Determinar el color según el consumo
-          const consumoColor = consumo >= 0 ? '#1ECAFF' : '#00ff00';
+          // Usar las funciones de formateo del servicio centralizado
+          const formattedConsumo = formatearConsumo(dispositivo.consumo);
+          const consumoColor = getColorForConsumo(dispositivo.consumo);
 
           return (
             <Card
               key={dispositivo.id}
               sx={{
-                m: 0.5, // Reducido de 1 a 0.5 (de 8px a 4px)
-                p: 1.5, // Reducido de 2 a 1.5 (de 16px a 12px)
+                m: 0.5,
+                p: 1.5,
                 backgroundColor: '#333',
                 color: 'white',
                 width: '240px',

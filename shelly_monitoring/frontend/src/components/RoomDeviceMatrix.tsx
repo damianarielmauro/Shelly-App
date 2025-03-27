@@ -1,62 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, Checkbox, Button, Dialog, DialogTitle, DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Box, Typography, Card, Checkbox } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
-import { getDispositivosByHabitacion } from '../services/api';
+import {
+  DispositivoConConsumo,
+  obtenerDispositivosHabitacionConConsumo,
+  formatearConsumo,
+  getColorForConsumo,
+  iniciarActualizacionPeriodica,
+  suscribirseADispositivosHabitacionActualizados
+} from '../services/consumptionService';
 
 interface RoomDeviceMatrixProps {
   habitacionId: number;
   editMode: boolean;
-  // Propiedades adicionales para compatibilidad con Dashboard.tsx
-  habitacionesPermitidas?: number[];
-  isAdmin?: boolean;
 }
 
-const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ 
-  habitacionId, 
-  editMode,
-  // Valores por defecto para las propiedades opcionales
-  habitacionesPermitidas = [], 
-  isAdmin = false 
-}) => {
-  const [dispositivos, setDispositivos] = useState<any[]>([]);
+const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ habitacionId, editMode }) => {
+  const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [open, setOpen] = useState(false);
-  // Nuevo estado para los consumos de los dispositivos
-  const [consumosDispositivos, setConsumosDispositivos] = useState<{[key: number]: number}>({});
 
   useEffect(() => {
-    const fetchDispositivos = async () => {
+    // Iniciar actualización periódica
+    iniciarActualizacionPeriodica();
+
+    // Cargar dispositivos de la habitación
+    const cargarDispositivos = async () => {
       try {
-        const data = await getDispositivosByHabitacion(habitacionId);
+        const data = await obtenerDispositivosHabitacionConConsumo(habitacionId);
         setDispositivos(data);
-        
-        // Inicializar consumos aleatorios para cada dispositivo
-        const consumos: {[key: number]: number} = {};
-        data.forEach((dispositivo: any) => {
-          consumos[dispositivo.id] = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
-        });
-        setConsumosDispositivos(consumos);
       } catch (error) {
         console.error('Error al obtener los dispositivos:', error);
       }
     };
 
-    fetchDispositivos();
-    
-    // Actualizar consumos cada 2 segundos, similar a DeviceList
-    const intervalo = setInterval(() => {
-      // Actualizar consumos individuales
-      setConsumosDispositivos(prev => {
-        const nuevosConsumos: {[key: number]: number} = {};
-        Object.keys(prev).forEach(id => {
-          nuevosConsumos[Number(id)] = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
-        });
-        return nuevosConsumos;
-      });
-    }, 2000);
-    
-    // Limpiar el intervalo al desmontar el componente
-    return () => clearInterval(intervalo);
+    cargarDispositivos();
+
+    // Suscribirse a actualizaciones de dispositivos de esta habitación
+    const unsuscribir = suscribirseADispositivosHabitacionActualizados(
+      habitacionId,
+      cargarDispositivos
+    );
+
+    return () => {
+      unsuscribir();
+    };
   }, [habitacionId]);
 
   const handleCheckboxChange = (id: number) => {
@@ -81,32 +68,22 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({
           backgroundColor: 'black',
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#1976d2',
+          backgroundColor: '#1ECAFF',
         },
       }}
     >
       <Box
         display="flex"
         flexWrap="wrap"
-        gap={0.5} // CAMBIO: Reducido de 1 a 0.5 (de 8px a 4px)
+        gap={0.5}
       >
         {dispositivos.map((dispositivo) => {
-          // Usar el consumo del estado en lugar del dispositivo directamente
-          const consumo = consumosDispositivos[dispositivo.id] || 0;
-          const formattedConsumo = 
-            consumo < 1000
-              ? `${consumo} W`
-              : `${(consumo / 1000).toFixed(2)} kW`;
-          
-          // Determinar el color según el consumo - CORREGIDO: Usando #1ECAFF para positivos
-          const consumoColor = consumo >= 0 ? '#1ECAFF' : '#00ff00';
-
           return (
             <Card
               key={dispositivo.id}
               sx={{
-                m: 0.5, // CAMBIO: Reducido de 1 a 0.5 (de 8px a 4px)
-                p: 1.5, // CAMBIO: Reducido de 2 a 1.5 (de 16px a 12px)
+                m: 0.5,
+                p: 1.5,
                 backgroundColor: '#333',
                 color: 'white',
                 width: '240px',
@@ -149,16 +126,20 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({
                 {dispositivo.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '0.75rem', color: consumoColor, mr: 0.5 }} />
+                <BoltIcon sx={{ 
+                  fontSize: '0.75rem',
+                  color: getColorForConsumo(dispositivo.consumo),
+                  mr: 0.5 
+                }} />
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: '0.6rem',
                     fontWeight: 'bold',
-                    color: consumoColor,
+                    color: getColorForConsumo(dispositivo.consumo),
                   }}
                 >
-                  {formattedConsumo}
+                  {formatearConsumo(dispositivo.consumo)}
                 </Typography>
               </Box>
             </Card>

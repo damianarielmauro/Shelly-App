@@ -67,6 +67,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [todasHabitacionesPermitidasIds, setTodasHabitacionesPermitidasIds] = useState<number[]>([]);
   const [habitacionesConDispositivosDialogOpen, setHabitacionesConDispositivosDialogOpen] = useState<boolean>(false);
   const [habitacionesConDispositivosLista, setHabitacionesConDispositivosLista] = useState<string[]>([]);
+  // Nuevo estado para la habitación seleccionada
+  const [selectedHabitacion, setSelectedHabitacion] = useState<number | null>(null);
   
   const navigate = useNavigate();
 
@@ -570,6 +572,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             editMode={editMode}
             roomMatrixView={roomMatrixView}
             setRoomMatrixView={setRoomMatrixView}
+            selectedHabitacion={selectedHabitacion}
+            setSelectedHabitacion={setSelectedHabitacion}
           />
         </Box>
         <Box sx={{ 
@@ -579,10 +583,13 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           overflow: 'hidden',
           p: 2 
         }}>
-          {/* Pasamos todas las habitaciones permitidas y la flag isAdmin */}
+          {/* Pasamos todas las habitaciones permitidas, la flag isAdmin, la habitación seleccionada y roomMatrixView */}
           <DeviceList 
             habitacionesPermitidas={todasHabitacionesPermitidasIds} 
-            isAdmin={isAdmin} 
+            isAdmin={isAdmin}
+            selectedHabitacion={!roomMatrixView && selectedHabitacion !== null ? 
+              habitaciones.find(h => h.id === selectedHabitacion) || null : null}
+            roomMatrixView={roomMatrixView}
           />
         </Box>
       </Box>

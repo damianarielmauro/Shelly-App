@@ -1,127 +1,124 @@
 import React, { useEffect, useState } from 'react';
 import { Box, List, ListItem, Typography } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
-import { getDispositivos } from '../services/api';
-
-// Interfaz para tipado de dispositivos
-interface Dispositivo {
-  id: number;
-  nombre: string;
-  habitacion_id?: number;
-  tipo?: string;
-  ubicacion?: string;
-}
+import {
+  DispositivoConConsumo,
+  obtenerDispositivosConConsumo,
+  obtenerDispositivosHabitacionConConsumo,
+  obtenerTop10Ids,
+  obtenerConsumoTotal,
+  formatearConsumo,
+  getColorForConsumo,
+  iniciarActualizacionPeriodica,
+  suscribirseADispositivosActualizados,
+  suscribirseAConsumoTotalActualizado,
+  suscribirseADispositivosHabitacionActualizados
+} from '../services/consumptionService';
 
 interface DeviceListProps {
   habitacionesPermitidas: number[];
   isAdmin?: boolean;
+  selectedHabitacion?: { id: number; nombre: string } | null;
+  roomMatrixView: boolean;
 }
 
-const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin = false }) => {
-  const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
+const DeviceList: React.FC<DeviceListProps> = ({ 
+  habitacionesPermitidas, 
+  isAdmin = false,
+  selectedHabitacion = null,
+  roomMatrixView
+}) => {
+  const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
   const [totalDispositivos, setTotalDispositivos] = useState(0);
   const [dispositivosOffline, setDispositivosOffline] = useState(4); // Valor ejemplo
-  const [totalConsumo, setTotalConsumo] = useState(-12800); // Valor inicial en W
-  const [consumosDispositivos, setConsumosDispositivos] = useState<{[key: number]: number}>({});
+  const [totalConsumo, setTotalConsumo] = useState(0);
   const [top10Ids, setTop10Ids] = useState<number[]>([]);
 
+  // Determinar si debemos mostrar los dispositivos de una habitación específica
+  const mostrarDispositivosHabitacion = !roomMatrixView && selectedHabitacion !== null;
+
   useEffect(() => {
-    const fetchDispositivos = async () => {
+    // Iniciar el servicio de actualización periódica
+    iniciarActualizacionPeriodica();
+
+    // Función para cargar dispositivos según el contexto (global o habitación específica)
+    const cargarDispositivos = async () => {
       try {
-        const data = await getDispositivos();
-        
-        // Para admins, mostrar todos los dispositivos
-        if (isAdmin) {
-          console.log("Admin: mostrando todos los dispositivos");
-          setDispositivos(data);
-          setTotalDispositivos(data.length);
+        let dispositivosData: DispositivoConConsumo[] = [];
+
+        if (mostrarDispositivosHabitacion && selectedHabitacion) {
+          // Cargar dispositivos de la habitación seleccionada
+          dispositivosData = await obtenerDispositivosHabitacionConConsumo(selectedHabitacion.id);
         } else {
-          // Para usuarios regulares, aplicar el filtro por habitaciones permitidas
-          const dispositivosFiltrados = data.filter((d: Dispositivo) => 
-            d.habitacion_id && habitacionesPermitidas.includes(d.habitacion_id)
-          );
+          // Cargar todos los dispositivos con filtros según permisos
+          dispositivosData = await obtenerDispositivosConConsumo();
           
-          console.log(`Dispositivos filtrados: ${dispositivosFiltrados.length} de ${data.length}`);
-          setDispositivos(dispositivosFiltrados);
-          setTotalDispositivos(dispositivosFiltrados.length);
+          if (!isAdmin) {
+            // Filtrar por habitaciones permitidas para usuarios no admin
+            dispositivosData = dispositivosData.filter(d => 
+              d.habitacion_id && habitacionesPermitidas.includes(d.habitacion_id)
+            );
+          }
         }
-        
-        // Inicializar consumos aleatorios para cada dispositivo
-        const consumos: {[key: number]: number} = {};
-        const dispositivos = isAdmin ? data : data.filter((d: Dispositivo) => 
-          d.habitacion_id && habitacionesPermitidas.includes(d.habitacion_id)
+
+        setDispositivos(dispositivosData);
+        setTotalDispositivos(dispositivosData.length);
+
+        // Actualizar top 10
+        const top10 = obtenerTop10Ids().filter(id => 
+          dispositivosData.some(d => d.id === id)
         );
-        
-        dispositivos.forEach((dispositivo: Dispositivo) => {
-          consumos[dispositivo.id] = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
-        });
-        
-        setConsumosDispositivos(consumos);
-        
-        // Calcular top 10 dispositivos con mayor consumo
-        const dispositivosOrdenados = [...dispositivos].sort((a: Dispositivo, b: Dispositivo) => 
-          consumos[b.id] - consumos[a.id]
-        );
-        
-        const top10 = dispositivosOrdenados.slice(0, 10).map(d => d.id);
         setTop10Ids(top10);
-        
+
+        // En vista de habitación, calcular consumo total como suma de dispositivos
+        if (mostrarDispositivosHabitacion) {
+          const suma = dispositivosData.reduce((total, d) => total + d.consumo, 0);
+          setTotalConsumo(suma);
+        } else {
+          // En vista global, obtener consumo total del sistema
+          setTotalConsumo(obtenerConsumoTotal());
+        }
       } catch (error) {
-        console.error('Error al obtener los dispositivos:', error);
+        console.error('Error al cargar dispositivos:', error);
       }
     };
 
-    fetchDispositivos();
+    // Cargar datos iniciales
+    cargarDispositivos();
+
+    // Suscribirse a las actualizaciones según el modo de visualización
+    let unsuscribir: () => void;
     
-    // Actualizar consumos y top 10 cada 2 segundos
-    const intervalo = setInterval(() => {
-      // Actualizar consumos individuales
-      setConsumosDispositivos(prev => {
-        const nuevosConsumos: {[key: number]: number} = {};
-        Object.keys(prev).forEach(id => {
-          nuevosConsumos[Number(id)] = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
-        });
-        return nuevosConsumos;
+    if (mostrarDispositivosHabitacion && selectedHabitacion) {
+      // En vista de habitación, suscribirse a cambios de esa habitación
+      unsuscribir = suscribirseADispositivosHabitacionActualizados(
+        selectedHabitacion.id,
+        cargarDispositivos
+      );
+    } else {
+      // En vista global, suscribirse a todos los cambios
+      const unsuscribirDispositivos = suscribirseADispositivosActualizados(cargarDispositivos);
+      const unsuscribirConsumoTotal = suscribirseAConsumoTotalActualizado(() => {
+        setTotalConsumo(obtenerConsumoTotal());
       });
       
-      // Actualizar top 10 basado en nuevos consumos
-      setDispositivos(prevDispositivos => {
-        if (prevDispositivos.length === 0) return prevDispositivos;
-        
-        // Actualizar top 10 sin modificar el array original
-        const dispositivosOrdenados = [...prevDispositivos].sort((a, b) => 
-          (consumosDispositivos[b.id] || 0) - (consumosDispositivos[a.id] || 0)
-        );
-        
-        setTop10Ids(dispositivosOrdenados.slice(0, 10).map(d => d.id));
-        
-        return prevDispositivos; // No cambiar los dispositivos, solo su ordenación para el top 10
-      });
+      unsuscribir = () => {
+        unsuscribirDispositivos();
+        unsuscribirConsumoTotal();
+      };
+    }
 
-      // Actualizar consumo/generación total
-      setTotalConsumo(prev => {
-        const fluctuacion = prev * 0.1 * (Math.random() > 0.5 ? 1 : -1);
-        return Math.round(prev + fluctuacion);
-      });
-    }, 2000);
-    
-    return () => clearInterval(intervalo);
-  }, [habitacionesPermitidas, isAdmin]);
+    return unsuscribir;
+  }, [habitacionesPermitidas, isAdmin, selectedHabitacion, mostrarDispositivosHabitacion]);
 
-  // Estilos y formateo
-  const consumoColor = totalConsumo >= 0 ? '#1ECAFF' : '#00ff00';
-  const formattedConsumo = totalConsumo < 1000 && totalConsumo > -1000 
-    ? `${Math.abs(totalConsumo)} W` 
-    : `${(Math.abs(totalConsumo) / 1000).toFixed(2)} kW`;
-  const consumoLabel = totalConsumo >= 0 ? 'Consumiendo de Red' : 'Entregando a la Red';
-
-  const getColorForConsumo = (consumo: number) => {
-    return consumo >= 0 ? '#1ECAFF' : '#00ff00'; // Azul para positivos, verde para negativos
-  };
+  // Etiqueta diferente dependiendo si estamos en vista normal o de habitación
+  const consumoLabel = mostrarDispositivosHabitacion 
+    ? selectedHabitacion?.nombre || "Habitación" 
+    : (totalConsumo >= 0 ? 'Consumiendo de Red' : 'Entregando a la Red');
 
   // Ordenar dispositivos por consumo antes de renderizar
   const dispositivosOrdenados = [...dispositivos]
-    .sort((a, b) => (consumosDispositivos[b.id] || 0) - (consumosDispositivos[a.id] || 0));
+    .sort((a, b) => Math.abs(b.consumo) - Math.abs(a.consumo));
 
   return (
     <Box className="device-list" sx={{ 
@@ -143,12 +140,12 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
         mb: 1,
         height: 'auto' // Ajuste automático de altura
       }}>
-        {/* Primer renglón: texto "Entregando/Consumiendo de Red" en color PERO SIN NEGRITA */}
+        {/* Primer renglón: nombre de la habitación o estado global */}
         <Typography sx={{ 
           fontSize: '0.85rem', 
-          fontWeight: 'normal', // Sin negrita
+          fontWeight: mostrarDispositivosHabitacion ? 'bold' : 'normal', // Con negrita si es nombre de habitación
           mb: 0.5,
-          color: consumoColor
+          color: getColorForConsumo(totalConsumo)
         }}>
           {consumoLabel}
         </Typography>
@@ -160,36 +157,36 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
           justifyContent: 'center' 
         }}>
           <BoltIcon sx={{ 
-            color: consumoColor,
+            color: getColorForConsumo(totalConsumo),
             mr: 0.5 
           }} />
           <Typography sx={{ 
-            color: consumoColor, 
+            color: getColorForConsumo(totalConsumo), 
             fontSize: '1rem', 
             fontWeight: 'bold' 
           }}>
-            {formattedConsumo}
+            {formatearConsumo(totalConsumo)}
           </Typography>
         </Box>
       </Box>
       
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-        <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', width: '48%' }}>
-          <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{dispositivosOffline}</Typography>
-          <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Offline</Typography>
+      {/* Mostrar los recuadros de total y offline solo si no estamos en vista de habitación */}
+      {!mostrarDispositivosHabitacion && (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+          <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', width: '48%' }}>
+            <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{dispositivosOffline}</Typography>
+            <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Offline</Typography>
+          </Box>
+          <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', width: '48%' }}>
+            <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{totalDispositivos}</Typography>
+            <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Total</Typography>
+          </Box>
         </Box>
-        <Box sx={{ backgroundColor: '#444', borderRadius: '8px', padding: '8px', textAlign: 'center', width: '48%' }}>
-          <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{totalDispositivos}</Typography>
-          <Typography sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Total</Typography>
-        </Box>
-      </Box>
+      )}
       
       <List sx={{ padding: 0 }}>
         {dispositivosOrdenados.map((dispositivo, index) => {
-          const consumo = consumosDispositivos[dispositivo.id] || 0;
-          const formattedConsumo = consumo < 1000 ? `${consumo} W` : `${(consumo / 1000).toFixed(2)} kW`;
-          const consumoColor = getColorForConsumo(consumo);
-          const isTop10 = index < 10; // Los primeros 10 de la lista ordenada
+          const isTop10 = top10Ids.includes(dispositivo.id);
           
           return (
             <ListItem 
@@ -219,7 +216,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
               <Typography 
                 sx={{ 
                   fontSize: '0.75rem', 
-                  color: consumoColor, 
+                  color: getColorForConsumo(dispositivo.consumo), 
                   flexShrink: 1, 
                   whiteSpace: 'nowrap', 
                   textOverflow: 'ellipsis', 
@@ -228,7 +225,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
                   fontWeight: isTop10 ? 'bold' : 'normal' // Consumo en negrita para top 10
                 }}
               >
-                {formattedConsumo}
+                {formatearConsumo(dispositivo.consumo)}
               </Typography>
             </ListItem>
           );
@@ -239,7 +236,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ habitacionesPermitidas, isAdmin
             <Typography variant="body2" sx={{ color: '#888' }}>
               No hay dispositivos disponibles
             </Typography>
-            {!isAdmin && habitacionesPermitidas.length === 0 && (
+            {!isAdmin && habitacionesPermitidas.length === 0 && !mostrarDispositivosHabitacion && (
               <Typography variant="caption" sx={{ color: '#666', display: 'block', mt: 1 }}>
                 No tienes acceso a ninguna habitación
               </Typography>
