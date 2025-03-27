@@ -181,6 +181,7 @@ const TabManager: React.FC<TabManagerProps> = ({
   const handleDialogOpen = (type: string) => {
     setDialogType(type);
     setDialogOpen(true);
+    handleMenuClose(); // Cerrar el menú después de seleccionar
   };
 
   const handleDialogClose = () => {
@@ -270,18 +271,67 @@ const TabManager: React.FC<TabManagerProps> = ({
           </Tooltip>
         )}
       </Box>
+      
+      {/* Menú de AddIcon con estilo mejorado, igual que el de DeleteIcon */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
+        PaperProps={{ 
+          sx: { 
+            minWidth: '150px', 
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '4px',
+          }
+        }}
       >
-        <MenuItem onClick={() => handleDialogOpen('Tablero')}>Tablero</MenuItem>
-        <MenuItem onClick={() => handleDialogOpen('Habitación')}>Habitación</MenuItem>
+        <MenuItem 
+          onClick={() => handleDialogOpen('Tablero')} 
+          sx={{ 
+            color: '#1ECAFF',
+            '&:hover': {
+              backgroundColor: 'rgba(30, 202, 255, 0.1)',
+            }
+          }}
+        >
+          Tablero
+        </MenuItem>
+        <MenuItem 
+          onClick={() => handleDialogOpen('Habitación')} 
+          sx={{ 
+            color: '#1ECAFF',
+            '&:hover': {
+              backgroundColor: 'rgba(30, 202, 255, 0.1)',
+            }
+          }}
+        >
+          Habitación
+        </MenuItem>
       </Menu>
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Agregar {dialogType}</DialogTitle>
+      
+      {/* Diálogo mejorado para agregar habitación o tablero */}
+      <Dialog 
+        open={dialogOpen} 
+        onClose={handleDialogClose}
+        PaperProps={{
+          style: {
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '10px',
+            minWidth: '300px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: '#1ECAFF', 
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}>
+          Agregar {dialogType}
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ color: 'white', paddingTop: '8px' }}>
             Por favor ingresa el nombre del {dialogType.toLowerCase()}.
           </DialogContentText>
           <TextField
@@ -292,14 +342,51 @@ const TabManager: React.FC<TabManagerProps> = ({
             fullWidth
             value={newItemName}
             onChange={(e) => setNewItemName(e.target.value)}
+            sx={{
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+              '& .MuiOutlinedInput-root': {
+                color: 'white',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#1ECAFF',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#1ECAFF',
+                },
+              },
+              marginTop: '16px',
+            }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
-            Cancelar
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button 
+            onClick={handleDialogClose} 
+            sx={{ 
+              color: '#1ECAFF',
+              '&:hover': {
+                backgroundColor: 'rgba(30, 202, 255, 0.1)',
+              }
+            }}
+          >
+            CANCELAR
           </Button>
-          <Button onClick={handleDialogSubmit} color="primary">
-            Agregar
+          <Button 
+            onClick={handleDialogSubmit} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#1ECAFF', 
+              color: 'black',
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#18b2e1',
+              }
+            }}
+          >
+            AGREGAR
           </Button>
         </DialogActions>
       </Dialog>

@@ -483,3 +483,990 @@ AttributeError: 'NoneType' object has no attribute 'role'
 2025-03-24 22:35:47,012 - DEBUG - Intento de inicio de sesión: admin@shelly.local
 2025-03-24 22:35:47,019 - DEBUG - Usuario encontrado en la base de datos
 2025-03-24 22:35:47,358 - DEBUG - Contraseña correcta
+2025-03-27 04:14:42,049 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:14:42,120 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:14:48,218 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:14:48,285 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:14:54,476 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:14:54,541 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:00,703 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:00,768 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:06,956 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:07,023 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:13,216 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:13,283 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:19,458 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:19,526 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:25,734 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:25,801 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:31,964 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:32,033 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:38,214 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:38,282 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:44,482 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:44,550 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:50,726 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:50,793 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:56,958 - INFO - 🔧 Backend Flask iniciado.
+2025-03-27 04:15:57,026 - INFO - 📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.
+2025-03-27 04:15:57,031 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on https://127.0.0.1:8000
+ * Running on https://172.16.10.222:8000
+2025-03-27 04:15:57,032 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-27 04:16:44,278 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "OPTIONS /api/login HTTP/1.1" 200 -
+2025-03-27 04:16:44,301 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-27 04:16:44,312 - DEBUG - Usuario encontrado en la base de datos
+2025-03-27 04:16:44,652 - DEBUG - Contraseña correcta
+2025-03-27 04:16:44,654 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "POST /api/login HTTP/1.1" 200 -
+2025-03-27 04:16:44,686 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "OPTIONS /api/roles/admin/permissions HTTP/1.1" 200 -
+2025-03-27 04:16:44,712 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "GET /api/roles/admin/permissions HTTP/1.1" 200 -
+2025-03-27 04:16:44,774 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 04:16:44,784 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 04:16:44,816 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 04:16:44,827 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 04:16:44,948 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:44,956 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:16:44,963 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:44,973 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:44,993 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:44] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,014 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,024 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:16:45,041 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,072 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,101 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,248 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,277 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,323 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,359 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,386 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,413 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:45,507 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:16:45,599 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:45] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:16:55,372 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:55] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:55,383 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:55] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:55,405 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:55] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:55,423 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:55] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:56,586 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:56] "OPTIONS /api/habitaciones/9/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:16:56,625 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:56] "GET /api/habitaciones/9/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:16:59,725 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:59] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:59,736 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:59] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:59,760 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:59] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:16:59,769 - INFO - 10.1.5.99 - - [27/Mar/2025 04:16:59] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:00,323 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:00] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:00,361 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:00] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:00,381 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:00] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:00,395 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:00] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:00,674 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:00] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:00,682 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:00] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:00,709 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:00] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:00,717 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:00] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:17:25,394 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:25] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:17:25,436 - INFO - 10.1.5.99 - - [27/Mar/2025 04:17:25] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:26:27,856 - INFO - 10.1.5.99 - - [27/Mar/2025 04:26:27] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:26:27,894 - INFO - 10.1.5.99 - - [27/Mar/2025 04:26:27] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:27:00,201 - INFO - 10.1.5.99 - - [27/Mar/2025 04:27:00] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:27:00,268 - INFO - 10.1.5.99 - - [27/Mar/2025 04:27:00] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:27:08,039 - INFO - 10.1.5.99 - - [27/Mar/2025 04:27:08] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:27:08,080 - INFO - 10.1.5.99 - - [27/Mar/2025 04:27:08] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:27:37,699 - INFO - 10.1.5.99 - - [27/Mar/2025 04:27:37] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:27:37,731 - INFO - 10.1.5.99 - - [27/Mar/2025 04:27:37] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:10,809 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 04:29:10,819 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 04:29:10,846 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 04:29:10,854 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 04:29:10,904 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:29:10,913 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:10,922 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:10,933 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:10,965 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:29:10,986 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:10] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,012 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,023 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,106 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,147 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,209 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,241 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,266 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,295 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,320 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,352 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:11,435 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:29:11,471 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:11] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:29:19,415 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:19] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:29:19,451 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:19] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:29:21,446 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "OPTIONS /api/usuarios HTTP/1.1" 200 -
+2025-03-27 04:29:21,456 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:21,482 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "GET /api/usuarios HTTP/1.1" 200 -
+2025-03-27 04:29:21,508 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 04:29:21,571 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "OPTIONS /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 04:29:21,578 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "OPTIONS /api/get_user_permissions/22 HTTP/1.1" 200 -
+2025-03-27 04:29:21,589 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "OPTIONS /api/get_user_permissions/23 HTTP/1.1" 200 -
+2025-03-27 04:29:21,595 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "OPTIONS /api/get_user_permissions/1 HTTP/1.1" 200 -
+2025-03-27 04:29:21,610 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "OPTIONS /api/get_user_permissions/19 HTTP/1.1" 200 -
+2025-03-27 04:29:21,619 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "OPTIONS /api/get_user_permissions/20 HTTP/1.1" 200 -
+2025-03-27 04:29:21,652 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "GET /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 04:29:21,662 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "GET /api/get_user_permissions/22 HTTP/1.1" 200 -
+2025-03-27 04:29:21,669 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "GET /api/get_user_permissions/23 HTTP/1.1" 200 -
+2025-03-27 04:29:21,677 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "GET /api/get_user_permissions/1 HTTP/1.1" 200 -
+2025-03-27 04:29:21,688 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "GET /api/get_user_permissions/19 HTTP/1.1" 200 -
+2025-03-27 04:29:21,689 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:21] "GET /api/get_user_permissions/20 HTTP/1.1" 200 -
+2025-03-27 04:29:23,749 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:23] "OPTIONS /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 04:29:23,781 - INFO - 10.1.5.99 - - [27/Mar/2025 04:29:23] "GET /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 04:31:13,271 - INFO - 10.1.5.99 - - [27/Mar/2025 04:31:13] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:31:13,316 - INFO - 10.1.5.99 - - [27/Mar/2025 04:31:13] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:59:59,702 - INFO - 10.1.5.99 - - [27/Mar/2025 04:59:59] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 04:59:59,737 - INFO - 10.1.5.99 - - [27/Mar/2025 04:59:59] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:00:11,108 - INFO - 10.1.5.99 - - [27/Mar/2025 05:00:11] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:00:11,140 - INFO - 10.1.5.99 - - [27/Mar/2025 05:00:11] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:01:07,108 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "OPTIONS /api/usuarios HTTP/1.1" 200 -
+2025-03-27 05:01:07,124 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:01:07,139 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "GET /api/usuarios HTTP/1.1" 200 -
+2025-03-27 05:01:07,160 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:01:07,210 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "OPTIONS /api/get_user_permissions/19 HTTP/1.1" 200 -
+2025-03-27 05:01:07,219 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "OPTIONS /api/get_user_permissions/20 HTTP/1.1" 200 -
+2025-03-27 05:01:07,235 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "OPTIONS /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 05:01:07,244 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "OPTIONS /api/get_user_permissions/22 HTTP/1.1" 200 -
+2025-03-27 05:01:07,253 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "OPTIONS /api/get_user_permissions/23 HTTP/1.1" 200 -
+2025-03-27 05:01:07,261 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "OPTIONS /api/get_user_permissions/1 HTTP/1.1" 200 -
+2025-03-27 05:01:07,291 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "GET /api/get_user_permissions/22 HTTP/1.1" 200 -
+2025-03-27 05:01:07,304 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "GET /api/get_user_permissions/1 HTTP/1.1" 200 -
+2025-03-27 05:01:07,311 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "GET /api/get_user_permissions/20 HTTP/1.1" 200 -
+2025-03-27 05:01:07,327 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "GET /api/get_user_permissions/23 HTTP/1.1" 200 -
+2025-03-27 05:01:07,330 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "GET /api/get_user_permissions/19 HTTP/1.1" 200 -
+2025-03-27 05:01:07,335 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:07] "GET /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 05:01:08,783 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:08] "GET /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 05:01:47,151 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:47] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:01:47,186 - INFO - 10.1.5.99 - - [27/Mar/2025 05:01:47] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:05:27,481 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "OPTIONS /api/usuarios HTTP/1.1" 200 -
+2025-03-27 05:05:27,490 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:05:27,511 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "GET /api/usuarios HTTP/1.1" 200 -
+2025-03-27 05:05:27,521 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:05:27,576 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "OPTIONS /api/get_user_permissions/1 HTTP/1.1" 200 -
+2025-03-27 05:05:27,586 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "OPTIONS /api/get_user_permissions/19 HTTP/1.1" 200 -
+2025-03-27 05:05:27,592 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "OPTIONS /api/get_user_permissions/20 HTTP/1.1" 200 -
+2025-03-27 05:05:27,599 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "OPTIONS /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 05:05:27,607 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "OPTIONS /api/get_user_permissions/22 HTTP/1.1" 200 -
+2025-03-27 05:05:27,615 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "OPTIONS /api/get_user_permissions/23 HTTP/1.1" 200 -
+2025-03-27 05:05:27,653 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "GET /api/get_user_permissions/1 HTTP/1.1" 200 -
+2025-03-27 05:05:27,660 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "GET /api/get_user_permissions/19 HTTP/1.1" 200 -
+2025-03-27 05:05:27,668 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "GET /api/get_user_permissions/20 HTTP/1.1" 200 -
+2025-03-27 05:05:27,675 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "GET /api/get_user_permissions/21 HTTP/1.1" 200 -
+2025-03-27 05:05:27,683 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "GET /api/get_user_permissions/22 HTTP/1.1" 200 -
+2025-03-27 05:05:27,692 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:27] "GET /api/get_user_permissions/23 HTTP/1.1" 200 -
+2025-03-27 05:05:28,884 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:28] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:05:28,917 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:28] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:05:33,218 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:33] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:05:33,255 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:33] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:05:37,694 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:37] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:05:37,729 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:37] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:05:43,108 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:43] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:05:43,138 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:43] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:05:55,891 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:55] "OPTIONS /api/asignar_habitacion HTTP/1.1" 200 -
+2025-03-27 05:05:55,985 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:55] "POST /api/asignar_habitacion HTTP/1.1" 200 -
+2025-03-27 05:05:56,012 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:56] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:05:56,045 - INFO - 10.1.5.99 - - [27/Mar/2025 05:05:56] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:06:17,845 - INFO - 10.1.5.99 - - [27/Mar/2025 05:06:17] "OPTIONS /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:06:17,876 - INFO - 10.1.5.99 - - [27/Mar/2025 05:06:17] "GET /api/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:06:20,747 - INFO - 10.1.5.99 - - [27/Mar/2025 05:06:20] "OPTIONS /api/asignar_habitacion HTTP/1.1" 200 -
+2025-03-27 05:06:20,798 - INFO - 10.1.5.99 - - [27/Mar/2025 05:06:20] "POST /api/asignar_habitacion HTTP/1.1" 200 -
+2025-03-27 05:06:20,827 - INFO - 10.1.5.99 - - [27/Mar/2025 05:06:20] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:06:20,863 - INFO - 10.1.5.99 - - [27/Mar/2025 05:06:20] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:07:12,549 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:07:12,557 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:07:12,576 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:07:12,601 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:07:12,647 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,655 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,664 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,672 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:07:12,686 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,713 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,730 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:07:12,773 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,781 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,799 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,816 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,853 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,878 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,907 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,932 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:12,963 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:12] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:07:13,005 - INFO - 10.1.5.99 - - [27/Mar/2025 05:07:13] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:11:20,762 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:20] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:11:20,772 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:20] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:11:20,798 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:20] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:11:20,821 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:20] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:11:20,866 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:20] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:11:20,887 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:20] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,109 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,120 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,141 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:11:21,145 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,206 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,234 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,292 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,320 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,418 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,447 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,471 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,499 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,524 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,551 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:21,651 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:21] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:11:49,502 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:49] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:11:49,526 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:49] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:11:49,614 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:49] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:49,621 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:49] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:49,639 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:49] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:49,660 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:49] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:11:54,820 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:54] "OPTIONS /api/habitaciones/8/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:11:54,847 - INFO - 10.1.5.99 - - [27/Mar/2025 05:11:54] "GET /api/habitaciones/8/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:07,611 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "OPTIONS /api/habitaciones/8 HTTP/1.1" 200 -
+2025-03-27 05:12:07,657 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "DELETE /api/habitaciones/8 HTTP/1.1" 200 -
+2025-03-27 05:12:07,728 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:12:07,754 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:12:07,786 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:07,810 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:07,839 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:07,865 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:07,893 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:07,917 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:07,945 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:07,970 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:07,998 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:07] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:08,024 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:08] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:08,118 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:08] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:08,151 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:08] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:12,998 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:12] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:13,007 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:13] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:13,023 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:13] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:13,047 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:13] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:13,932 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:13] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:13,940 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:13] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:13,958 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:13] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:13,982 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:13] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:15,300 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:15] "OPTIONS /api/habitaciones/25/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:15,329 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:15] "GET /api/habitaciones/25/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:22,402 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:22] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:22,413 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:22] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:22,428 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:22] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:22,452 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:22] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:23,349 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:23] "OPTIONS /api/habitaciones/19/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:23,376 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:23] "GET /api/habitaciones/19/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:24,898 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:24] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:24,908 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:24] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:24,926 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:24] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:24,949 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:24] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,311 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:12:38,327 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:12:38,443 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:12:38,481 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:12:38,521 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:38,529 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,537 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,545 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,560 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,600 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:12:38,621 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,672 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,764 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,790 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,822 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,848 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,875 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,903 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,933 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:38,957 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:38] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:12:39,093 - INFO - 10.1.5.99 - - [27/Mar/2025 05:12:39] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:24,343 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:24] "OPTIONS /api/habitaciones/6/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:24,371 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:24] "GET /api/habitaciones/6/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:29,164 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "OPTIONS /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:15:29,195 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "GET /api/tableros HTTP/1.1" 200 -
+2025-03-27 05:15:29,223 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,252 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,277 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,305 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,331 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "OPTIONS /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,357 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "GET /api/tableros/4/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,382 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "OPTIONS /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,412 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "GET /api/tableros/5/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,435 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "OPTIONS /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,460 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "GET /api/tableros/6/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:29,534 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "OPTIONS /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:29,567 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:29] "GET /api/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:34,897 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:34] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:34,906 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:34] "OPTIONS /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:34,928 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:34] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:34,951 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:34] "GET /api/tableros/3/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:35,670 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:35] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:35,696 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:35] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:35,703 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:35] "OPTIONS /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:35,725 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:35] "GET /api/tableros/2/habitaciones HTTP/1.1" 200 -
+2025-03-27 05:15:37,163 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:37] "OPTIONS /api/habitaciones/6/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:37,191 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:37] "GET /api/habitaciones/6/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:47,178 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:47] "OPTIONS /api/habitaciones/6/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:47,205 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:47] "GET /api/habitaciones/6/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:15:52,156 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:52] "OPTIONS /api/habitaciones/6 HTTP/1.1" 200 -
+2025-03-27 05:15:52,229 - ERROR - Exception on /api/habitaciones/6 [DELETE]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.ForeignKeyViolation: update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 69, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 240, in eliminar_habitacion
+    db.session.commit()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 679, in execute
+    util.preloaded.orm_persistence.delete_obj(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 193, in delete_obj
+    _emit_delete_statements(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1465, in _emit_delete_statements
+    c = connection.execute(
+        ^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+[SQL: DELETE FROM habitaciones WHERE habitaciones.id = %(id)s]
+[parameters: {'id': 6}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-03-27 05:15:52,242 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:52] "[35m[1mDELETE /api/habitaciones/6 HTTP/1.1[0m" 500 -
+2025-03-27 05:15:56,741 - ERROR - Exception on /api/habitaciones/6 [DELETE]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.ForeignKeyViolation: update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 69, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 240, in eliminar_habitacion
+    db.session.commit()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 679, in execute
+    util.preloaded.orm_persistence.delete_obj(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 193, in delete_obj
+    _emit_delete_statements(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1465, in _emit_delete_statements
+    c = connection.execute(
+        ^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+[SQL: DELETE FROM habitaciones WHERE habitaciones.id = %(id)s]
+[parameters: {'id': 6}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-03-27 05:15:56,745 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:56] "[35m[1mDELETE /api/habitaciones/6 HTTP/1.1[0m" 500 -
+2025-03-27 05:15:58,369 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:58] "OPTIONS /api/habitaciones/6 HTTP/1.1" 200 -
+2025-03-27 05:15:58,404 - ERROR - Exception on /api/habitaciones/6 [DELETE]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.ForeignKeyViolation: update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 69, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 240, in eliminar_habitacion
+    db.session.commit()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 679, in execute
+    util.preloaded.orm_persistence.delete_obj(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 193, in delete_obj
+    _emit_delete_statements(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1465, in _emit_delete_statements
+    c = connection.execute(
+        ^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+[SQL: DELETE FROM habitaciones WHERE habitaciones.id = %(id)s]
+[parameters: {'id': 6}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-03-27 05:15:58,408 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:58] "[35m[1mDELETE /api/habitaciones/6 HTTP/1.1[0m" 500 -
+2025-03-27 05:15:59,390 - ERROR - Exception on /api/habitaciones/6 [DELETE]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.ForeignKeyViolation: update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 69, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 240, in eliminar_habitacion
+    db.session.commit()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 679, in execute
+    util.preloaded.orm_persistence.delete_obj(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 193, in delete_obj
+    _emit_delete_statements(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1465, in _emit_delete_statements
+    c = connection.execute(
+        ^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+[SQL: DELETE FROM habitaciones WHERE habitaciones.id = %(id)s]
+[parameters: {'id': 6}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-03-27 05:15:59,393 - INFO - 10.1.5.99 - - [27/Mar/2025 05:15:59] "[35m[1mDELETE /api/habitaciones/6 HTTP/1.1[0m" 500 -
+2025-03-27 05:16:00,615 - ERROR - Exception on /api/habitaciones/6 [DELETE]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.ForeignKeyViolation: update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 69, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 240, in eliminar_habitacion
+    db.session.commit()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 679, in execute
+    util.preloaded.orm_persistence.delete_obj(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 193, in delete_obj
+    _emit_delete_statements(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1465, in _emit_delete_statements
+    c = connection.execute(
+        ^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+[SQL: DELETE FROM habitaciones WHERE habitaciones.id = %(id)s]
+[parameters: {'id': 6}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-03-27 05:16:00,618 - INFO - 10.1.5.99 - - [27/Mar/2025 05:16:00] "[35m[1mDELETE /api/habitaciones/6 HTTP/1.1[0m" 500 -
+2025-03-27 05:16:01,513 - ERROR - Exception on /api/habitaciones/6 [DELETE]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.ForeignKeyViolation: update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 69, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 240, in eliminar_habitacion
+    db.session.commit()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 679, in execute
+    util.preloaded.orm_persistence.delete_obj(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 193, in delete_obj
+    _emit_delete_statements(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1465, in _emit_delete_statements
+    c = connection.execute(
+        ^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+[SQL: DELETE FROM habitaciones WHERE habitaciones.id = %(id)s]
+[parameters: {'id': 6}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-03-27 05:16:01,517 - INFO - 10.1.5.99 - - [27/Mar/2025 05:16:01] "[35m[1mDELETE /api/habitaciones/6 HTTP/1.1[0m" 500 -
+2025-03-27 05:16:05,779 - INFO - 10.1.5.99 - - [27/Mar/2025 05:16:05] "OPTIONS /api/habitaciones/6 HTTP/1.1" 200 -
+2025-03-27 05:16:05,808 - ERROR - Exception on /api/habitaciones/6 [DELETE]
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.ForeignKeyViolation: update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 69, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/shelly_monitoring/app.py", line 240, in eliminar_habitacion
+    db.session.commit()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/unitofwork.py", line 679, in execute
+    util.preloaded.orm_persistence.delete_obj(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 193, in delete_obj
+    _emit_delete_statements(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/orm/persistence.py", line 1465, in _emit_delete_statements
+    c = connection.execute(
+        ^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/shelly_monitoring/venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) update or delete on table "habitaciones" violates foreign key constraint "dispositivos_habitacion_id_fkey" on table "dispositivos"
+DETAIL:  Key (id)=(6) is still referenced from table "dispositivos".
+
+[SQL: DELETE FROM habitaciones WHERE habitaciones.id = %(id)s]
+[parameters: {'id': 6}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-03-27 05:16:05,812 - INFO - 10.1.5.99 - - [27/Mar/2025 05:16:05] "[35m[1mDELETE /api/habitaciones/6 HTTP/1.1[0m" 500 -
+2025-03-27 05:16:06,949 - INFO - 10.1.5.99 - - [27/Mar/2025 05:16:06] "OPTIONS /api/habitaciones/6/dispositivos HTTP/1.1" 200 -
+2025-03-27 05:16:06,984 - INFO - 10.1.5.99 - - [27/Mar/2025 05:16:06] "GET /api/habitaciones/6/dispositivos HTTP/1.1" 200 -

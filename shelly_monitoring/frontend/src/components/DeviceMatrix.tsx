@@ -136,7 +136,8 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
           backgroundColor: 'black',
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#1976d2',
+          backgroundColor: '#1ECAFF', // Actualizado para coincidir con el tema
+          borderRadius: '3px',
         },
       }}
     >
@@ -151,7 +152,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
         <Typography variant="body1" sx={{ color: 'white', mx: 1 }}>
           - Sin Asignar: {contadorSinAsignar}
         </Typography>
-        <Typography variant="body1" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+        <Typography variant="body1" sx={{ color: '#1ECAFF', fontWeight: 'bold' }}>
           - Totales: {dispositivos.length}
         </Typography>
       </Box>
@@ -162,9 +163,9 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
       >
         {dispositivos.map((dispositivo) => {
           const consumo =
-            dispositivo.consumo < 1000
-              ? `${dispositivo.consumo} W`
-              : `${(dispositivo.consumo / 1000).toFixed(2)} kW`;
+            dispositivo.ultimo_consumo < 1000
+              ? `${dispositivo.ultimo_consumo} W`
+              : `${(dispositivo.ultimo_consumo / 1000).toFixed(2)} kW`;
 
           return (
             <Card
@@ -224,13 +225,13 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
                 {dispositivo.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '0.75rem', color: '#1976d2', mr: 0.5 }} />
+                <BoltIcon sx={{ fontSize: '0.75rem', color: '#1ECAFF', mr: 0.5 }} />
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: '0.6rem',
                     fontWeight: 'bold',
-                    color: '#1976d2',
+                    color: '#1ECAFF',
                   }}
                 >
                   {consumo}
@@ -240,67 +241,113 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
           );
         })}
       </Box>
-      {editMode && selectedItems.length > 0 && !showRoomDialog && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAssignClick}
-          sx={{ position: 'fixed', bottom: '725px', right: '98px', height: '25px', zIndex: 1000 }}
-        >
+      {/* Diálogo rediseñado para coincidir con el estilo de UsersManagement */}
+      <Dialog 
+        open={open} 
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '10px',
+            minWidth: '300px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: '#1ECAFF', 
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}>
           Asignar a Habitación
-        </Button>
-      )}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
+        </DialogTitle>
         <DialogContent
           sx={{
-            fontSize: '0.4rem',
-            lineHeight: '0.6rem',
-            maxHeight: '600px', 
+            maxHeight: '600px',
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               width: '4px',
             },
             '&::-webkit-scrollbar-track': {
-              backgroundColor: 'white',
+              backgroundColor: '#222',
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#1976d2',
+              backgroundColor: '#1ECAFF',
               borderRadius: '10px',
             },
+            pt: 1
           }}
         >
-          <RadioGroup value={selectedHabitacion} onChange={handleHabitacionChange}>
-            <FormControlLabel 
-              key="ninguna" 
-              value="null" 
-              control={<Radio sx={{ padding: '2px' }} />} 
-              label={
-                <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
-                  Ninguna
-                </Box>
-              }
-            />
-            {habitaciones.map((habitacion) => (
+          <Box display="flex" flexDirection="column">
+            <RadioGroup value={selectedHabitacion} onChange={handleHabitacionChange}>
               <FormControlLabel 
-                key={habitacion.id} 
-                value={habitacion.id.toString()} 
-                control={<Radio sx={{ padding: '2px' }} />} 
+                key="ninguna" 
+                value="null" 
+                control={
+                  <Radio 
+                    sx={{
+                      color: 'white',
+                      '&.Mui-checked': {
+                        color: '#1ECAFF',
+                      }
+                    }} 
+                  />
+                } 
                 label={
-                  <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
-                    {habitacion.nombre}
-                  </Box>
+                  <Typography sx={{ color: 'white', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                    Ninguna
+                  </Typography>
                 }
               />
-            ))}
-          </RadioGroup>
+              {habitaciones.map((habitacion) => (
+                <FormControlLabel 
+                  key={habitacion.id} 
+                  value={habitacion.id.toString()} 
+                  control={
+                    <Radio 
+                      sx={{
+                        color: 'white',
+                        '&.Mui-checked': {
+                          color: '#1ECAFF',
+                        }
+                      }} 
+                    />
+                  } 
+                  label={
+                    <Typography sx={{ color: 'white', fontSize: '0.9rem' }}>
+                      {habitacion.nombre}
+                    </Typography>
+                  }
+                />
+              ))}
+            </RadioGroup>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancelar
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button 
+            onClick={handleClose} 
+            sx={{ 
+              color: '#1ECAFF',
+              '&:hover': {
+                backgroundColor: 'rgba(30, 202, 255, 0.1)',
+              }
+            }}
+          >
+            CANCELAR
           </Button>
-          <Button onClick={handleAssign} color="primary">
-            Asignar
+          <Button 
+            onClick={handleAssign} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#1ECAFF', 
+              color: 'black',
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#18b2e1',
+              }
+            }}
+          >
+            GUARDAR
           </Button>
         </DialogActions>
       </Dialog>
