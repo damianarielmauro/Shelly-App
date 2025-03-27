@@ -41,43 +41,41 @@ const DeviceList: React.FC<DeviceListProps> = ({
     // Iniciar el servicio de actualización periódica
     iniciarActualizacionPeriodica();
 
-    // Función para cargar dispositivos según el contexto (global o habitación específica)
+    // Función para cargar dispositivos y calcular consumo total
     const cargarDispositivos = async () => {
       try {
         let dispositivosData: DispositivoConConsumo[] = [];
+        let consumoTotal = 0;
 
         if (mostrarDispositivosHabitacion && selectedHabitacion) {
-          // Cargar dispositivos de la habitación seleccionada
-          dispositivosData = await obtenerDispositivosHabitacionConConsumo(selectedHabitacion.id);
+          // Cargar dispositivos de la habitación seleccionada con un refresco forzado
+          dispositivosData = await obtenerDispositivosHabitacionConConsumo(selectedHabitacion.id, true);
+          
+          // Calcular consumo total de estos dispositivos
+          consumoTotal = dispositivosData.reduce((total, dispositivo) => total + dispositivo.consumo, 0);
         } else {
-          // Cargar todos los dispositivos con filtros según permisos
+          // Cargar todos los dispositivos
           dispositivosData = await obtenerDispositivosConConsumo();
           
+          // Filtrar según permisos si no es admin
           if (!isAdmin) {
-            // Filtrar por habitaciones permitidas para usuarios no admin
             dispositivosData = dispositivosData.filter(d => 
               d.habitacion_id && habitacionesPermitidas.includes(d.habitacion_id)
             );
           }
+          
+          // En vista global, usar el consumo total del sistema
+          consumoTotal = obtenerConsumoTotal();
         }
 
         setDispositivos(dispositivosData);
         setTotalDispositivos(dispositivosData.length);
+        setTotalConsumo(consumoTotal);
 
-        // Actualizar top 10
-        const top10 = obtenerTop10Ids().filter(id => 
+        // Actualizar top 10 IDs
+        setTop10Ids(obtenerTop10Ids().filter(id => 
           dispositivosData.some(d => d.id === id)
-        );
-        setTop10Ids(top10);
-
-        // En vista de habitación, calcular consumo total como suma de dispositivos
-        if (mostrarDispositivosHabitacion) {
-          const suma = dispositivosData.reduce((total, d) => total + d.consumo, 0);
-          setTotalConsumo(suma);
-        } else {
-          // En vista global, obtener consumo total del sistema
-          setTotalConsumo(obtenerConsumoTotal());
-        }
+        ));
       } catch (error) {
         console.error('Error al cargar dispositivos:', error);
       }
@@ -86,20 +84,22 @@ const DeviceList: React.FC<DeviceListProps> = ({
     // Cargar datos iniciales
     cargarDispositivos();
 
-    // Suscribirse a las actualizaciones según el modo de visualización
+    // Suscribirse a actualizaciones según el contexto
     let unsuscribir: () => void;
     
     if (mostrarDispositivosHabitacion && selectedHabitacion) {
-      // En vista de habitación, suscribirse a cambios de esa habitación
+      // En vista de habitación, suscribirse a cambios de dispositivos de esa habitación
       unsuscribir = suscribirseADispositivosHabitacionActualizados(
-        selectedHabitacion.id,
+        selectedHabitacion.id, 
         cargarDispositivos
       );
     } else {
-      // En vista global, suscribirse a todos los cambios
+      // En vista global, suscribirse a cambios globales
       const unsuscribirDispositivos = suscribirseADispositivosActualizados(cargarDispositivos);
       const unsuscribirConsumoTotal = suscribirseAConsumoTotalActualizado(() => {
-        setTotalConsumo(obtenerConsumoTotal());
+        if (!mostrarDispositivosHabitacion) {
+          setTotalConsumo(obtenerConsumoTotal());
+        }
       });
       
       unsuscribir = () => {
@@ -108,15 +108,19 @@ const DeviceList: React.FC<DeviceListProps> = ({
       };
     }
 
-    return unsuscribir;
+    return () => {
+      if (unsuscribir) unsuscribir();
+    };
   }, [habitacionesPermitidas, isAdmin, selectedHabitacion, mostrarDispositivosHabitacion]);
 
-  // Etiqueta diferente dependiendo si estamos en vista normal o de habitación
+  // Determinar la etiqueta y color según el contexto
+  const consumoColor = getColorForConsumo(totalConsumo);
+  const formattedConsumo = formatearConsumo(totalConsumo);
   const consumoLabel = mostrarDispositivosHabitacion 
-    ? selectedHabitacion?.nombre || "Habitación" 
+    ? selectedHabitacion?.nombre || "Habitación"
     : (totalConsumo >= 0 ? 'Consumiendo de Red' : 'Entregando a la Red');
 
-  // Ordenar dispositivos por consumo antes de renderizar
+  // Ordenar dispositivos por consumo absoluto (mayor a menor)
   const dispositivosOrdenados = [...dispositivos]
     .sort((a, b) => Math.abs(b.consumo) - Math.abs(a.consumo));
 
@@ -140,32 +144,32 @@ const DeviceList: React.FC<DeviceListProps> = ({
         mb: 1,
         height: 'auto' // Ajuste automático de altura
       }}>
-        {/* Primer renglón: nombre de la habitación o estado global */}
+        {/* Primer renglón: nombre de habitación o estado de red */}
         <Typography sx={{ 
           fontSize: '0.85rem', 
           fontWeight: mostrarDispositivosHabitacion ? 'bold' : 'normal', // Con negrita si es nombre de habitación
           mb: 0.5,
-          color: getColorForConsumo(totalConsumo)
+          color: consumoColor
         }}>
           {consumoLabel}
         </Typography>
         
-        {/* Segundo renglón: ícono y valor */}
+        {/* Segundo renglón: ícono y valor de consumo */}
         <Box sx={{ 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center' 
         }}>
           <BoltIcon sx={{ 
-            color: getColorForConsumo(totalConsumo),
+            color: consumoColor,
             mr: 0.5 
           }} />
           <Typography sx={{ 
-            color: getColorForConsumo(totalConsumo), 
+            color: consumoColor, 
             fontSize: '1rem', 
             fontWeight: 'bold' 
           }}>
-            {formatearConsumo(totalConsumo)}
+            {formattedConsumo}
           </Typography>
         </Box>
       </Box>
@@ -185,7 +189,7 @@ const DeviceList: React.FC<DeviceListProps> = ({
       )}
       
       <List sx={{ padding: 0 }}>
-        {dispositivosOrdenados.map((dispositivo, index) => {
+        {dispositivosOrdenados.map((dispositivo) => {
           const isTop10 = top10Ids.includes(dispositivo.id);
           
           return (

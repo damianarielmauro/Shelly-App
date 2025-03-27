@@ -10,6 +10,7 @@ export interface DispositivoConConsumo {
   nombre: string;
   habitacion_id?: number | null;
   consumo: number;
+  ultimoConsumoEmitido?: number;
   [key: string]: any;
 }
 
@@ -26,6 +27,7 @@ export interface HabitacionConConsumo {
   nombre: string;
   tablero_id: number;
   consumo: number;
+  ultimoConsumoEmitido?: number;
   [key: string]: any;
 }
 
@@ -43,12 +45,30 @@ const cache = {
   dispositvosPorHabitacion: {} as Record<number, DispositivoConConsumo[]>,
   habitaciones: [] as HabitacionConConsumo[],
   consumoTotal: 0,
-  top10Ids: [] as number[]
+  ultimoConsumoTotalEmitido: 0,
+  top10Ids: [] as number[],
+  ultimaActualizacion: Date.now(),
+  emisionsEnCurso: false // Flag para controlar emisiones y evitar solapamiento
 };
 
 // Variables para los intervalos
 let actualizacionInterval: NodeJS.Timeout | null = null;
-const INTERVALO_ACTUALIZACION = 2000; // 2 segundos
+const INTERVALO_ACTUALIZACION = 4000; // 4 segundos
+
+// Configuración para el sistema de debounce y throttling
+const UMBRAL_CAMBIO_CONSUMO_PORCENTAJE = 7; // Aumentado a 7%
+const UMBRAL_CAMBIO_CONSUMO_MINIMO = 20; // Aumentado a 20W
+
+// Intervalo mínimo entre emisiones de eventos (ms)
+const INTERVALO_MINIMO_EMISIONES = 4000; // Coincide con el intervalo de actualización
+
+// Últimas veces que se emitieron eventos
+const ultimasEmisiones = {
+  dispositivos: 0,
+  habitaciones: 0,
+  consumoTotal: 0,
+  habitacionesEspecificas: {} as Record<number, number>
+};
 
 // Eventos disponibles
 export const EVENTOS = {
@@ -83,7 +103,8 @@ export const obtenerDispositivosConConsumo = async (forceRefresh = false): Promi
       
       return {
         ...dispositivo,
-        consumo
+        consumo,
+        ultimoConsumoEmitido: consumo
       };
     });
 
@@ -120,17 +141,35 @@ export const obtenerDispositivosHabitacionConConsumo = async (habitacionId: numb
         return existente;
       }
       
-      // Si no existe, generar nuevo consumo
-      const consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
+      // Si no existe, generar nuevo consumo (excepto caso especial)
+      let consumo: number;
+      
+      // Asignación especial para dispositivo Garage_Tomas (generación)
+      if (dispositivo.nombre === "Garage_Tomas") {
+        consumo = -12800; // -12.80kW
+      } else {
+        consumo = Math.floor(Math.random() * (3578 - 7 + 1)) + 7;
+      }
       
       return {
         ...dispositivo,
-        consumo
+        consumo,
+        ultimoConsumoEmitido: consumo
       };
     });
 
     // Guardar en caché para esta habitación
     cache.dispositvosPorHabitacion[habitacionId] = dispositivosConConsumo;
+    
+    // Actualizar también los dispositivos en la caché global
+    dispositivosConConsumo.forEach((dispositivo: DispositivoConConsumo) => {
+      const index = cache.dispositivos.findIndex(d => d.id === dispositivo.id);
+      if (index >= 0) {
+        cache.dispositivos[index] = dispositivo;
+      } else {
+        cache.dispositivos.push(dispositivo);
+      }
+    });
 
     return dispositivosConConsumo;
   } catch (error) {
@@ -150,10 +189,10 @@ export const obtenerHabitacionesConConsumo = async (forceRefresh = false): Promi
     // Obtener la lista base de habitaciones
     const habitaciones = await getHabitaciones();
     
-    // Obtener dispositivos con consumos
+    // Asegurar que tenemos los dispositivos actualizados
     const dispositivos = await obtenerDispositivosConConsumo(forceRefresh);
     
-    // Calcular el consumo total para cada habitación
+    // Calcular el consumo total para cada habitación basado en sus dispositivos
     const habitacionesConConsumo = habitaciones.map((habitacion: Habitacion) => {
       // Filtrar dispositivos que pertenecen a esta habitación
       const dispositivosHabitacion = dispositivos.filter(
@@ -168,7 +207,8 @@ export const obtenerHabitacionesConConsumo = async (forceRefresh = false): Promi
       
       return {
         ...habitacion,
-        consumo: consumoTotal
+        consumo: consumoTotal,
+        ultimoConsumoEmitido: consumoTotal
       };
     });
     
@@ -192,11 +232,70 @@ export const obtenerTop10Ids = (): number[] => {
   return cache.top10Ids;
 };
 
+// Comprobar si un cambio de consumo supera el umbral para actualizarse
+const superaUmbralCambio = (valorAnterior: number, valorActual: number): boolean => {
+  if (valorAnterior === undefined) return true;
+  
+  const cambioAbsoluto = Math.abs(valorActual - valorAnterior);
+  
+  // Si el cambio es mayor que el umbral mínimo
+  if (cambioAbsoluto >= UMBRAL_CAMBIO_CONSUMO_MINIMO) {
+    // Y además el cambio porcentual es significativo
+    const cambioPorcentual = valorAnterior !== 0 ? (cambioAbsoluto / Math.abs(valorAnterior)) * 100 : 100;
+    return cambioPorcentual >= UMBRAL_CAMBIO_CONSUMO_PORCENTAJE;
+  }
+  
+  return false;
+};
+
+// Verificar si ha pasado suficiente tiempo para emitir otro evento
+const puedeEmitirEvento = (tipoEvento: string, id?: number): boolean => {
+  const ahora = Date.now();
+  
+  if (id !== undefined) {
+    // Para eventos específicos de habitaciones
+    const ultimaEmision = ultimasEmisiones.habitacionesEspecificas[id] || 0;
+    if (ahora - ultimaEmision >= INTERVALO_MINIMO_EMISIONES) {
+      ultimasEmisiones.habitacionesEspecificas[id] = ahora;
+      return true;
+    }
+  } else {
+    // Para eventos generales
+    let ultimaEmision = 0;
+    
+    switch (tipoEvento) {
+      case EVENTOS.DISPOSITIVOS_ACTUALIZADOS:
+        ultimaEmision = ultimasEmisiones.dispositivos;
+        if (ahora - ultimaEmision >= INTERVALO_MINIMO_EMISIONES) {
+          ultimasEmisiones.dispositivos = ahora;
+          return true;
+        }
+        break;
+      case EVENTOS.HABITACIONES_ACTUALIZADAS:
+        ultimaEmision = ultimasEmisiones.habitaciones;
+        if (ahora - ultimaEmision >= INTERVALO_MINIMO_EMISIONES) {
+          ultimasEmisiones.habitaciones = ahora;
+          return true;
+        }
+        break;
+      case EVENTOS.CONSUMO_TOTAL_ACTUALIZADO:
+        ultimaEmision = ultimasEmisiones.consumoTotal;
+        if (ahora - ultimaEmision >= INTERVALO_MINIMO_EMISIONES) {
+          ultimasEmisiones.consumoTotal = ahora;
+          return true;
+        }
+        break;
+    }
+  }
+  
+  return false;
+};
+
 // Calcular y actualizar el top 10 de dispositivos por consumo
 const actualizarTop10 = () => {
   if (cache.dispositivos.length === 0) return;
   
-  // Ordenar dispositivos por consumo (mayor a menor)
+  // Ordenar dispositivos por consumo absoluto (mayor a menor)
   const dispositivosOrdenados = [...cache.dispositivos].sort((a, b) => 
     Math.abs(b.consumo) - Math.abs(a.consumo)
   );
@@ -205,95 +304,226 @@ const actualizarTop10 = () => {
   cache.top10Ids = dispositivosOrdenados.slice(0, 10).map(d => d.id);
 };
 
+// Función para emitir eventos de forma controlada
+const emitirEventoControlado = (tipoEvento: string, id?: number) => {
+  if (puedeEmitirEvento(tipoEvento, id)) {
+    if (id !== undefined) {
+      consumptionEmitter.emit(tipoEvento, id);
+    } else {
+      consumptionEmitter.emit(tipoEvento);
+    }
+    return true;
+  }
+  return false;
+};
+
 // Actualizar consumos de dispositivos con valores aleatorios
 export const actualizarConsumos = async () => {
-  // Actualizar consumos de los dispositivos en cache
-  cache.dispositivos = cache.dispositivos.map(dispositivo => {
-    // Generar variación de ±10% sobre el consumo actual
-    let consumo = dispositivo.consumo;
-    const variacion = consumo * 0.1 * (Math.random() > 0.5 ? 1 : -1);
-    consumo = Math.round(consumo + variacion);
-    
-    // Asegurar que Garage_Tomas siga siendo negativo (generando)
-    if (dispositivo.nombre === "Garage_Tomas") {
-      consumo = Math.min(-5000, consumo);
-    }
-    
-    // Asegurar que no sea negativo para otros dispositivos
-    if (dispositivo.nombre !== "Garage_Tomas" && consumo < 5) {
-      consumo = 5;
-    }
-    
-    return {
-      ...dispositivo,
-      consumo
-    };
-  });
+  // Si ya hay una emisión en curso, salir
+  if (cache.emisionsEnCurso) {
+    return;
+  }
   
-  // Actualizar consumos para dispositivos por habitación
-  Object.keys(cache.dispositvosPorHabitacion).forEach(habitacionIdStr => {
-    const habitacionId = parseInt(habitacionIdStr);
-    cache.dispositvosPorHabitacion[habitacionId] = cache.dispositvosPorHabitacion[habitacionId].map(dispositivo => {
-      // Buscar el dispositivo actualizado en la caché global
-      const dispositivoActualizado = cache.dispositivos.find(d => d.id === dispositivo.id);
-      
-      // Si existe, usar ese valor, de lo contrario generar uno nuevo
-      if (dispositivoActualizado) {
-        return dispositivoActualizado;
-      }
-      
-      // Generar variación de ±10% sobre el consumo actual
+  cache.emisionsEnCurso = true;
+  
+  const ahora = Date.now();
+  const tiempoDesdeUltimaActualizacion = ahora - cache.ultimaActualizacion;
+  
+  // Actualizar el tiempo de la última actualización
+  cache.ultimaActualizacion = ahora;
+  
+  // Variables para seguimiento de cambios significativos
+  let dispositivosCambiados = false;
+  let habitacionesCambiadas = false;
+  let consumoTotalCambiado = false;
+  const habitacionesCambiadasIds: number[] = [];
+
+  try {
+    // Actualizar consumos de los dispositivos en cache con menor variación
+    cache.dispositivos = cache.dispositivos.map((dispositivo: DispositivoConConsumo) => {
+      // Generar variación más pequeña: ±3% sobre el consumo actual
       let consumo = dispositivo.consumo;
-      const variacion = consumo * 0.1 * (Math.random() > 0.5 ? 1 : -1);
+      const variacion = consumo * 0.03 * (Math.random() > 0.5 ? 1 : -1);
       consumo = Math.round(consumo + variacion);
       
-      // Asegurar consumo mínimo de 5W
-      if (consumo < 5) {
+      // Asegurar que Garage_Tomas siga siendo negativo (generando)
+      if (dispositivo.nombre === "Garage_Tomas") {
+        consumo = Math.min(-5000, consumo);
+      }
+      
+      // Asegurar que no sea negativo para otros dispositivos
+      if (dispositivo.nombre !== "Garage_Tomas" && consumo < 5) {
         consumo = 5;
       }
       
-      return {
-        ...dispositivo,
+      // Comprobar si el cambio es significativo para el debounce
+      const cambioSignificativo = superaUmbralCambio(
+        dispositivo.ultimoConsumoEmitido || 0, 
         consumo
-      };
+      );
+      
+      // Si hay cambio significativo, actualizar el valor emitido y marcar
+      if (cambioSignificativo) {
+        dispositivosCambiados = true;
+        return {
+          ...dispositivo,
+          consumo,
+          ultimoConsumoEmitido: consumo
+        };
+      } else {
+        return {
+          ...dispositivo,
+          consumo
+        };
+      }
     });
     
-    // Notificar cambios para esta habitación
-    consumptionEmitter.emit(EVENTOS.DISPOSITIVOS_HABITACION_ACTUALIZADOS, habitacionId);
-  });
-  
-  // Recalcular consumos para habitaciones
-  cache.habitaciones = cache.habitaciones.map(habitacion => {
-    // Filtrar dispositivos que pertenecen a esta habitación
-    const dispositivosHabitacion = cache.dispositivos.filter(
-      dispositivo => dispositivo.habitacion_id === habitacion.id
-    );
+    // Actualizar consumos para dispositivos por habitación, con menor variación
+    Object.keys(cache.dispositvosPorHabitacion).forEach((habitacionIdStr: string) => {
+      const habitacionId = parseInt(habitacionIdStr);
+      let dispositivosHabitacionCambiados = false;
+      
+      cache.dispositvosPorHabitacion[habitacionId] = cache.dispositvosPorHabitacion[habitacionId].map((dispositivo: DispositivoConConsumo) => {
+        // Buscar el dispositivo actualizado en la caché global
+        const dispositivoActualizado = cache.dispositivos.find(d => d.id === dispositivo.id);
+        
+        // Si existe, usar ese valor, de lo contrario generar uno nuevo
+        if (dispositivoActualizado) {
+          // Comprobar si hay cambio significativo en el dispositivo
+          const cambioSignificativo = superaUmbralCambio(
+            dispositivo.ultimoConsumoEmitido || 0,
+            dispositivoActualizado.consumo
+          );
+          
+          if (cambioSignificativo) {
+            dispositivosHabitacionCambiados = true;
+          }
+          
+          return dispositivoActualizado;
+        }
+        
+        // Generar variación menor: ±3% sobre el consumo actual
+        let consumo = dispositivo.consumo;
+        const variacion = consumo * 0.03 * (Math.random() > 0.5 ? 1 : -1);
+        consumo = Math.round(consumo + variacion);
+        
+        // Asegurar consumo mínimo de 5W
+        if (consumo < 5) {
+          consumo = 5;
+        }
+        
+        // Comprobar si el cambio es significativo
+        const cambioSignificativo = superaUmbralCambio(
+          dispositivo.ultimoConsumoEmitido || 0,
+          consumo
+        );
+        
+        // Si hay cambio significativo, actualizar el valor emitido y marcar
+        if (cambioSignificativo) {
+          dispositivosHabitacionCambiados = true;
+          return {
+            ...dispositivo,
+            consumo,
+            ultimoConsumoEmitido: consumo
+          };
+        } else {
+          return {
+            ...dispositivo,
+            consumo
+          };
+        }
+      });
+      
+      // Si hubo cambios significativos en esta habitación, añadir a la lista
+      if (dispositivosHabitacionCambiados) {
+        habitacionesCambiadasIds.push(habitacionId);
+      }
+    });
     
-    // Calcular la suma de consumos
-    const consumoTotal = dispositivosHabitacion.reduce(
-      (suma, dispositivo) => suma + (dispositivo.consumo || 0), 
+    // Recalcular consumos para habitaciones basados en sus dispositivos
+    const habitacionesActualizadas: HabitacionConConsumo[] = [];
+    
+    for (const habitacion of cache.habitaciones) {
+      // Filtrar dispositivos que pertenecen a esta habitación
+      const dispositivosHabitacion = cache.dispositivos.filter(
+        (dispositivo: DispositivoConConsumo) => dispositivo.habitacion_id === habitacion.id
+      );
+      
+      // Calcular la suma de consumos de los dispositivos
+      const consumoTotal = dispositivosHabitacion.reduce(
+        (suma: number, dispositivo: DispositivoConConsumo) => suma + (dispositivo.consumo || 0), 
+        0
+      );
+      
+      // Comprobar si el cambio en el consumo total de la habitación es significativo
+      const cambioSignificativo = superaUmbralCambio(
+        habitacion.ultimoConsumoEmitido || 0,
+        consumoTotal
+      );
+      
+      if (cambioSignificativo) {
+        habitacionesCambiadas = true;
+        
+        // Añadir habitación actualizada con nuevo valor emitido
+        habitacionesActualizadas.push({
+          ...habitacion,
+          consumo: consumoTotal,
+          ultimoConsumoEmitido: consumoTotal
+        });
+      } else {
+        // Mantener el último valor emitido
+        habitacionesActualizadas.push({
+          ...habitacion,
+          consumo: consumoTotal
+        });
+      }
+    }
+    
+    // Actualizar cache de habitaciones
+    cache.habitaciones = habitacionesActualizadas;
+    
+    // Calcular nuevo consumo total del sistema
+    const nuevoConsumoTotal = cache.dispositivos.reduce(
+      (suma: number, dispositivo: DispositivoConConsumo) => suma + dispositivo.consumo, 
       0
     );
     
-    return {
-      ...habitacion,
-      consumo: consumoTotal
-    };
-  });
-  
-  // Actualizar consumo total del sistema (puede ser positivo o negativo)
-  cache.consumoTotal = cache.dispositivos.reduce(
-    (suma, dispositivo) => suma + dispositivo.consumo, 
-    0
-  );
-  
-  // Actualizar top 10
-  actualizarTop10();
-  
-  // Emitir eventos para notificar a los componentes
-  consumptionEmitter.emit(EVENTOS.DISPOSITIVOS_ACTUALIZADOS);
-  consumptionEmitter.emit(EVENTOS.HABITACIONES_ACTUALIZADAS);
-  consumptionEmitter.emit(EVENTOS.CONSUMO_TOTAL_ACTUALIZADO);
+    // Comprobar si el cambio en el consumo total es significativo
+    consumoTotalCambiado = superaUmbralCambio(
+      cache.ultimoConsumoTotalEmitido,
+      nuevoConsumoTotal
+    );
+    
+    // Actualizar consumo total
+    cache.consumoTotal = nuevoConsumoTotal;
+    if (consumoTotalCambiado) {
+      cache.ultimoConsumoTotalEmitido = nuevoConsumoTotal;
+    }
+    
+    // Actualizar top 10
+    actualizarTop10();
+    
+    // Emitir eventos solo si hubo cambios significativos y control de tiempo
+    if (dispositivosCambiados) {
+      emitirEventoControlado(EVENTOS.DISPOSITIVOS_ACTUALIZADOS);
+    }
+    
+    if (habitacionesCambiadas) {
+      emitirEventoControlado(EVENTOS.HABITACIONES_ACTUALIZADAS);
+    }
+    
+    if (consumoTotalCambiado) {
+      emitirEventoControlado(EVENTOS.CONSUMO_TOTAL_ACTUALIZADO);
+    }
+    
+    // Notificar cambios para habitaciones específicas
+    habitacionesCambiadasIds.forEach(id => {
+      emitirEventoControlado(EVENTOS.DISPOSITIVOS_HABITACION_ACTUALIZADOS, id);
+    });
+  } finally {
+    // Asegurar que siempre se limpia el flag
+    cache.emisionsEnCurso = false;
+  }
 };
 
 // Iniciar actualización periódica
@@ -306,6 +536,15 @@ export const iniciarActualizacionPeriodica = () => {
   obtenerDispositivosConConsumo(true)
     .then(() => obtenerHabitacionesConConsumo(true))
     .then(() => {
+      // Inicializar el último consumo total emitido
+      cache.ultimoConsumoTotalEmitido = cache.consumoTotal;
+      
+      // Inicializar tiempos de emisión
+      const ahora = Date.now();
+      ultimasEmisiones.dispositivos = ahora;
+      ultimasEmisiones.habitaciones = ahora;
+      ultimasEmisiones.consumoTotal = ahora;
+      
       // Iniciar intervalo de actualización
       actualizacionInterval = setInterval(actualizarConsumos, INTERVALO_ACTUALIZACION);
     });

@@ -38,42 +38,43 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
   const [habitacionesConConsumo, setHabitacionesConConsumo] = useState<HabitacionConConsumo[]>([]);
 
   useEffect(() => {
-    // Iniciar el servicio de actualización periódica cuando se monta el componente
+    // Iniciar el servicio de actualización periódica
     iniciarActualizacionPeriodica();
     
-    // Cargar las habitaciones con sus consumos
-    const cargarHabitacionesConConsumo = async () => {
+    // Función para actualizar las habitaciones con sus consumos
+    const actualizarHabitaciones = async () => {
       try {
-        const data = await obtenerHabitacionesConConsumo();
+        // Obtener habitaciones con consumos del servicio centralizado
+        const habitacionesConsumo = await obtenerHabitacionesConConsumo(true); // forzar refresco
         
-        // Aplicar los consumos a las habitaciones recibidas por props
-        const habitacionesActualizadas = habitaciones.map(habitacion => {
-          const habitacionConConsumo = data.find(h => h.id === habitacion.id);
-          return {
-            ...habitacion,
-            consumo: habitacionConConsumo?.consumo || 0
-          };
-        });
+        // Mapear solo las habitaciones que están en el prop habitaciones
+        const habitacionesIds = new Set(habitaciones.map(h => h.id));
+        const habitacionesFiltradas = habitacionesConsumo.filter(h => habitacionesIds.has(h.id));
         
-        setHabitacionesConConsumo(habitacionesActualizadas);
+        // Actualizar el estado con las habitaciones filtradas
+        setHabitacionesConConsumo(habitacionesFiltradas);
       } catch (error) {
-        console.error('Error al cargar habitaciones con consumo:', error);
+        console.error('Error al actualizar habitaciones con consumo:', error);
       }
     };
     
-    cargarHabitacionesConConsumo();
+    // Cargar datos iniciales
+    actualizarHabitaciones();
     
-    // Suscribirse a las actualizaciones de consumos de habitaciones
+    // Suscribirse a cambios en las habitaciones
     const unsuscribir = suscribirseAHabitacionesActualizadas(() => {
-      cargarHabitacionesConConsumo();
+      actualizarHabitaciones();
     });
     
-    // Reset de selectedHabitacion cuando cambian las habitaciones
-    setSelectedHabitacion(null);
-    
+    // Limpiar al desmontar
     return () => {
-      unsuscribir(); // Cancelar la suscripción cuando se desmonta el componente
+      unsuscribir();
     };
+  }, [habitaciones]);
+
+  // Resetear habitación seleccionada cuando cambian las habitaciones
+  useEffect(() => {
+    setSelectedHabitacion(null);
   }, [habitaciones, setSelectedHabitacion]);
 
   const handleRoomClick = (habitacionId: number) => {
@@ -91,10 +92,9 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
     <Box display="flex" flexWrap="wrap" gap={0.5}>
       {roomMatrixView ? (
         habitacionesConConsumo.map((habitacion) => {
-          // Usar función de formateo del servicio
-          const consumo = formatearConsumo(habitacion.consumo);
-          // Obtener el color adecuado para el consumo
-          const colorConsumo = getColorForConsumo(habitacion.consumo);
+          // Usar funciones del servicio para formatear valores
+          const consumoFormateado = formatearConsumo(habitacion.consumo);
+          const consumoColor = getColorForConsumo(habitacion.consumo);
 
           return (
             <Card
@@ -147,16 +147,16 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
                 {habitacion.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '1rem', color: '#1ECAFF', mr: 0.5 }} />
+                <BoltIcon sx={{ fontSize: '1rem', color: consumoColor, mr: 0.5 }} />
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: '0.8rem',
                     fontWeight: 'bold',
-                    color: '#1ECAFF',
+                    color: consumoColor,
                   }}
                 >
-                  {consumo}
+                  {consumoFormateado}
                 </Typography>
               </Box>
             </Card>
