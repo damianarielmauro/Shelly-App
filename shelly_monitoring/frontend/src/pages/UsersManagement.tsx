@@ -42,16 +42,52 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [userToDelete, setUserToDelete] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
+  // Función para cargar las habitaciones y ordenarlas alfabéticamente
+  const fetchRooms = async () => {
+    try {
+      const fetchedRooms = await getRooms();
+      console.log('Fetched rooms:', fetchedRooms);
+      // Ordenar habitaciones alfabéticamente por nombre
+      const sortedRooms = [...fetchedRooms].sort((a, b) => a.nombre.localeCompare(b.nombre));
+      setRooms(sortedRooms);
+      return sortedRooms;
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+      return [];
+    }
+  };
+
+  // Función para cargar usuarios con permisos actualizados
+  const fetchUsers = async () => {
+    try {
       const fetchedUsers = await getUsers();
       console.log('Fetched users:', fetchedUsers);
+      
+      // Obtener la lista actualizada de habitaciones para asegurar que tengamos todas
+      const currentRooms = await fetchRooms();
+      const roomIds = currentRooms.map(room => room.id);
+      
       const usersWithPermissions = await Promise.all(
         fetchedUsers.map(async (user: User) => {
           const userPermissions = await getUserPermissions(user.id);
-          return { ...user, permissions: userPermissions.room_ids };
+          
+          // Si el usuario es admin, asegurarse que tenga acceso a todas las habitaciones
+          let permissions = userPermissions.room_ids;
+          if (user.role === 'admin') {
+            // Para administradores, asignar automáticamente todas las habitaciones
+            permissions = roomIds;
+            
+            // Actualizar los permisos en el backend si es necesario
+            if (JSON.stringify(userPermissions.room_ids.sort()) !== JSON.stringify(roomIds.sort())) {
+              console.log('Updating admin permissions to include all rooms');
+              await saveUserPermissions(user.id, roomIds);
+            }
+          }
+          
+          return { ...user, permissions };
         })
       );
+      
       // Ordenar los usuarios: admin primero y luego user, ambos alfabéticamente
       usersWithPermissions.sort((a, b) => {
         if (a.role === b.role) {
@@ -59,17 +95,20 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         }
         return a.role === 'admin' ? -1 : 1;
       });
+      
       setUsers(usersWithPermissions);
-    };
+    } catch (error) {
+      console.error('Error fetching users with permissions:', error);
+    }
+  };
+
+  // Cargar usuarios y habitaciones al inicializar el componente
+  useEffect(() => {
     fetchUsers();
   }, []);
 
+  // Cargar habitaciones al inicializar el componente
   useEffect(() => {
-    const fetchRooms = async () => {
-      const fetchedRooms = await getRooms();
-      console.log('Fetched rooms:', fetchedRooms);
-      setRooms(fetchedRooms);
-    };
     fetchRooms();
   }, []);
 
@@ -80,36 +119,39 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
     }
     if (username && email && password && role) {
       try {
+        // Crear nuevo usuario
         await createUser(username, email, password, role);
         setMessage('Usuario creado correctamente');
-        setMessageColor('#1ECAFF'); // Set success message color to blue
+        setMessageColor('#1ECAFF');
+        
+        // Limpiar campos del formulario
         setUsername('');
         setEmail('');
         setPassword('');
-        setRole('user'); // Reset role to 'user'
-        const fetchedUsers = await getUsers();
-        const usersWithPermissions = await Promise.all(
-          fetchedUsers.map(async (user: User) => {
-            const userPermissions = await getUserPermissions(user.id);
-            return { ...user, permissions: userPermissions.room_ids };
-          })
-        );
-        // Ordenar los usuarios: admin primero y luego user, ambos alfabéticamente
-        usersWithPermissions.sort((a, b) => {
-          if (a.role === b.role) {
-            return a.username.localeCompare(b.username);
+        setRole('user');
+        
+        // Si es admin, asignar automáticamente todas las habitaciones
+        if (role === 'admin') {
+          // Primero necesitamos obtener el ID del usuario recién creado
+          const allUsers = await getUsers();
+          const newUser = allUsers.find((u: User) => u.email === email);
+          
+          if (newUser) {
+            const allRoomIds = rooms.map(room => room.id);
+            await saveUserPermissions(newUser.id, allRoomIds);
           }
-          return a.role === 'admin' ? -1 : 1;
-        });
-        setUsers(usersWithPermissions);
+        }
+        
+        // Recargar la lista de usuarios actualizada
+        await fetchUsers();
       } catch (error) {
         console.error('Error creating user:', error);
         setMessage('Error al crear el usuario');
-        setMessageColor('red'); // Set error message color to red
+        setMessageColor('red');
       }
     } else {
       setMessage('Por favor, completa todos los campos');
-      setMessageColor('red'); // Set error message color to red
+      setMessageColor('red');
     }
   };
 
@@ -127,38 +169,38 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const handleUpdateUser = async () => {
     if (editUserId !== null && role) {
       try {
+        const previousUser = users.find(u => u.id === editUserId);
+        const wasAdmin = previousUser?.role === 'admin';
+        const willBeAdmin = role === 'admin';
+        
         await updateUserRole(editUserId, role);
         setMessage('Usuario actualizado correctamente');
-        setMessageColor('#1ECAFF'); // Set success message color to blue
+        setMessageColor('#1ECAFF');
+        
+        // Si se cambió a rol admin, asignar todas las habitaciones
+        if (!wasAdmin && willBeAdmin) {
+          const allRoomIds = rooms.map(room => room.id);
+          await saveUserPermissions(editUserId, allRoomIds);
+        }
+        
+        // Limpiar formulario
         setUsername('');
         setEmail('');
-        setRole('user'); // Reset role to 'user'
+        setRole('user');
         setEditUserId(null);
         setEditMode(false);
-        const fetchedUsers = await getUsers();
-        const usersWithPermissions = await Promise.all(
-          fetchedUsers.map(async (user: User) => {
-            const userPermissions = await getUserPermissions(user.id);
-            return { ...user, permissions: userPermissions.room_ids };
-          })
-        );
-        // Ordenar los usuarios: admin primero y luego user, ambos alfabéticamente
-        usersWithPermissions.sort((a, b) => {
-          if (a.role === b.role) {
-            return a.username.localeCompare(b.username);
-          }
-          return a.role === 'admin' ? -1 : 1;
-        });
-        setUsers(usersWithPermissions);
+        
+        // Recargar usuarios actualizados
+        await fetchUsers();
       } catch (error) {
         console.error('Error updating user:', error);
         setMessage('Error al actualizar el usuario');
-        setMessageColor('red'); // Set error message color to red
+        setMessageColor('red');
       }
     }
   };
 
-  // Nuevo método para abrir el diálogo de confirmación de eliminación
+  // Método para abrir el diálogo de confirmación de eliminación
   const confirmDeleteUser = (id: number) => {
     setUserToDelete(id);
     setDeleteDialogOpen(true);
@@ -169,21 +211,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
     if (userToDelete !== null) {
       try {
         await deleteUser(userToDelete);
-        const fetchedUsers = await getUsers();
-        const usersWithPermissions = await Promise.all(
-          fetchedUsers.map(async (user: User) => {
-            const userPermissions = await getUserPermissions(user.id);
-            return { ...user, permissions: userPermissions.room_ids };
-          })
-        );
-        // Ordenar los usuarios: admin primero y luego user, ambos alfabéticamente
-        usersWithPermissions.sort((a, b) => {
-          if (a.role === b.role) {
-            return a.username.localeCompare(b.username);
-          }
-          return a.role === 'admin' ? -1 : 1;
-        });
-        setUsers(usersWithPermissions);
+        await fetchUsers();
       } catch (error) {
         console.error('Error deleting user:', error);
       }
@@ -201,10 +229,15 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
   const handleOpenDialog = async (id: number) => {
     setEditUserId(id);
     try {
+      // Refrescar la lista de habitaciones antes de abrir el diálogo
+      const currentRooms = await fetchRooms();
+      
+      // Obtener permisos actuales del usuario
       const userPermissions = await getUserPermissions(id);
       console.log('User permissions:', userPermissions);
+      
       setSelectedRooms(userPermissions.room_ids);
-      setSelectAll(userPermissions.room_ids.length === rooms.length);
+      setSelectAll(userPermissions.room_ids.length === currentRooms.length);
       setDialogOpen(true);
     } catch (error) {
       console.error('Error fetching user permissions:', error);
@@ -238,16 +271,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
     if (editUserId !== null) {
       try {
         await saveUserPermissions(editUserId, selectedRooms);
-        const updatedUsers = await Promise.all(
-          users.map(async (user) => {
-            if (user.id === editUserId) {
-              const userPermissions = await getUserPermissions(user.id);
-              return { ...user, permissions: userPermissions.room_ids };
-            }
-            return user;
-          })
-        );
-        setUsers(updatedUsers);
+        await fetchUsers();
         handleCloseDialog();
       } catch (error) {
         console.error('Error saving user permissions:', error);
@@ -401,6 +425,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               alignItems: 'center',
               justifyContent: 'center',
               marginTop: '6px', // Añadido para centrarlo verticalmente
+              fontWeight: 'bold', // Agregar texto en negrita
             }}
           >
             {editMode ? 'Actualizar Usuario' : 'Crear Usuario'}
@@ -473,24 +498,28 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                   </Button>
                 )}
                 <IconButton onClick={() => handleEditUser(user.id)}>
-                  <EditIcon sx={{ color: '#1ECAFF' }} />
+                  <EditIcon sx={{ color: 'white' }} /> {/* Cambiar color a blanco */}
                 </IconButton>
                 <IconButton onClick={() => confirmDeleteUser(user.id)}>
-                  <DeleteIcon sx={{ color: 'white' }} /> {/* Cambiado a color blanco */}
+                  <DeleteIcon sx={{ color: 'white' }} />
                 </IconButton>
               </Box>
             </Box>
             <Box sx={{ mt: 1, width: '100%' }}>
-              {user.role === 'admin' && user.permissions.length === rooms.length ? (
-                <Typography variant="body2" sx={{ color: '#00FF00' }}> {/* Cambiado a #00FF00 (verde corporativo) */}
+              {user.role === 'admin' || (rooms.length > 0 && user.permissions && user.permissions.length === rooms.length) ? (
+                <Typography variant="body2" sx={{ color: '#00FF00' }}>
                   Todas las habitaciones permitidas
                 </Typography>
               ) : (
                 <Typography variant="body2">
-                  <span style={{ color: '#1ECAFF' }}>Habitaciones permitidas: </span> {/* Añadido espacio después de los dos puntos */}
-                  <span style={{ color: '#00FF00' }}> {/* Cambiado a #00FF00 (verde corporativo) */}
+                  <span style={{ color: '#1ECAFF' }}>Habitaciones permitidas: </span>
+                  <span style={{ color: '#00FF00' }}>
                     {rooms && user.permissions && user.permissions.length > 0 
-                      ? user.permissions.map(id => rooms.find(room => room.id === id)?.nombre).filter(Boolean).join(' - ') 
+                      ? user.permissions
+                          .map(id => rooms.find(room => room.id === id)?.nombre)
+                          .filter(Boolean)
+                          .sort() // Ordenar alfabéticamente los nombres
+                          .join(' - ') 
                       : 'Ninguna'}
                   </span>
                 </Typography>
@@ -610,7 +639,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Nuevo diálogo de confirmación para eliminar usuario */}
+      {/* Diálogo de confirmación para eliminar usuario */}
       <Dialog 
         open={deleteDialogOpen}
         onClose={handleCancelDelete}
