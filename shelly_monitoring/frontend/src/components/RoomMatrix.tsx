@@ -24,19 +24,24 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
 }) => {
   const [selectedHabitacion, setSelectedHabitacion] = useState<number | null>(null);
 
+  // Reset de selectedHabitacion cuando cambian las habitaciones
   useEffect(() => {
     setSelectedHabitacion(null);
   }, [habitaciones]);
 
   const handleRoomClick = (habitacionId: number) => {
-    if (roomMatrixView) {
+    // Solo cambiar vista si no estamos en modo de borrado
+    if (roomMatrixView && !deleteMode) {
       setSelectedHabitacion(habitacionId);
       setRoomMatrixView(false);
+    } else if (deleteMode) {
+      // Si estamos en modo borrado, solo manejar el checkbox
+      handleDeleteSelectionChange(habitacionId);
     }
   };
 
   return (
-    <Box display="flex" flexWrap="wrap" gap={0.5}> {/* CAMBIO: De gap={0} a gap={0.5} para alinear con los otros componentes */}
+    <Box display="flex" flexWrap="wrap" gap={0.5}>
       {roomMatrixView ? (
         habitaciones.map((habitacion) => {
           const consumo =
@@ -49,8 +54,8 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
               key={habitacion.id}
               onClick={() => handleRoomClick(habitacion.id)}
               sx={{
-                m: 0.5, // CAMBIO: Reducido de 1 a 0.5 (de 8px a 4px)
-                p: 1.5, // CAMBIO: Reducido de 2 a 1.5 (de 16px a 12px)
+                m: 0.5,
+                p: 1.5,
                 backgroundColor: '#333',
                 color: 'white',
                 width: '120px',
@@ -58,13 +63,14 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
                 textAlign: 'center',
                 borderRadius: '8px',
                 position: 'relative',
-                cursor: 'pointer',
+                cursor: deleteMode ? 'default' : 'pointer', // Cambiar cursor según el modo
               }}
             >
               {deleteMode && (
                 <Checkbox
                   checked={selectedItems.includes(habitacion.id)}
                   onChange={() => handleDeleteSelectionChange(habitacion.id)}
+                  onClick={(e) => e.stopPropagation()} // Evitar que el clic en el checkbox active el handleRoomClick
                   sx={{
                     position: 'absolute',
                     bottom: '-5px',
@@ -94,13 +100,13 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
                 {habitacion.nombre}
               </Typography>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <BoltIcon sx={{ fontSize: '1rem', color: '#1976d2', mr: 0.5 }} />
+                <BoltIcon sx={{ fontSize: '1rem', color: '#1ECAFF', mr: 0.5 }} />
                 <Typography
                   variant="body2"
                   sx={{
                     fontSize: '0.8rem',
                     fontWeight: 'bold',
-                    color: '#1976d2',
+                    color: '#1ECAFF',
                   }}
                 >
                   {consumo}
@@ -110,7 +116,8 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
           );
         })
       ) : (
-        selectedHabitacion !== null && (
+        // Solo mostrar dispositivos si no estamos en modo borrado
+        !deleteMode && selectedHabitacion !== null && (
           <RoomDeviceMatrix habitacionId={selectedHabitacion} editMode={editMode} />
         )
       )}

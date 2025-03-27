@@ -10,7 +10,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import RoomMatrix from '../components/RoomMatrix';
 import TabManager from '../components/TabManager';
 import DeviceList from '../components/DeviceList';
-import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros, getHabitaciones } from '../services/api';
+import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros, getHabitaciones, getDispositivosByHabitacion } from '../services/api';
 import { checkPermission, setAuthToken } from '../services/auth';
 
 // Estilos de barra de desplazamiento consistentes para toda la aplicación
@@ -65,6 +65,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [roomMatrixView, setRoomMatrixView] = useState<boolean>(true);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false);
   const [todasHabitacionesPermitidasIds, setTodasHabitacionesPermitidasIds] = useState<number[]>([]);
+  const [habitacionesConDispositivosDialogOpen, setHabitacionesConDispositivosDialogOpen] = useState<boolean>(false);
+  const [habitacionesConDispositivosLista, setHabitacionesConDispositivosLista] = useState<string[]>([]);
   
   const navigate = useNavigate();
 
@@ -250,6 +252,26 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     if (deleteMode) {
       try {
         if (deleteType === 'Habitación') {
+          // Primero verificar si las habitaciones seleccionadas tienen dispositivos
+          const habitacionesConDispositivos = [];
+          for (const id of selectedItems) {
+            const dispositivos = await getDispositivosByHabitacion(id);
+            if (dispositivos && dispositivos.length > 0) {
+              // Guarda las habitaciones que tienen dispositivos
+              const habitacion = habitaciones.find(h => h.id === id);
+              if (habitacion) {
+                habitacionesConDispositivos.push(habitacion.nombre);
+              }
+            }
+          }
+          
+          if (habitacionesConDispositivos.length > 0) {
+            // Mostrar diálogo de error si hay habitaciones con dispositivos
+            setHabitacionesConDispositivosDialogOpen(true);
+            setHabitacionesConDispositivosLista(habitacionesConDispositivos);
+            return;
+          }
+          
           for (const id of selectedItems) {
             await deleteHabitacion(id);
           }
@@ -615,6 +637,75 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             }}
           >
             CERRAR SESIÓN
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Diálogo para mostrar habitaciones que no se pueden borrar por tener dispositivos */}
+      <Dialog 
+        open={habitacionesConDispositivosDialogOpen}
+        onClose={() => setHabitacionesConDispositivosDialogOpen(false)}
+        PaperProps={{
+          style: {
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '10px',
+            minWidth: '300px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: '#1ECAFF', 
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}>
+          No se pueden eliminar habitaciones
+        </DialogTitle>
+        <DialogContent sx={{ paddingTop: '8px' }}>
+          <Typography sx={{ color: 'white', marginBottom: '8px' }}>
+            Las siguientes habitaciones tienen dispositivos asignados y no se pueden borrar:
+          </Typography>
+          <Box sx={{ 
+            backgroundColor: '#222', 
+            padding: '8px', 
+            borderRadius: '4px',
+            maxHeight: '150px',
+            overflowY: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '4px',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: '#111',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#1ECAFF',
+              borderRadius: '10px',
+            },
+          }}>
+            {habitacionesConDispositivosLista.map((nombre, index) => (
+              <Typography key={index} sx={{ color: '#FF6B6B', fontSize: '0.9rem', marginBottom: '4px' }}>
+                • {nombre}
+              </Typography>
+            ))}
+          </Box>
+          <Typography sx={{ color: 'white', marginTop: '16px' }}>
+            Para eliminar estas habitaciones, primero debes quitar todos los dispositivos asignados a ellas desde la sección de configuración de dispositivos.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button 
+            onClick={() => setHabitacionesConDispositivosDialogOpen(false)} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#1ECAFF', 
+              color: 'black',
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#18b2e1',
+              }
+            }}
+          >
+            ENTENDIDO
           </Button>
         </DialogActions>
       </Dialog>
