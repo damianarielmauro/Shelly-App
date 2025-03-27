@@ -433,7 +433,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         </Box>
 
         {/* Box para mostrar los mensajes de éxito/error */}
-        <Box sx={{ mt: 2, height: '50px', overflow: 'hidden' }}> {/* Fijo el alto y oculto cualquier sobrecarga */}
+        <Box sx={{ mt: 2, height: '30px', overflow: 'hidden' }}> {/* Reducir altura de 50px a 30px */}
           {message && (
             <Typography variant="body2" sx={{ color: messageColor, fontSize: '0.875rem' }}>
               {message}
@@ -454,9 +454,11 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           '::-webkit-scrollbar': { width: '6px' },
           '::-webkit-scrollbar-track': { background: 'black' },
           '::-webkit-scrollbar-thumb': { background: '#1ECAFF' },
+          // Añadir padding bottom para que se vea el último elemento
+          pb: 2,
         }}
       >
-        <Typography variant="h6" sx={{ mb: 2, fontSize: '1rem' }}>
+        <Typography variant="h6" sx={{ mb: 1, fontSize: '1rem' }}> {/* Reducir margen de 2 a 1 */}
           Lista de Usuarios
         </Typography>
         {users.map((user) => (
@@ -470,16 +472,33 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               bgcolor: '#333',
               color: 'white',
               p: 1,
-              mb: 1,
+              mb: 1, // Mantener este espacio
               borderRadius: 1,
               boxShadow: 1,
               height: 'auto',
               width: '100%',
             }}
           >
-            <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
-              <Typography>{user.username} - {user.email} - {user.role}</Typography>
-              <Box>
+            <Box 
+              display="flex" 
+              justifyContent="space-between" 
+              alignItems="center" 
+              sx={{ 
+                width: '100%',
+                // Eliminar espacio vertical entre los elementos
+                mb: 0.5, // Reducir margen inferior
+              }}
+            >
+              <Typography variant="body2" sx={{ fontSize: '0.9rem' }}> {/* Reducir tamaño de texto */}
+                {user.username} - {user.email} - {user.role}
+              </Typography>
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center',  // Centrar verticalmente los botones e iconos
+                  ml: 2, // Agregar margen a la izquierda para separar del texto
+                }}
+              >
                 {user.role !== 'admin' && (
                   <Button
                     onClick={() => handleOpenDialog(user.id)}
@@ -488,7 +507,9 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                       backgroundColor: '#1ECAFF',
                       color: 'black',
                       fontWeight: 'bold',
-                      fontSize: '0.75rem',
+                      fontSize: '0.7rem', // Reducir tamaño de texto
+                      height: '24px', // Reducir altura del botón
+                      minWidth: '70px', // Establecer ancho mínimo
                       '&:hover': {
                         backgroundColor: '#18b2e1',
                       }
@@ -497,21 +518,34 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                     Permisos
                   </Button>
                 )}
-                <IconButton onClick={() => handleEditUser(user.id)}>
-                  <EditIcon sx={{ color: 'white' }} /> {/* Cambiar color a blanco */}
+                <IconButton 
+                  onClick={() => handleEditUser(user.id)}
+                  size="small" // Hacer el botón más pequeño
+                  sx={{ p: 0.5 }} // Reducir padding
+                >
+                  <EditIcon sx={{ color: 'white', fontSize: '1.2rem' }} /> {/* Reducir tamaño de icono */}
                 </IconButton>
-                <IconButton onClick={() => confirmDeleteUser(user.id)}>
-                  <DeleteIcon sx={{ color: 'white' }} />
+                <IconButton 
+                  onClick={() => confirmDeleteUser(user.id)}
+                  size="small" // Hacer el botón más pequeño
+                  sx={{ p: 0.5 }} // Reducir padding
+                >
+                  <DeleteIcon sx={{ color: 'white', fontSize: '1.2rem' }} /> {/* Reducir tamaño de icono */}
                 </IconButton>
               </Box>
             </Box>
-            <Box sx={{ mt: 1, width: '100%' }}>
+            <Box sx={{ 
+              width: '100%', 
+              mt: 0, // Eliminar margen superior
+              // Asegurar que el texto termine antes del botón de permisos
+              pr: user.role !== 'admin' ? '90px' : '0', // Reservar espacio para el botón permisos
+            }}>
               {user.role === 'admin' || (rooms.length > 0 && user.permissions && user.permissions.length === rooms.length) ? (
-                <Typography variant="body2" sx={{ color: '#00FF00' }}>
+                <Typography variant="body2" sx={{ color: '#00FF00', fontSize: '0.8rem' }}> {/* Reducir tamaño de texto */}
                   Todas las habitaciones permitidas
                 </Typography>
               ) : (
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ fontSize: '0.8rem' }}> {/* Reducir tamaño de texto */}
                   <span style={{ color: '#1ECAFF' }}>Habitaciones permitidas: </span>
                   <span style={{ color: '#00FF00' }}>
                     {rooms && user.permissions && user.permissions.length > 0 
