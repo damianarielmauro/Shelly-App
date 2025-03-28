@@ -152,7 +152,8 @@ export const deleteTablero = async (id: number): Promise<any> => {
 
 export const updateTableroName = async (id: number, nombre: string): Promise<any> => {
   try {
-    const response = await api.put(`/tableros/${id}`, { nombre });
+    console.log(`Enviando petición para renombrar tablero ${id} a "${nombre}"`);
+    const response = await api.put(`/tableros/${id}/renombrar`, { nombre });
     console.log('updateTableroName response:', response);
     return response.data;
   } catch (error) {
@@ -183,31 +184,38 @@ export const getHabitacionesByTablero = async (tableroId: number): Promise<any> 
   }
 };
 
-// Añadir esta función junto a las otras funciones de API existentes
+/**
+ * Renombrar una habitación
+ * @param id ID de la habitación a renombrar
+ * @param nombre Nuevo nombre para la habitación
+ * @returns Respuesta de la API
+ */
+export const renameHabitacion = async (id: number, nombre: string): Promise<any> => {
+  try {
+    console.log(`Enviando petición para renombrar habitación ${id} a "${nombre}"`);
+    const response = await api.put(`/habitaciones/${id}/renombrar`, { nombre });
+    console.log('renameHabitacion response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('renameHabitacion error:', error);
+    throw error;
+  }
+};
 
 /**
- * Actualiza un tablero existente
- * @param id ID del tablero a actualizar
- * @param data Datos para actualizar (nombre del tablero)
- * @returns El tablero actualizado
+ * Cambiar una habitación de un tablero a otro
+ * @param habitacionId ID de la habitación a mover
+ * @param tableroId ID del tablero destino
+ * @returns Respuesta de la API
  */
-export const updateTablero = async (id: number, data: { nombre: string }) => {
+export const cambiarTableroHabitacion = async (habitacionId: number, tableroId: number): Promise<any> => {
   try {
-    const response = await fetch(`/api/tableros/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error updating tablero: ${response.status}`);
-    }
-
-    return await response.json();
+    console.log(`Enviando petición para mover habitación ${habitacionId} al tablero ${tableroId}`);
+    const response = await api.put(`/habitaciones/${habitacionId}/cambiar-tablero`, { tablero_id: tableroId });
+    console.log('cambiarTableroHabitacion response:', response);
+    return response.data;
   } catch (error) {
-    console.error('Error in updateTablero:', error);
+    console.error('cambiarTableroHabitacion error:', error);
     throw error;
   }
 };

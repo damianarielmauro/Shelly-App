@@ -5,6 +5,8 @@ import {
   DispositivoConConsumo,
   obtenerDispositivosConConsumo,
   obtenerDispositivosHabitacionConConsumo,
+  obtenerHabitacionesConConsumo,
+  HabitacionConConsumo,
   obtenerTop10Ids,
   obtenerConsumoTotal,
   formatearConsumo,
@@ -18,7 +20,7 @@ import {
 interface DeviceListProps {
   habitacionesPermitidas: number[];
   isAdmin?: boolean;
-  selectedHabitacion?: { id: number; nombre: string } | null;
+  selectedHabitacion?: number | null;
   roomMatrixView: boolean;
 }
 
@@ -33,6 +35,7 @@ const DeviceList: React.FC<DeviceListProps> = ({
   const [dispositivosOffline, setDispositivosOffline] = useState(4); // Valor ejemplo
   const [totalConsumo, setTotalConsumo] = useState(0);
   const [top10Ids, setTop10Ids] = useState<number[]>([]);
+  const [habitacionSeleccionadaData, setHabitacionSeleccionadaData] = useState<HabitacionConConsumo | null>(null);
 
   // Determinar si debemos mostrar los dispositivos de una habitación específica
   const mostrarDispositivosHabitacion = !roomMatrixView && selectedHabitacion !== null;
@@ -40,6 +43,21 @@ const DeviceList: React.FC<DeviceListProps> = ({
   useEffect(() => {
     // Iniciar el servicio de actualización periódica
     iniciarActualizacionPeriodica();
+
+    // Función para cargar habitación seleccionada (si estamos en ese modo)
+    const cargarHabitacionSeleccionada = async () => {
+      if (mostrarDispositivosHabitacion && selectedHabitacion) {
+        try {
+          const habitaciones = await obtenerHabitacionesConConsumo();
+          const habitacion = habitaciones.find(h => h.id === selectedHabitacion) || null;
+          setHabitacionSeleccionadaData(habitacion);
+        } catch (error) {
+          console.error('Error al cargar información de habitación:', error);
+        }
+      } else {
+        setHabitacionSeleccionadaData(null);
+      }
+    };
 
     // Función para cargar dispositivos y calcular consumo total
     const cargarDispositivos = async () => {
@@ -49,10 +67,13 @@ const DeviceList: React.FC<DeviceListProps> = ({
 
         if (mostrarDispositivosHabitacion && selectedHabitacion) {
           // Cargar dispositivos de la habitación seleccionada con un refresco forzado
-          dispositivosData = await obtenerDispositivosHabitacionConConsumo(selectedHabitacion.id, true);
+          dispositivosData = await obtenerDispositivosHabitacionConConsumo(selectedHabitacion, true);
           
           // Calcular consumo total de estos dispositivos
           consumoTotal = dispositivosData.reduce((total, dispositivo) => total + dispositivo.consumo, 0);
+          
+          // También actualizar información de la habitación
+          await cargarHabitacionSeleccionada();
         } else {
           // Cargar todos los dispositivos
           dispositivosData = await obtenerDispositivosConConsumo();
@@ -83,6 +104,7 @@ const DeviceList: React.FC<DeviceListProps> = ({
 
     // Cargar datos iniciales
     cargarDispositivos();
+    cargarHabitacionSeleccionada();
 
     // Suscribirse a actualizaciones según el contexto
     let unsuscribir: () => void;
@@ -90,8 +112,11 @@ const DeviceList: React.FC<DeviceListProps> = ({
     if (mostrarDispositivosHabitacion && selectedHabitacion) {
       // En vista de habitación, suscribirse a cambios de dispositivos de esa habitación
       unsuscribir = suscribirseADispositivosHabitacionActualizados(
-        selectedHabitacion.id, 
-        cargarDispositivos
+        selectedHabitacion, 
+        async () => {
+          await cargarDispositivos();
+          await cargarHabitacionSeleccionada();
+        }
       );
     } else {
       // En vista global, suscribirse a cambios globales
@@ -117,7 +142,7 @@ const DeviceList: React.FC<DeviceListProps> = ({
   const consumoColor = getColorForConsumo(totalConsumo);
   const formattedConsumo = formatearConsumo(totalConsumo);
   const consumoLabel = mostrarDispositivosHabitacion 
-    ? selectedHabitacion?.nombre || "Habitación"
+    ? habitacionSeleccionadaData?.nombre || "Habitación"
     : (totalConsumo >= 0 ? 'Consumiendo de Red' : 'Entregando a la Red');
 
   // Ordenar dispositivos por consumo absoluto (mayor a menor)

@@ -96,3 +96,78 @@
 .device-list::-webkit-scrollbar-track {
   background-color: #000; /* Color del fondo de la barra */
 }
+
+/* Estilos para drag & drop */
+/* Estilos para elementos durante el arrastre */
+.dragging {
+  opacity: 0.7;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
+}
+
+/* Estilos para las manijas de arrastre */
+.drag-handle {
+  cursor: move;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.2s ease;
+}
+
+.drag-handle:hover {
+  color: #1ECAFF;
+}
+
+/* Estilos para el área de destino durante el arrastre */
+.droppable-area {
+  background-color: rgba(30, 202, 255, 0.05);
+  border: 1px dashed rgba(30, 202, 255, 0.3);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.droppable-area.active {
+  background-color: rgba(30, 202, 255, 0.1);
+  border-color: #1ECAFF;
+}
+
+/* Estilos para elementos renombrables */
+.rename-input input {
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  border: 1px solid #1ECAFF;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.rename-input input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(30, 202, 255, 0.3);
+}
+
+/* Botones de edición */
+.rename-button {
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.rename-button:hover {
+  opacity: 1;
+  color: #1ECAFF;
+}
+
+/* Feedback visual durante arrastre entre tableros */
+.tablero-drop-indicator {
+  background-color: rgba(30, 202, 255, 0.1);
+  border: 2px dashed #1ECAFF;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1ECAFF;
+  font-size: 12px;
+  padding: 10px;
+  margin: 5px;
+  height: 90px;
+}

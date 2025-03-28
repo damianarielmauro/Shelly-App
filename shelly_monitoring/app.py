@@ -344,6 +344,95 @@ def actualizar_orden_habitaciones():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# API: Renombrar un tablero
+@app.route('/api/tableros/<int:tablero_id>/renombrar', methods=['PUT'])
+@require_jwt
+@require_permission('edit_dashboard')
+def renombrar_tablero(tablero_id):
+    data = request.get_json()
+    nuevo_nombre = data.get('nombre', '').strip()
+
+    if not nuevo_nombre:
+        return jsonify({"error": "El nombre no puede estar vacío"}), 400
+        
+    # Verificar si ya existe otro tablero con ese nombre
+    tablero_existente = Tableros.query.filter(Tableros.nombre == nuevo_nombre, Tableros.id != tablero_id).first()
+    if tablero_existente:
+        return jsonify({"error": "Ya existe un tablero con ese nombre"}), 409
+    
+    tablero = Tableros.query.get(tablero_id)
+    if not tablero:
+        return jsonify({"error": "Tablero no encontrado"}), 404
+        
+    tablero.nombre = nuevo_nombre
+    db.session.commit()
+    
+    return jsonify({"message": "Tablero renombrado correctamente", "id": tablero.id, "nombre": tablero.nombre}), 200
+
+# API: Renombrar una habitación
+@app.route('/api/habitaciones/<int:habitacion_id>/renombrar', methods=['PUT'])
+@require_jwt
+@require_permission('edit_dashboard')
+def renombrar_habitacion(habitacion_id):
+    data = request.get_json()
+    nuevo_nombre = data.get('nombre', '').strip()
+
+    if not nuevo_nombre:
+        return jsonify({"error": "El nombre no puede estar vacío"}), 400
+        
+    # Verificar si ya existe otra habitación con ese nombre
+    habitacion_existente = Habitaciones.query.filter(Habitaciones.nombre == nuevo_nombre, Habitaciones.id != habitacion_id).first()
+    if habitacion_existente:
+        return jsonify({"error": "Ya existe una habitación con ese nombre"}), 409
+    
+    habitacion = Habitaciones.query.get(habitacion_id)
+    if not habitacion:
+        return jsonify({"error": "Habitación no encontrada"}), 404
+        
+    habitacion.nombre = nuevo_nombre
+    db.session.commit()
+    
+    return jsonify({"message": "Habitación renombrada correctamente", "id": habitacion.id, "nombre": habitacion.nombre}), 200
+
+# API: Cambiar una habitación de tablero
+@app.route('/api/habitaciones/<int:habitacion_id>/cambiar-tablero', methods=['PUT'])
+@require_jwt
+@require_permission('edit_dashboard')
+def cambiar_tablero_habitacion(habitacion_id):
+    data = request.get_json()
+    nuevo_tablero_id = data.get('tablero_id')
+    
+    if not nuevo_tablero_id:
+        return jsonify({"error": "El ID del tablero destino es requerido"}), 400
+    
+    habitacion = Habitaciones.query.get(habitacion_id)
+    if not habitacion:
+        return jsonify({"error": "Habitación no encontrada"}), 404
+        
+    # Verificar que el tablero destino exista
+    tablero_destino = Tableros.query.get(nuevo_tablero_id)
+    if not tablero_destino:
+        return jsonify({"error": "Tablero destino no encontrado"}), 404
+    
+    # Obtener el mayor orden en el tablero destino para colocar la habitación al final
+    max_orden = db.session.query(db.func.coalesce(db.func.max(Habitaciones.orden), -1)).filter(
+        Habitaciones.tablero_id == nuevo_tablero_id
+    ).scalar()
+    
+    # Cambiar la habitación al nuevo tablero
+    habitacion.tablero_id = nuevo_tablero_id
+    habitacion.orden = max_orden + 1
+    
+    db.session.commit()
+    
+    return jsonify({
+        "message": "Habitación movida correctamente", 
+        "id": habitacion.id, 
+        "nombre": habitacion.nombre,
+        "tablero_id": habitacion.tablero_id,
+        "orden": habitacion.orden
+    }), 200
+
 # ===========================
 # API: Iniciar descubrimiento
 # ===========================
