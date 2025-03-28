@@ -17300,3 +17300,27 @@ DETAIL:  Key (id)=(33) is still referenced from table "dispositivos".
 2025-03-28 05:11:23,242 - DEBUG - Intento de inicio de sesión: admin@shelly.local
 2025-03-28 05:11:23,246 - DEBUG - Usuario encontrado en la base de datos
 2025-03-28 05:11:23,592 - DEBUG - Contraseña correcta
+2025-03-28 05:34:15,650 - DEBUG - Intento de inicio de sesión: pepe@pepe
+2025-03-28 05:34:15,653 - DEBUG - Usuario encontrado en la base de datos
+2025-03-28 05:34:15,990 - DEBUG - Contraseña correcta
+2025-03-28 05:52:00,009 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-28 05:52:00,012 - DEBUG - Usuario encontrado en la base de datos
+2025-03-28 05:52:00,354 - DEBUG - Contraseña correcta
+2025-03-28 05:53:04,691 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 05:53:04,694 - DEBUG - Permisos del usuario: admin
+2025-03-28 05:53:04,694 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 05:53:15,405 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 05:53:15,407 - DEBUG - Permisos del usuario: admin
+2025-03-28 05:53:15,407 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 05:53:21,434 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 05:53:21,436 - DEBUG - Permisos del usuario: admin
+2025-03-28 05:53:21,436 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 05:53:26,741 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 05:53:26,744 - DEBUG - Permisos del usuario: admin
+2025-03-28 05:53:26,744 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 05:53:56,938 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 05:53:56,940 - DEBUG - Permisos del usuario: admin
+2025-03-28 05:53:56,940 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 05:54:19,029 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 05:54:19,031 - DEBUG - Permisos del usuario: admin
+2025-03-28 05:54:19,031 - DEBUG - Permiso concedido para la acción: edit_dashboard

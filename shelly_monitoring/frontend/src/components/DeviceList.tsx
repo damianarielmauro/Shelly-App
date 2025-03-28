@@ -141,6 +141,8 @@ const DeviceList: React.FC<DeviceListProps> = ({
   // Determinar la etiqueta y color según el contexto
   const consumoColor = getColorForConsumo(totalConsumo);
   const formattedConsumo = formatearConsumo(totalConsumo);
+  
+  // Título para mostrar (nombre de habitación o estado de red)
   const consumoLabel = mostrarDispositivosHabitacion 
     ? habitacionSeleccionadaData?.nombre || "Habitación"
     : (totalConsumo >= 0 ? 'Consumiendo de Red' : 'Entregando a la Red');
@@ -172,9 +174,10 @@ const DeviceList: React.FC<DeviceListProps> = ({
         {/* Primer renglón: nombre de habitación o estado de red */}
         <Typography sx={{ 
           fontSize: '0.85rem', 
-          fontWeight: mostrarDispositivosHabitacion ? 'bold' : 'normal', // Con negrita si es nombre de habitación
+          fontWeight: 'normal', // Siempre normal, sin negrita
           mb: 0.5,
-          color: consumoColor
+          // Color blanco para habitaciones, color consumo para modo global
+          color: mostrarDispositivosHabitacion ? 'white' : consumoColor
         }}>
           {consumoLabel}
         </Typography>

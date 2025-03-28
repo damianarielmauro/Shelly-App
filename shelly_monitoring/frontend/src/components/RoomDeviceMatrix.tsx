@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, Checkbox } from '@mui/material';
+import { Box, Typography, Card } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import {
   DispositivoConConsumo,
@@ -12,12 +12,14 @@ import {
 
 interface RoomDeviceMatrixProps {
   habitacionId: number;
-  editMode: boolean;
+  editMode: boolean; // Mantenemos esta prop por compatibilidad, pero ya no la usamos
 }
 
-const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ habitacionId, editMode }) => {
+const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ 
+  habitacionId, 
+  editMode 
+}) => {
   const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   useEffect(() => {
     // Iniciar actualización periódica
@@ -45,14 +47,6 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ habitacionId, editM
       unsuscribir();
     };
   }, [habitacionId]);
-
-  const handleCheckboxChange = (id: number) => {
-    setSelectedItems((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((itemId) => itemId !== id)
-        : [...prevSelected, id]
-    );
-  };
 
   return (
     <Box
@@ -93,24 +87,6 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ habitacionId, editM
                 position: 'relative',
               }}
             >
-              {editMode && (
-                <Checkbox
-                  checked={selectedItems.includes(dispositivo.id)}
-                  onChange={() => handleCheckboxChange(dispositivo.id)}
-                  sx={{
-                    position: 'absolute',
-                    bottom: '-5px',
-                    right: '-5px',
-                    color: 'red',
-                    '& .MuiSvgIcon-root': {
-                      color: selectedItems.includes(dispositivo.id) ? 'red' : 'red',
-                    },
-                    '&.Mui-checked': {
-                      backgroundColor: 'none',
-                    },
-                  }}
-                />
-              )}
               <Typography
                 variant="body2"
                 sx={{
