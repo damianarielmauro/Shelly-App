@@ -60,12 +60,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [habitaciones, setHabitaciones] = useState<Habitacion[]>([]);
   const [tableros, setTableros] = useState<Tablero[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [deleteMode, setDeleteMode] = useState<boolean>(false);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [editMenuAnchorEl, setEditMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [settingsMenuAnchorEl, setSettingsMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [deleteType, setDeleteType] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [roomMatrixView, setRoomMatrixView] = useState<boolean>(true);
@@ -245,13 +242,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     fetchHabitacionesPermitidas();
   }, [selectedTab, tableros, isAdmin]);
 
-  const handleDeleteSelectionChange = (id: number) => {
-    setSelectedItems((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((itemId) => itemId !== id)
-        : [...prevSelected, id]
-    );
-  };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -263,10 +253,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
 
   const toggleEditMode = (event: React.MouseEvent<HTMLButtonElement>) => {
     setEditMode(!editMode);
-    if (deleteMode) {
-      setDeleteMode(false);
-      setSelectedItems([]);
-    }
   };
 
   const handleEditMenuClose = () => {
@@ -611,12 +597,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             setEditMode={setEditMode}
             setHabitaciones={setHabitaciones}
             setTableros={setTableros}
-            deleteMode={deleteMode}
-            setDeleteMode={setDeleteMode}
-            handleDeleteOptionSelect={() => {}}
-            selectedItems={selectedItems}
-            setSelectedItems={setSelectedItems}
-            deleteType={deleteType}
             user={user}
             setRoomMatrixView={setRoomMatrixView}
             tableros={tableros}
@@ -698,10 +678,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             />
           ) : (
             <RoomMatrix 
-              habitaciones={habitaciones} 
-              deleteMode={deleteMode && deleteType === 'Habitación'} 
-              selectedItems={selectedItems} 
-              handleDeleteSelectionChange={handleDeleteSelectionChange} 
+              habitaciones={habitaciones}  
               editMode={editMode}
               roomMatrixView={roomMatrixView}
               setRoomMatrixView={setRoomMatrixView}

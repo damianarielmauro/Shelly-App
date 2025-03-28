@@ -17324,3 +17324,19 @@ DETAIL:  Key (id)=(33) is still referenced from table "dispositivos".
 2025-03-28 05:54:19,029 - DEBUG - Verificando permisos para el usuario: 1
 2025-03-28 05:54:19,031 - DEBUG - Permisos del usuario: admin
 2025-03-28 05:54:19,031 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 16:49:39,270 - INFO - 🔧 Backend Flask iniciado.
+2025-03-28 20:40:29,348 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-28 20:40:29,421 - DEBUG - Usuario encontrado en la base de datos
+2025-03-28 20:40:29,762 - DEBUG - Contraseña correcta
+2025-03-28 20:42:11,638 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 20:42:11,641 - DEBUG - Permisos del usuario: admin
+2025-03-28 20:42:11,641 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 20:42:27,414 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 20:42:27,416 - DEBUG - Permisos del usuario: admin
+2025-03-28 20:42:27,416 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 20:42:39,935 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 20:42:39,937 - DEBUG - Permisos del usuario: admin
+2025-03-28 20:42:39,937 - DEBUG - Permiso concedido para la acción: edit_dashboard
+2025-03-28 20:42:43,983 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-28 20:42:43,985 - DEBUG - Permisos del usuario: admin
+2025-03-28 20:42:43,985 - DEBUG - Permiso concedido para la acción: edit_dashboard

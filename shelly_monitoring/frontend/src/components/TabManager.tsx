@@ -13,12 +13,6 @@ interface TabManagerProps {
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
   setHabitaciones: React.Dispatch<React.SetStateAction<any[]>>;
   setTableros: React.Dispatch<React.SetStateAction<any[]>>;
-  deleteMode: boolean;
-  setDeleteMode: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDeleteOptionSelect: (type: string) => void;
-  selectedItems: number[];
-  setSelectedItems: React.Dispatch<React.SetStateAction<number[]>>;
-  deleteType: string;
   user: {
     permissions: string[];
     role: string;
@@ -34,12 +28,6 @@ const TabManager: React.FC<TabManagerProps> = ({
   setEditMode,
   setHabitaciones,
   setTableros,
-  deleteMode,
-  setDeleteMode,
-  handleDeleteOptionSelect,
-  selectedItems,
-  setSelectedItems,
-  deleteType,
   user,
   setRoomMatrixView,
   tableros
