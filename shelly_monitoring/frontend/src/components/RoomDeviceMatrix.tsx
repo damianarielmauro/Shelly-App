@@ -9,10 +9,12 @@ import {
   iniciarActualizacionPeriodica,
   suscribirseADispositivosHabitacionActualizados
 } from '../services/consumptionService';
+import { updateOrdenDispositivos } from '../services/api';
+import DraggableDeviceGrid from './DraggableDeviceGrid';
 
 interface RoomDeviceMatrixProps {
   habitacionId: number;
-  editMode: boolean; // Mantenemos esta prop por compatibilidad, pero ya no la usamos
+  editMode: boolean;
 }
 
 const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({ 
@@ -20,6 +22,7 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({
   editMode 
 }) => {
   const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Iniciar actualización periódica
@@ -28,10 +31,13 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({
     // Cargar dispositivos de la habitación
     const cargarDispositivos = async () => {
       try {
+        setLoading(true);
         const data = await obtenerDispositivosHabitacionConConsumo(habitacionId);
         setDispositivos(data);
       } catch (error) {
         console.error('Error al obtener los dispositivos:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -40,20 +46,71 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({
     // Suscribirse a actualizaciones de dispositivos de esta habitación
     const unsuscribir = suscribirseADispositivosHabitacionActualizados(
       habitacionId,
-      cargarDispositivos
+      // Solo actualizar si no estamos en modo edición para evitar conflictos
+      () => !editMode && cargarDispositivos()
     );
 
     return () => {
       unsuscribir();
     };
-  }, [habitacionId]);
+  }, [habitacionId, editMode]);
 
+  // Manejar reordenamiento de dispositivos
+  const handleReorderDevices = async (newOrder: DispositivoConConsumo[]) => {
+    try {
+      // Preparar datos para API
+      const ordenData = newOrder.map((disp, index) => ({
+        id: disp.id,
+        orden: index
+      }));
+      
+      // Llamar a API para actualizar el orden
+      await updateOrdenDispositivos(ordenData);
+      
+      // Actualizar el estado local
+      setDispositivos(newOrder);
+    } catch (error) {
+      console.error('Error reordering devices:', error);
+      // Recargar dispositivos en caso de error
+      const data = await obtenerDispositivosHabitacionConConsumo(habitacionId);
+      setDispositivos(data);
+    }
+  };
+
+  // Si estamos en modo edición, usar el componente DraggableDeviceGrid
+  if (editMode) {
+    return (
+      <Box
+        sx={{
+          overflowY: 'auto',
+          height: 'calc(100vh - 85px)',
+          '&::-webkit-scrollbar': {
+            width: '6px',
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: 'black',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: '#1ECAFF',
+          },
+        }}
+      >
+        <DraggableDeviceGrid
+          dispositivos={dispositivos}
+          editMode={editMode}
+          onReorder={handleReorderDevices}
+        />
+      </Box>
+    );
+  }
+
+  // Vista normal (no edición)
   return (
     <Box
       display="flex"
       flexDirection="column"
       sx={{
-        overflowY: 'scroll',
+        overflowY: 'auto',
         height: 'calc(100vh - 85px)', // Ajustar la altura para el scroll
         '&::-webkit-scrollbar': {
           width: '6px',

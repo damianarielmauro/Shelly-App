@@ -563,7 +563,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         ))}
       </Box>
 
-      {/* Diálogo rediseñado para seleccionar habitaciones */}
+      {/* Diálogo rediseñado para seleccionar habitaciones con espacio entre renglones reducido */}
       <Dialog 
         open={dialogOpen}
         onClose={handleCloseDialog}
@@ -610,7 +610,8 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                     color: 'white',
                     '&.Mui-checked': {
                       color: '#1ECAFF',
-                    }
+                    },
+                    padding: '2px' // Reducir padding del checkbox
                   }}
                 />
               }
@@ -619,6 +620,10 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                   Seleccionar todas
                 </Typography>
               }
+              sx={{ 
+                marginBottom: '2px', // Reducir espacio entre opciones a la mitad
+                '& .MuiFormControlLabel-label': { marginLeft: '-4px' } // Ajustar posición del texto
+              }}
             />
             {rooms.map((room) => (
               <FormControlLabel
@@ -631,7 +636,8 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                       color: 'white',
                       '&.Mui-checked': {
                         color: '#1ECAFF',
-                      }
+                      },
+                      padding: '2px' // Reducir padding del checkbox
                     }}
                   />
                 }
@@ -640,6 +646,10 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                     {room.nombre}
                   </Typography>
                 }
+                sx={{ 
+                  marginBottom: '2px', // Reducir espacio entre opciones a la mitad 
+                  '& .MuiFormControlLabel-label': { marginLeft: '-4px' } // Ajustar posición del texto
+                }}
               />
             ))}
           </Box>

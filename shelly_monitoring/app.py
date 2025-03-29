@@ -41,7 +41,7 @@ roles_permissions = {
         'update_room_order', 'start_discovery', 'view_logs', 'edit_dashboard',
         'create_user', 'create_tablero', 'delete_dashboard', 'delete_habitacion',
         'create_habitacion', 'rename_tablero', 'stream_logs', 'view_statistics', 'delete_habitacion',
-        'discover_devices', 'manage_users', 'view_consumption'
+        'discover_devices', 'manage_users', 'view_consumption', 'update_device_order'
     ],
     'user': ['view_devices', 'toggle_device', 'view_rooms']
 }
@@ -128,6 +128,7 @@ class Dispositivos(db.Model):
     habitacion_id = db.Column(db.Integer, db.ForeignKey('habitaciones.id'), nullable=True)
     ultimo_consumo = db.Column(db.Float, default=0)
     estado = db.Column(db.Boolean, default=False)
+    orden = db.Column(db.Integer, default=0)  # Añadida columna orden para dispositivos
 
 class UserRoomPermission(db.Model):
     __tablename__ = 'user_room_permissions'
@@ -193,7 +194,7 @@ def get_role_permissions(role):
 @require_jwt
 def get_dispositivos():
     dispositivos = Dispositivos.query.all()
-    return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado } for d in dispositivos])
+    return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado, "orden": d.orden } for d in dispositivos])
 
 # API: Cambiar estado de un dispositivo
 @app.route('/api/toggle_device/<int:device_id>', methods=['POST'])
@@ -341,6 +342,22 @@ def actualizar_orden_habitaciones():
                 habitacion.orden = item['orden']
         db.session.commit()
         return jsonify({"message": "Orden actualizado"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# API: Actualizar orden de dispositivos dentro de una habitación
+@app.route('/api/dispositivos/orden', methods=['PUT'])
+@require_jwt
+@require_permission('update_device_order')
+def actualizar_orden_dispositivos():
+    try:
+        data = request.get_json()
+        for item in data:
+            dispositivo = Dispositivos.query.get(item['id'])
+            if dispositivo:
+                dispositivo.orden = item['orden']
+        db.session.commit()
+        return jsonify({"message": "Orden de dispositivos actualizado"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -648,8 +665,17 @@ def asignar_habitacion():
 @app.route('/api/habitaciones/<int:habitacion_id>/dispositivos', methods=['GET'])
 @require_jwt
 def get_dispositivos_by_habitacion(habitacion_id):
-    dispositivos = Dispositivos.query.filter_by(habitacion_id=habitacion_id).all()
-    return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado } for d in dispositivos])
+    dispositivos = Dispositivos.query.filter_by(habitacion_id=habitacion_id).order_by(Dispositivos.orden).all()
+    return jsonify([{ 
+        "id": d.id, 
+        "nombre": d.nombre, 
+        "ip": d.ip, 
+        "tipo": d.tipo, 
+        "habitacion_id": d.habitacion_id, 
+        "ultimo_consumo": d.ultimo_consumo, 
+        "estado": d.estado,
+        "orden": d.orden
+    } for d in dispositivos])
 
 
 # API: Endpoint de prueba de conexión

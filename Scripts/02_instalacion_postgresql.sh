@@ -106,7 +106,8 @@ CREATE TABLE IF NOT EXISTS dispositivos (
     habitacion_id INT REFERENCES habitaciones(id) ON DELETE SET NULL,
     ultimo_consumo FLOAT DEFAULT 0,
     tipo_artefacto_id INT REFERENCES tipos_artefacto(id) ON DELETE SET NULL,
-    estado BOOLEAN DEFAULT FALSE
+    estado BOOLEAN DEFAULT FALSE,
+    orden INT DEFAULT 0  -- Añadir la columna orden para dispositivos
 );
 
 CREATE TABLE IF NOT EXISTS historico_consumo (

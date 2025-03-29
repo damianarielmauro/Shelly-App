@@ -101,7 +101,11 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
   const handleAssignClick = async () => {
     try {
       const habitacionesData = await getHabitaciones();
-      setHabitaciones(habitacionesData);
+      // Ordenar habitaciones alfabéticamente como en UsersManagement
+      const sortedHabitaciones = [...habitacionesData].sort((a, b) => 
+        a.nombre.localeCompare(b.nombre)
+      );
+      setHabitaciones(sortedHabitaciones);
       setOpen(true);
     } catch (error) {
       console.error('Error al obtener las habitaciones:', error);
@@ -266,67 +270,131 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
           );
         })}
       </Box>
-      {editMode && selectedItems.length > 0 && !showRoomDialog && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAssignClick}
-          sx={{ position: 'fixed', bottom: '725px', right: '98px', height: '25px', zIndex: 1000 }}
-        >
-          Asignar a Habitación
-        </Button>
-      )}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle sx={{ fontSize: '1rem' }}>Asignar a Habitación</DialogTitle>
+      
+      {/* Eliminamos el botón flotante de "Asignar a Habitación" */}
+
+      {/* Diálogo con el mismo estilo de UsersManagement.tsx */}
+      <Dialog 
+        open={open} 
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            backgroundColor: '#333',
+            color: 'white',
+            borderRadius: '10px',
+            minWidth: '300px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: '#1ECAFF', 
+          fontSize: '1.1rem',
+          fontWeight: 'bold'
+        }}>
+          Seleccionar habitación
+        </DialogTitle>
         <DialogContent
           sx={{
-            fontSize: '0.4rem',
-            lineHeight: '0.6rem',
-            maxHeight: '600px', 
+            maxHeight: '600px',
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               width: '4px',
             },
             '&::-webkit-scrollbar-track': {
-              backgroundColor: 'white',
+              backgroundColor: '#222',
             },
             '&::-webkit-scrollbar-thumb': {
               backgroundColor: '#1ECAFF',
               borderRadius: '10px',
             },
+            pt: 1
           }}
         >
-          <RadioGroup value={selectedHabitacion} onChange={handleHabitacionChange}>
+          <RadioGroup 
+            value={selectedHabitacion} 
+            onChange={handleHabitacionChange}
+            sx={{ 
+              '& .MuiFormControlLabel-root': {
+                marginBottom: '2px', // Reducir espacio entre opciones a la mitad
+              }
+            }}
+          >
             <FormControlLabel 
               key="ninguna" 
               value="null" 
-              control={<Radio sx={{ padding: '2px' }} />} 
+              control={
+                <Radio 
+                  sx={{
+                    color: 'white',
+                    padding: '2px',
+                    '&.Mui-checked': {
+                      color: '#1ECAFF',
+                    }
+                  }} 
+                />
+              } 
               label={
-                <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                <Typography sx={{ 
+                  color: 'white', 
+                  fontSize: '0.9rem',
+                  fontWeight: 'bold'
+                }}>
                   Ninguna
-                </Box>
+                </Typography>
               }
             />
             {habitaciones.map((habitacion) => (
               <FormControlLabel 
                 key={habitacion.id} 
                 value={habitacion.id.toString()} 
-                control={<Radio sx={{ padding: '2px' }} />} 
+                control={
+                  <Radio 
+                    sx={{
+                      color: 'white',
+                      padding: '2px',
+                      '&.Mui-checked': {
+                        color: '#1ECAFF',
+                      }
+                    }} 
+                  />
+                } 
                 label={
-                  <Box sx={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+                  <Typography sx={{ 
+                    color: 'white', 
+                    fontSize: '0.9rem' 
+                  }}>
                     {habitacion.nombre}
-                  </Box>
+                  </Typography>
                 }
               />
             ))}
           </RadioGroup>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancelar
+        <DialogActions sx={{ padding: '16px' }}>
+          <Button 
+            onClick={handleClose} 
+            sx={{ 
+              color: '#1ECAFF',
+              '&:hover': {
+                backgroundColor: 'rgba(30, 202, 255, 0.1)',
+              }
+            }}
+          >
+            CANCELAR
           </Button>
-          <Button onClick={handleAssign} color="primary">
-            Asignar
+          <Button 
+            onClick={handleAssign} 
+            variant="contained" 
+            sx={{ 
+              backgroundColor: '#1ECAFF', 
+              color: 'black',
+              fontWeight: 'bold',
+              '&:hover': {
+                backgroundColor: '#18b2e1',
+              }
+            }}
+          >
+            GUARDAR
           </Button>
         </DialogActions>
       </Dialog>

@@ -116,6 +116,18 @@ export const getDispositivosByHabitacion = async (habitacionId: number): Promise
   return response.data;
 };
 
+// Actualizar orden de dispositivos dentro de una habitación
+export const updateOrdenDispositivos = async (dispositivos: { id: number; orden: number }[]): Promise<any> => {
+  try {
+    const response = await api.put('/dispositivos/orden', dispositivos);
+    console.log('updateOrdenDispositivos response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('updateOrdenDispositivos error:', error);
+    throw error;
+  }
+};
+
 // Tableros
 export const getTableros = async (): Promise<any> => {
   try {
