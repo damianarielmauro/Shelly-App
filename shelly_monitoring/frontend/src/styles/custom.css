@@ -11,7 +11,7 @@
   margin: 0 auto; /* Centrado horizontal */
   box-sizing: border-box; /* Incluir padding y border en el ancho y alto */
   scrollbar-width: thin; /* Scrollbar más fino */
-  scrollbar-color: #1ECAFF #000; /* Color del thumb y el fondo de la barra de desplazamiento */
+  scrollbar-color: #2391FF #000; /* Color del thumb y el fondo de la barra de desplazamiento */
 }
 
 .device-list-header {
@@ -89,7 +89,7 @@
 }
 
 .device-list::-webkit-scrollbar-thumb {
-  background-color: #1ECAFF; /* Color del thumb de la barra */
+  background-color: #2391FF; /* Color del thumb de la barra */
   border-radius: 4px;
 }
 
@@ -113,7 +113,7 @@
 }
 
 .drag-handle:hover {
-  color: #1ECAFF;
+  color: #2391FF;
 }
 
 /* Estilos para el área de destino durante el arrastre */
@@ -126,14 +126,14 @@
 
 .droppable-area.active {
   background-color: rgba(30, 202, 255, 0.1);
-  border-color: #1ECAFF;
+  border-color: #2391FF;
 }
 
 /* Estilos para elementos renombrables */
 .rename-input input {
   background-color: rgba(0, 0, 0, 0.3);
   color: white;
-  border: 1px solid #1ECAFF;
+  border: 1px solid #2391FF;
   border-radius: 4px;
   padding: 4px;
   font-size: 14px;
@@ -154,18 +154,18 @@
 
 .rename-button:hover {
   opacity: 1;
-  color: #1ECAFF;
+  color: #2391FF;
 }
 
 /* Feedback visual durante arrastre entre tableros */
 .tablero-drop-indicator {
   background-color: rgba(30, 202, 255, 0.1);
-  border: 2px dashed #1ECAFF;
+  border: 2px dashed #2391FF;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1ECAFF;
+  color: #2391FF;
   font-size: 12px;
   padding: 10px;
   margin: 5px;

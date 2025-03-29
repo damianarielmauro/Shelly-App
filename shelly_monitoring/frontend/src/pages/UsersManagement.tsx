@@ -122,7 +122,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         // Crear nuevo usuario
         await createUser(username, email, password, role);
         setMessage('Usuario creado correctamente');
-        setMessageColor('#1ECAFF');
+        setMessageColor('#2391FF');
         
         // Limpiar campos del formulario
         setUsername('');
@@ -175,7 +175,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         
         await updateUserRole(editUserId, role);
         setMessage('Usuario actualizado correctamente');
-        setMessageColor('#1ECAFF');
+        setMessageColor('#2391FF');
         
         // Si se cambió a rol admin, asignar todas las habitaciones
         if (!wasAdmin && willBeAdmin) {
@@ -308,7 +308,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: 'none' },
                 '&:hover fieldset': { borderColor: 'none' },
-                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
+                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#2391FF' },
               },
               '& input': {
                 color: 'white',
@@ -336,7 +336,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: 'none' },
                 '&:hover fieldset': { borderColor: 'none' },
-                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
+                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#2391FF' },
               },
               '& input': {
                 color: 'white',
@@ -365,7 +365,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: 'none' },
                 '&:hover fieldset': { borderColor: 'none' },
-                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
+                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#2391FF' },
               },
               '& input': {
                 color: 'white',
@@ -395,7 +395,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: 'none' },
                 '&:hover fieldset': { borderColor: 'none' },
-                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#1ECAFF' },
+                '&.Mui-focused fieldset': { borderWidth: '2px', borderColor: '#2391FF' },
               },
               '& .MuiSelect-select': {
                 color: 'white',
@@ -414,7 +414,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             color="primary"
             onClick={editMode ? handleUpdateUser : handleCreateUser}
             sx={{
-              backgroundColor: '#1ECAFF',
+              backgroundColor: '#2391FF',
               fontSize: '10px',
               height: '40px', // Altura igual a los campos
               marginLeft: '18px',
@@ -450,10 +450,10 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           flexGrow: 1,
           overflowY: 'auto',
           scrollbarWidth: 'thin',
-          scrollbarColor: '#1ECAFF black',
+          scrollbarColor: '#2391FF black',
           '::-webkit-scrollbar': { width: '6px' },
           '::-webkit-scrollbar-track': { background: 'black' },
-          '::-webkit-scrollbar-thumb': { background: '#1ECAFF' },
+          '::-webkit-scrollbar-thumb': { background: '#2391FF' },
           // Añadir padding bottom para que se vea el último elemento
           pb: 2,
         }}
@@ -504,7 +504,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                     onClick={() => handleOpenDialog(user.id)}
                     variant="contained"
                     sx={{
-                      backgroundColor: '#1ECAFF',
+                      backgroundColor: '#2391FF',
                       color: 'black',
                       fontWeight: 'bold',
                       fontSize: '0.7rem', // Reducir tamaño de texto
@@ -546,7 +546,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                 </Typography>
               ) : (
                 <Typography variant="body2" sx={{ fontSize: '0.8rem' }}> {/* Reducir tamaño de texto */}
-                  <span style={{ color: '#1ECAFF' }}>Habitaciones permitidas: </span>
+                  <span style={{ color: '#2391FF' }}>Habitaciones permitidas: </span>
                   <span style={{ color: '#00FF00' }}>
                     {rooms && user.permissions && user.permissions.length > 0 
                       ? user.permissions
@@ -577,7 +577,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         }}
       >
         <DialogTitle sx={{ 
-          color: '#1ECAFF', 
+          color: '#2391FF', 
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}>
@@ -594,7 +594,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
               backgroundColor: '#222',
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#1ECAFF',
+              backgroundColor: '#2391FF',
               borderRadius: '10px',
             },
             pt: 1
@@ -609,7 +609,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                   sx={{
                     color: 'white',
                     '&.Mui-checked': {
-                      color: '#1ECAFF',
+                      color: '#2391FF',
                     },
                     padding: '2px' // Reducir padding del checkbox
                   }}
@@ -635,7 +635,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
                     sx={{
                       color: 'white',
                       '&.Mui-checked': {
-                        color: '#1ECAFF',
+                        color: '#2391FF',
                       },
                       padding: '2px' // Reducir padding del checkbox
                     }}
@@ -658,7 +658,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           <Button 
             onClick={handleCloseDialog} 
             sx={{ 
-              color: '#1ECAFF',
+              color: '#2391FF',
               '&:hover': {
                 backgroundColor: 'rgba(30, 202, 255, 0.1)',
               }
@@ -670,7 +670,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
             onClick={handleSavePermissions} 
             variant="contained" 
             sx={{ 
-              backgroundColor: '#1ECAFF', 
+              backgroundColor: '#2391FF', 
               color: 'black',
               fontWeight: 'bold',
               '&:hover': {
@@ -697,7 +697,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
         }}
       >
         <DialogTitle sx={{ 
-          color: '#1ECAFF', 
+          color: '#2391FF', 
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}>
@@ -712,7 +712,7 @@ const UsersManagement: React.FC<UsersManagementProps> = ({ user }) => {
           <Button 
             onClick={handleCancelDelete} 
             sx={{ 
-              color: '#1ECAFF',
+              color: '#2391FF',
               '&:hover': {
                 backgroundColor: 'rgba(30, 202, 255, 0.1)',
               }

@@ -22404,3 +22404,9 @@ FROM dispositivos]
 2025-03-29 00:33:37,244 - DEBUG - Verificando permisos para el usuario: 1
 2025-03-29 00:33:37,246 - DEBUG - Permisos del usuario: admin
 2025-03-29 00:33:37,246 - DEBUG - Permiso concedido para la acción: update_device_order
+2025-03-29 04:59:55,410 - DEBUG - Verificando permisos para el usuario: 1
+2025-03-29 04:59:55,413 - DEBUG - Permisos del usuario: admin
+2025-03-29 04:59:55,413 - DEBUG - Permiso concedido para la acción: update_device_order
+2025-03-29 22:07:06,488 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-29 22:07:06,492 - DEBUG - Usuario encontrado en la base de datos
+2025-03-29 22:07:06,829 - DEBUG - Contraseña correcta

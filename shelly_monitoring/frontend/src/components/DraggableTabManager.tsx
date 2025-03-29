@@ -106,8 +106,8 @@ const DraggableTabManager: React.FC<DraggableTabManagerProps> = ({
                     {...provided.draggableProps}
                     sx={{
                       backgroundColor: index === selectedTab ? '#333' : 'transparent',
-                      borderBottom: index === selectedTab ? '3px solid #1ECAFF' : 'none',
-                      color: index === selectedTab ? '#1ECAFF' : 'white',
+                      borderBottom: index === selectedTab ? '3px solid #2391FF' : 'none',
+                      color: index === selectedTab ? '#2391FF' : 'white',
                       padding: '8px 16px',
                       margin: '0 2px',
                       display: 'flex',

@@ -597,5 +597,5 @@ export const formatearConsumo = (consumo: number): string => {
 
 // Función para determinar el color según el valor de consumo
 export const getColorForConsumo = (consumo: number): string => {
-  return consumo >= 0 ? '#1ECAFF' : '#00ff00'; // Azul claro para consumo, verde para generación
+  return consumo >= 0 ? '#2391FF' : '#00ff00'; // Azul claro para consumo, verde para generación
 };

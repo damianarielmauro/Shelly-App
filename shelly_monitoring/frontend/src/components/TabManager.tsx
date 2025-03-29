@@ -51,8 +51,8 @@ const TabManager: React.FC<TabManagerProps> = ({
         indicatorColor="primary"
         textColor="primary"
         sx={{
-          '& .MuiTabs-indicator': { backgroundColor: '#1ECAFF', height: 3 },
-          '& .MuiTab-root': { color: 'white', '&.Mui-selected': { color: '#1ECAFF' } },
+          '& .MuiTabs-indicator': { backgroundColor: '#2391FF', height: 3 },
+          '& .MuiTab-root': { color: 'white', '&.Mui-selected': { color: '#2391FF' } },
         }}
       >
         {tableros.map((tablero, index) => (

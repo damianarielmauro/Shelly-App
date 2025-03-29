@@ -91,7 +91,7 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({
             backgroundColor: 'black',
           },
           '&::-webkit-scrollbar-thumb': {
-            backgroundColor: '#1ECAFF',
+            backgroundColor: '#2391FF',
           },
         }}
       >
@@ -119,7 +119,7 @@ const RoomDeviceMatrix: React.FC<RoomDeviceMatrixProps> = ({
           backgroundColor: 'black',
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#1ECAFF',
+          backgroundColor: '#2391FF',
         },
       }}
     >

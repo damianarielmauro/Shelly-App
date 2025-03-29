@@ -167,7 +167,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
           backgroundColor: 'black',
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#1ECAFF',
+          backgroundColor: '#2391FF',
         },
       }}
     >
@@ -182,7 +182,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
         <Typography variant="body1" sx={{ color: 'white', mx: 1 }}>
           - Sin Asignar: {contadorSinAsignar}
         </Typography>
-        <Typography variant="body1" sx={{ color: '#1ECAFF', fontWeight: 'bold' }}>
+        <Typography variant="body1" sx={{ color: '#2391FF', fontWeight: 'bold' }}>
           - Totales: {dispositivos.length}
         </Typography>
       </Box>
@@ -287,7 +287,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
         }}
       >
         <DialogTitle sx={{ 
-          color: '#1ECAFF', 
+          color: '#2391FF', 
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}>
@@ -304,7 +304,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
               backgroundColor: '#222',
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#1ECAFF',
+              backgroundColor: '#2391FF',
               borderRadius: '10px',
             },
             pt: 1
@@ -328,7 +328,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
                     color: 'white',
                     padding: '2px',
                     '&.Mui-checked': {
-                      color: '#1ECAFF',
+                      color: '#2391FF',
                     }
                   }} 
                 />
@@ -353,7 +353,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
                       color: 'white',
                       padding: '2px',
                       '&.Mui-checked': {
-                        color: '#1ECAFF',
+                        color: '#2391FF',
                       }
                     }} 
                   />
@@ -374,7 +374,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
           <Button 
             onClick={handleClose} 
             sx={{ 
-              color: '#1ECAFF',
+              color: '#2391FF',
               '&:hover': {
                 backgroundColor: 'rgba(30, 202, 255, 0.1)',
               }
@@ -386,7 +386,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
             onClick={handleAssign} 
             variant="contained" 
             sx={{ 
-              backgroundColor: '#1ECAFF', 
+              backgroundColor: '#2391FF', 
               color: 'black',
               fontWeight: 'bold',
               '&:hover': {

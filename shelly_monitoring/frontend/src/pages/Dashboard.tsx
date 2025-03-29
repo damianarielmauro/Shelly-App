@@ -25,12 +25,12 @@ const scrollbarStyle = {
     backgroundColor: '#000', // Fondo negro
   },
   '&::-webkit-scrollbar-thumb': {
-    backgroundColor: '#1ECAFF', // Color azul para el "thumb" (parte deslizable)
+    backgroundColor: '#2391FF', // Color azul para el "thumb" (parte deslizable)
     borderRadius: '3px', // Bordes redondeados para el thumb
   },
   // Firefox scrollbar
   scrollbarWidth: 'thin',
-  scrollbarColor: '#1ECAFF #000', // thumb y track
+  scrollbarColor: '#2391FF #000', // thumb y track
 };
 
 interface Habitacion {
@@ -517,7 +517,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         <Button 
           variant="contained" 
           sx={{ 
-            backgroundColor: '#1ECAFF', 
+            backgroundColor: '#2391FF', 
             color: 'black',
             fontWeight: 'bold',
             marginTop: 4,
@@ -648,11 +648,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
               }
             }}
           >
-            <MenuItem onClick={handleLogoutClick} sx={{ height: '20px', color: '#1ECAFF' }}>Cerrar sesión</MenuItem>
+            <MenuItem onClick={handleLogoutClick} sx={{ height: '20px', color: '#2391FF' }}>Cerrar sesión</MenuItem>
           </Menu>
         </Box>
       </Box>
-      <Box sx={{ borderBottom: 1, borderColor: '#1ECAFF', width: '100%', flexShrink: 0 }} />
+      <Box sx={{ borderBottom: 1, borderColor: '#2391FF', width: '100%', flexShrink: 0 }} />
       <Box display="flex" sx={{ flexGrow: 1, overflow: 'hidden' }}>
         <Box sx={{ 
           flexGrow: 1, 
@@ -721,7 +721,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         <MenuItem
           onClick={() => handleAddMenuItemClick('Tablero')}
           sx={{
-            color: '#1ECAFF',
+            color: '#2391FF',
             '&:hover': {
               backgroundColor: 'rgba(30, 202, 255, 0.1)',
             }
@@ -732,7 +732,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         <MenuItem
           onClick={() => handleAddMenuItemClick('Habitación')}
           sx={{
-            color: '#1ECAFF',
+            color: '#2391FF',
             '&:hover': {
               backgroundColor: 'rgba(30, 202, 255, 0.1)',
             }
@@ -756,7 +756,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         }}
       >
         <DialogTitle sx={{ 
-          color: '#1ECAFF', 
+          color: '#2391FF', 
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}>
@@ -773,7 +773,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             onChange={(e) => setNewItemName(e.target.value)}
             variant="outlined"
             InputLabelProps={{
-              style: { color: '#1ECAFF' },
+              style: { color: '#2391FF' },
             }}
             InputProps={{
               style: { color: 'white' },
@@ -781,13 +781,13 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             sx={{
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#1ECAFF',
+                  borderColor: '#2391FF',
                 },
                 '&:hover fieldset': {
-                  borderColor: '#1ECAFF',
+                  borderColor: '#2391FF',
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#1ECAFF',
+                  borderColor: '#2391FF',
                 },
               },
             }}
@@ -797,7 +797,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           <Button 
             onClick={() => setAddDialogOpen(false)} 
             sx={{ 
-              color: '#1ECAFF',
+              color: '#2391FF',
               '&:hover': {
                 backgroundColor: 'rgba(30, 202, 255, 0.1)',
               }
@@ -809,7 +809,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             onClick={handleAddItem} 
             variant="contained" 
             sx={{ 
-              backgroundColor: '#1ECAFF', 
+              backgroundColor: '#2391FF', 
               color: 'black',
               fontWeight: 'bold',
               '&:hover': {
@@ -836,7 +836,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         }}
       >
         <DialogTitle sx={{ 
-          color: '#1ECAFF', 
+          color: '#2391FF', 
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}>
@@ -852,7 +852,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             onClick={() => setErrorDialogOpen(false)} 
             variant="contained" 
             sx={{ 
-              backgroundColor: '#1ECAFF', 
+              backgroundColor: '#2391FF', 
               color: 'black',
               fontWeight: 'bold',
               '&:hover': {
@@ -879,7 +879,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         }}
       >
         <DialogTitle sx={{ 
-          color: '#1ECAFF', 
+          color: '#2391FF', 
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}>
@@ -897,7 +897,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           <Button 
             onClick={() => setDeleteDialogOpen(false)} 
             sx={{ 
-              color: '#1ECAFF',
+              color: '#2391FF',
               '&:hover': {
                 backgroundColor: 'rgba(30, 202, 255, 0.1)',
               }
@@ -932,7 +932,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         }}
       >
         <DialogTitle sx={{ 
-          color: '#1ECAFF', 
+          color: '#2391FF', 
           fontSize: '1.1rem',
           fontWeight: 'bold'
         }}>
@@ -947,7 +947,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           <Button 
             onClick={handleLogoutCancel} 
             sx={{ 
-              color: '#1ECAFF',
+              color: '#2391FF',
               '&:hover': {
                 backgroundColor: 'rgba(30, 202, 255, 0.1)',
               }
@@ -959,7 +959,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             onClick={handleLogoutConfirm} 
             variant="contained" 
             sx={{ 
-              backgroundColor: '#1ECAFF', 
+              backgroundColor: '#2391FF', 
               color: 'black',
               fontWeight: 'bold',
               '&:hover': {

@@ -17,12 +17,12 @@ const scrollbarStyle = {
     backgroundColor: '#000', // Fondo negro
   },
   '&::-webkit-scrollbar-thumb': {
-    backgroundColor: '#1ECAFF', // Color estandarizado para el "thumb"
+    backgroundColor: '#2391FF', // Color estandarizado para el "thumb"
     borderRadius: '3px', // Bordes redondeados para el thumb
   },
   // Firefox scrollbar
   scrollbarWidth: 'thin',
-  scrollbarColor: '#1ECAFF #000', // thumb y track
+  scrollbarColor: '#2391FF #000', // thumb y track
 };
 
 interface SettingsProps {
@@ -77,7 +77,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
               variant="contained"
               onClick={handleShowRoomDialog}
               sx={{
-                backgroundColor: '#1ECAFF',
+                backgroundColor: '#2391FF',
                 color: 'black',
                 fontWeight: 'bold',
                 fontSize: '0.75rem',
@@ -95,7 +95,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
           {selectedTab === 0 && (
             <EditIcon 
               sx={{ 
-                color: editMode ? '#1ECAFF' : 'white', 
+                color: editMode ? '#2391FF' : 'white', 
                 cursor: 'pointer', 
                 marginRight: '18px' 
               }} 
@@ -105,7 +105,7 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
           <HomeIcon sx={{ color: 'white', cursor: 'pointer', marginRight: '18px' }} onClick={handleHomeClick} />
         </Box>
       </Box>
-      <Box sx={{ borderBottom: 1, borderColor: '#1ECAFF', width: '100%', flexShrink: 0 }} />
+      <Box sx={{ borderBottom: 1, borderColor: '#2391FF', width: '100%', flexShrink: 0 }} />
       <Box sx={{ 
         flexGrow: 1, 
         overflow: 'hidden',
