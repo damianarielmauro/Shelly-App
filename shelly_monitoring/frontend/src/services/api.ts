@@ -3,7 +3,8 @@ import { getToken } from './auth';
 
 // Crear una instancia de Axios con configuración personalizada
 const api = axios.create({
-  baseURL: 'https://172.16.10.222:8000/api',
+  // Cambia esta línea para usar la URL relativa en lugar de la absoluta
+  baseURL: '/api', 
   headers: {
     'Content-Type': 'application/json'
   }

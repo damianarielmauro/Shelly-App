@@ -22410,3 +22410,11 @@ FROM dispositivos]
 2025-03-29 22:07:06,488 - DEBUG - Intento de inicio de sesión: admin@shelly.local
 2025-03-29 22:07:06,492 - DEBUG - Usuario encontrado en la base de datos
 2025-03-29 22:07:06,829 - DEBUG - Contraseña correcta
+2025-03-31 17:35:38,323 - INFO - 🔧 Backend Flask iniciado.
+2025-03-31 17:39:33,184 - INFO - 🔧 Backend Flask iniciado.
+2025-03-31 17:57:53,024 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-31 17:57:53,043 - DEBUG - Usuario encontrado en la base de datos
+2025-03-31 17:57:53,389 - DEBUG - Contraseña correcta
+2025-03-31 18:08:57,590 - DEBUG - Intento de inicio de sesión: admin@shelly.local
+2025-03-31 18:08:57,593 - DEBUG - Usuario encontrado en la base de datos
+2025-03-31 18:08:57,933 - DEBUG - Contraseña correcta

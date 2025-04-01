@@ -45,7 +45,7 @@ const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
 
   useEffect(() => {
     if (isDiscovering) {
-      const eventSource = createSSEConnection('https://172.16.10.222:8000/api/logs', (data) => {
+      const eventSource = createSSEConnection('/api/logs', (data) => {  
         terminal.current?.writeln(data);
         if (data.includes("=== Fin del descubrimiento ===")) {
           setIsDiscovering(false);

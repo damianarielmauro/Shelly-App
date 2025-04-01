@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Set up the base URL for axios
-axios.defaults.baseURL = 'https://172.16.10.222:8000';
+axios.defaults.baseURL = '';  // Usa la URL relativa
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 // Function to set the Authorization header
