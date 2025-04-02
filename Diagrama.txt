@@ -25,9 +25,9 @@
                                                       v
                                        +--------------------------------+
                                        |                                |
-                                       |        ioBROKER.SHELLY         |
-                                       |          Node.js               |
-                                       |        Puerto 8087             |
+                                       |        SHELLY.ioAdapter        |
+                                       |            Node.js             |
+                                       |           Puerto 8087          |
                                        |                                |
                                        +--------------------------------+
                                               ^                    ^
