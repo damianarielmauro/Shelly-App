@@ -361,4 +361,121 @@ export const loginUser = async (email: string, password: string): Promise<any> =
 
 export const getRooms = getHabitaciones; // Alias para getRooms
 
+// === Servicios para la comunicación con Shelly.ioAdapter ===
+
+/**
+ * Obtiene todos los dispositivos Shelly descubiertos por el adaptador
+ */
+export const getShellyDevices = async (): Promise<any> => {
+  try {
+    const response = await api.get('/shelly/devices');
+    console.log('getShellyDevices response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('getShellyDevices error:', error);
+    return [];
+  }
+};
+
+/**
+ * Inicia el descubrimiento de dispositivos Shelly
+ */
+export const discoverShellyDevices = async (): Promise<any> => {
+  try {
+    const response = await api.post('/shelly/discover');
+    console.log('discoverShellyDevices response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('discoverShellyDevices error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Sincroniza los dispositivos Shelly con la base de datos
+ */
+export const syncShellyDevices = async (): Promise<any> => {
+  try {
+    const response = await api.post('/shelly/sync_database');
+    console.log('syncShellyDevices response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('syncShellyDevices error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene información detallada de un dispositivo Shelly
+ */
+export const getShellyDeviceInfo = async (deviceId: string): Promise<any> => {
+  try {
+    const response = await api.get(`/shelly/devices/${deviceId}`);
+    console.log('getShellyDeviceInfo response:', response);
+    return response.data;
+  } catch (error) {
+    console.error(`Error obteniendo información del dispositivo ${deviceId}:`, error);
+    return null;
+  }
+};
+
+/**
+ * Controla un dispositivo Shelly (encendido/apagado)
+ */
+export const controlShellyDevice = async (deviceId: string, channel: number, state: boolean): Promise<any> => {
+  try {
+    const response = await api.post(`/shelly/devices/${deviceId}/control`, {
+      channel,
+      state
+    });
+    console.log('controlShellyDevice response:', response);
+    return response.data;
+  } catch (error) {
+    console.error(`Error controlando dispositivo ${deviceId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Verifica si hay actualizaciones de firmware disponibles
+ */
+export const checkShellyFirmware = async (deviceId: string): Promise<any> => {
+  try {
+    const response = await api.get(`/shelly/devices/${deviceId}/firmware`);
+    console.log('checkShellyFirmware response:', response);
+    return response.data;
+  } catch (error) {
+    console.error(`Error verificando firmware para ${deviceId}:`, error);
+    return null;
+  }
+};
+
+/**
+ * Inicia la actualización de firmware para un dispositivo
+ */
+export const updateShellyFirmware = async (deviceId: string): Promise<any> => {
+  try {
+    const response = await api.post(`/shelly/devices/${deviceId}/firmware/update`);
+    console.log('updateShellyFirmware response:', response);
+    return response.data;
+  } catch (error) {
+    console.error(`Error actualizando firmware para ${deviceId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene datos de consumo energético de un dispositivo
+ */
+export const getShellyEnergyData = async (deviceId: string): Promise<any> => {
+  try {
+    const response = await api.get(`/shelly/devices/${deviceId}/energy`);
+    console.log('getShellyEnergyData response:', response);
+    return response.data;
+  } catch (error) {
+    console.error(`Error obteniendo datos de energía para ${deviceId}:`, error);
+    return null;
+  }
+};
+
 export default api;

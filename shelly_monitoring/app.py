@@ -10,6 +10,11 @@ import subprocess
 import time
 from threading import Thread
 import functools
+from shelly_interface import ShellyInterface
+
+# Inicializar interfaz Shelly
+shelly_interface = ShellyInterface()
+
 
 # Configuración del backend Flask
 app = Flask(__name__)
@@ -41,7 +46,7 @@ roles_permissions = {
         'update_room_order', 'start_discovery', 'view_logs', 'edit_dashboard',
         'create_user', 'create_tablero', 'delete_dashboard', 'delete_habitacion',
         'create_habitacion', 'rename_tablero', 'stream_logs', 'view_statistics', 'delete_habitacion',
-        'discover_devices', 'manage_users', 'view_consumption', 'update_device_order'
+        'discover_devices', 'manage_users', 'view_consumption', 'update_device_order', 'control_devices', 'manage_devices'
     ],
     'user': ['view_devices', 'toggle_device', 'view_rooms']
 }
@@ -682,6 +687,169 @@ def get_dispositivos_by_habitacion(habitacion_id):
 @app.route('/api/test', methods=['GET'])
 def test_connection():
     return jsonify({"message": "Connection successful"}), 200
+
+
+
+# === Endpoints para la integración con Shelly.ioAdapter ===
+
+@app.route('/api/shelly/devices', methods=['GET'])
+@require_jwt
+def get_shelly_devices():
+    """Obtiene todos los dispositivos Shelly descubiertos por el adaptador"""
+    devices = shelly_interface.get_devices()
+    return jsonify(devices)
+
+@app.route('/api/shelly/discover', methods=['POST'])
+@require_jwt
+@require_permission('discover_devices')
+def discover_shelly_devices():
+    """Inicia el descubrimiento de dispositivos Shelly en la red"""
+    success = shelly_interface.discover_devices()
+    if success:
+        return jsonify({"status": "ok", "message": "Descubrimiento iniciado"}), 200
+    else:
+        return jsonify({"status": "error", "message": "Error al iniciar el descubrimiento"}), 500
+
+@app.route('/api/shelly/devices/<device_id>', methods=['GET'])
+@require_jwt
+def get_shelly_device_info(device_id):
+    """Obtiene información detallada de un dispositivo Shelly"""
+    device_info = shelly_interface.get_device_info(device_id)
+    if device_info:
+        return jsonify(device_info)
+    else:
+        return jsonify({"status": "error", "message": "Dispositivo no encontrado"}), 404
+
+@app.route('/api/shelly/devices/<device_id>/status', methods=['GET'])
+@require_jwt
+def get_shelly_device_status(device_id):
+    """Obtiene el estado actual de un dispositivo Shelly"""
+    device_status = shelly_interface.get_device_status(device_id)
+    if device_status:
+        return jsonify(device_status)
+    else:
+        return jsonify({"status": "error", "message": "Error al obtener estado del dispositivo"}), 500
+
+@app.route('/api/shelly/devices/<device_id>/control', methods=['POST'])
+@require_jwt
+@require_permission('control_devices')
+def control_shelly_device(device_id):
+    """Controla un dispositivo Shelly (encender/apagar)"""
+    data = request.json
+    if not data or 'channel' not in data or 'state' not in data:
+        return jsonify({"status": "error", "message": "Datos incompletos"}), 400
+    
+    channel = int(data['channel'])
+    state = bool(data['state'])
+    
+    success = shelly_interface.control_device(device_id, channel, state)
+    if success:
+        return jsonify({"status": "ok", "message": "Dispositivo controlado correctamente"})
+    else:
+        return jsonify({"status": "error", "message": "Error al controlar el dispositivo"}), 500
+
+@app.route('/api/shelly/devices/<device_id>/firmware', methods=['GET'])
+@require_jwt
+@require_permission('manage_devices')
+def check_shelly_firmware(device_id):
+    """Verifica si hay actualizaciones de firmware disponibles para un dispositivo Shelly"""
+    firmware_info = shelly_interface.check_firmware_updates(device_id)
+    if firmware_info:
+        return jsonify(firmware_info)
+    else:
+        return jsonify({"status": "error", "message": "Error al verificar actualizaciones"}), 500
+
+@app.route('/api/shelly/devices/<device_id>/firmware/update', methods=['POST'])
+@require_jwt
+@require_permission('manage_devices')
+def update_shelly_firmware(device_id):
+    """Inicia la actualización de firmware para un dispositivo Shelly"""
+    success = shelly_interface.update_firmware(device_id)
+    if success:
+        return jsonify({"status": "ok", "message": "Actualización iniciada"})
+    else:
+        return jsonify({"status": "error", "message": "Error al iniciar la actualización"}), 500
+
+@app.route('/api/shelly/devices/<device_id>/energy', methods=['GET'])
+@require_jwt
+def get_shelly_energy_data(device_id):
+    """Obtiene datos de consumo energético para dispositivos Shelly compatibles"""
+    energy_data = shelly_interface.get_device_energy_data(device_id)
+    if energy_data:
+        return jsonify(energy_data)
+    else:
+        return jsonify({"status": "error", "message": "Datos de energía no disponibles"}), 404
+
+@app.route('/api/shelly/sync_database', methods=['POST'])
+@require_jwt
+@require_permission('manage_devices')
+def sync_shelly_devices():
+    """
+    Sincroniza los dispositivos Shelly descubiertos con la base de datos
+    Actualiza los dispositivos existentes y añade los nuevos
+    """
+    try:
+        # Obtener todos los dispositivos desde el adaptador
+        shelly_devices = shelly_interface.get_devices()
+        
+        # Obtener todos los dispositivos de la base de datos
+        db_devices = Dispositivos.query.all()
+        db_devices_by_ip = {d.ip: d for d in db_devices}
+        
+        # Contador de dispositivos actualizados y añadidos
+        updated_count = 0
+        added_count = 0
+        
+        # Iterar por todos los dispositivos Shelly
+        for device in shelly_devices:
+            ip = device.get('ip', '')
+            if not ip:
+                continue
+                
+            # Crear un nombre amigable para el dispositivo
+            friendly_name = device.get('name', '') or f"Shelly {device.get('type', '')} {device.get('id', '')}"
+            
+            # Verificar si el dispositivo ya existe en la base de datos
+            if ip in db_devices_by_ip:
+                # Actualizar dispositivo existente
+                db_device = db_devices_by_ip[ip]
+                db_device.nombre = friendly_name
+                db_device.tipo = device.get('type', '')
+                db_device.estado = device.get('online', False)
+                
+                # Actualizar último consumo si está disponible
+                if 'meters' in device and len(device['meters']) > 0:
+                    db_device.ultimo_consumo = device['meters'][0].get('power', 0)
+                
+                updated_count += 1
+            else:
+                # Crear nuevo dispositivo
+                new_device = Dispositivos(
+                    nombre=friendly_name,
+                    ip=ip,
+                    tipo=device.get('type', ''),
+                    estado=device.get('online', False),
+                    ultimo_consumo=device.get('meters', [{}])[0].get('power', 0) if 'meters' in device and len(device['meters']) > 0 else 0
+                )
+                db.session.add(new_device)
+                added_count += 1
+        
+        # Guardar cambios en la base de datos
+        db.session.commit()
+        
+        return jsonify({
+            "status": "ok",
+            "message": f"Sincronización completada: {updated_count} dispositivos actualizados, {added_count} dispositivos añadidos"
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "status": "error",
+            "message": f"Error durante la sincronización: {str(e)}"
+        }), 500
+
+
+
 
 
 
