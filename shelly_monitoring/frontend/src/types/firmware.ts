@@ -1,4 +1,4 @@
-// Tipos existentes
+// Tipos para verificar actualizaciones
 export interface FirmwareVersionInfo {
   currentVersion: string;
   newVersion: string;
@@ -7,6 +7,7 @@ export interface FirmwareVersionInfo {
   releaseDate?: string;
 }
 
+// Estado de actualización para un dispositivo
 export interface FirmwareUpdateStatus {
   deviceId: string;
   deviceName: string;
@@ -18,7 +19,7 @@ export interface FirmwareUpdateStatus {
   lastCheck: string;
 }
 
-// Tipo que faltaba y está siendo importado
+// Tipo para representar actualizaciones de firmware agrupadas por modelo
 export interface FirmwareUpdate {
   modelId: string;
   modelName: string;
@@ -30,7 +31,7 @@ export interface FirmwareUpdate {
   devices?: DeviceUpdateInfo[];
 }
 
-// Tipo auxiliar para FirmwareUpdate
+// Información de actualización para un dispositivo específico
 export interface DeviceUpdateInfo {
   id: number;
   nombre: string;
