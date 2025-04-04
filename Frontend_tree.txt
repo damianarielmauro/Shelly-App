@@ -1,5 +1,6 @@
 damian@app-shelly:/opt/shelly_monitoring/frontend/src$ tree -L 4 -I "__pycache__|venv|build|dist|node_modules|public|pictures|utils|t
 ypes"
+
 .
 ├── App.css
 ├── App.tsx
