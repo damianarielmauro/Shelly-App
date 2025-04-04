@@ -1,0 +1,196 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Box, 
+  Typography, 
+  Grid, 
+  Paper, 
+  Switch, 
+  FormControlLabel, 
+  TextField, 
+  Button,
+  AppBar,
+  Toolbar
+} from '@mui/material';
+import { getUser } from '../services/auth';
+
+const Settings: React.FC = () => {
+  const [darkMode, setDarkMode] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [dataRefreshRate, setDataRefreshRate] = useState('30');
+  const [systemSettings, setSystemSettings] = useState({
+    backupEnabled: true,
+    backupFrequency: 'daily',
+    autoUpdateEnabled: false,
+  });
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await getUser();
+        setUser(userData);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    
+    fetchUser();
+  }, []);
+
+  const handleSaveSettings = () => {
+    // Lógica para guardar la configuración
+    console.log('Settings saved:', {
+      darkMode,
+      notificationsEnabled,
+      dataRefreshRate,
+      systemSettings
+    });
+  };
+
+  const isAdmin = user?.permissions?.includes('admin') || false;
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', bgcolor: '#000' }}>
+      {/* Barra de aplicación simple en lugar de Header */}
+      <AppBar position="static" sx={{ backgroundColor: '#0A0A0A' }}>
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Configuración
+          </Typography>
+          {user && (
+            <Typography variant="body2" color="inherit">
+              {user.name || user.email}
+            </Typography>
+          )}
+        </Toolbar>
+      </AppBar>
+      
+      <Box sx={{ flex: 1, p: 3 }}>
+        <Grid container spacing={3}>
+          {/* Configuración personal */}
+          <Grid item xs={12} md={6}>
+            <Paper sx={{ p: 3, bgcolor: '#151515', color: 'white', borderRadius: '10px' }}>
+              <Typography variant="h6" sx={{ mb: 2, color: '#2391FF' }}>
+                Configuración Personal
+              </Typography>
+              
+              <FormControlLabel
+                control={
+                  <Switch 
+                    checked={darkMode} 
+                    onChange={(e) => setDarkMode(e.target.checked)}
+                    sx={{ 
+                      '& .MuiSwitch-switchBase.Mui-checked': { color: '#2391FF' },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#2391FF' },
+                    }}
+                  />
+                }
+                label="Modo oscuro"
+                sx={{ display: 'block', mb: 2 }}
+              />
+              
+              <FormControlLabel
+                control={
+                  <Switch 
+                    checked={notificationsEnabled} 
+                    onChange={(e) => setNotificationsEnabled(e.target.checked)}
+                    sx={{ 
+                      '& .MuiSwitch-switchBase.Mui-checked': { color: '#2391FF' },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#2391FF' },
+                    }}
+                  />
+                }
+                label="Notificaciones"
+                sx={{ display: 'block', mb: 2 }}
+              />
+              
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  Intervalo de actualización de datos (segundos)
+                </Typography>
+                <TextField
+                  value={dataRefreshRate}
+                  onChange={(e) => setDataRefreshRate(e.target.value)}
+                  type="number"
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    sx: { color: 'white', bgcolor: '#0A0A0A', borderColor: '#333' }
+                  }}
+                  sx={{ 
+                    width: 200,
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': { borderColor: '#333' },
+                      '&:hover fieldset': { borderColor: '#444' },
+                      '&.Mui-focused fieldset': { borderColor: '#2391FF' },
+                    }
+                  }}
+                />
+              </Box>
+            </Paper>
+          </Grid>
+          
+          {/* Configuración del sistema (solo para administradores) */}
+          {isAdmin && (
+            <Grid item xs={12} md={6}>
+              <Paper sx={{ p: 3, bgcolor: '#151515', color: 'white', borderRadius: '10px' }}>
+                <Typography variant="h6" sx={{ mb: 2, color: '#2391FF' }}>
+                  Configuración del Sistema
+                </Typography>
+                
+                <FormControlLabel
+                  control={
+                    <Switch 
+                      checked={systemSettings.backupEnabled} 
+                      onChange={(e) => setSystemSettings({...systemSettings, backupEnabled: e.target.checked})}
+                      sx={{ 
+                        '& .MuiSwitch-switchBase.Mui-checked': { color: '#2391FF' },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#2391FF' },
+                      }}
+                    />
+                  }
+                  label="Copias de seguridad automáticas"
+                  sx={{ display: 'block', mb: 2 }}
+                />
+                
+                <FormControlLabel
+                  control={
+                    <Switch 
+                      checked={systemSettings.autoUpdateEnabled} 
+                      onChange={(e) => setSystemSettings({...systemSettings, autoUpdateEnabled: e.target.checked})}
+                      sx={{ 
+                        '& .MuiSwitch-switchBase.Mui-checked': { color: '#2391FF' },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#2391FF' },
+                      }}
+                    />
+                  }
+                  label="Actualizaciones automáticas de firmware"
+                  sx={{ display: 'block', mb: 2 }}
+                />
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+        
+        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button 
+            variant="contained" 
+            onClick={handleSaveSettings}
+            sx={{ 
+              bgcolor: '#2391FF', 
+              '&:hover': { bgcolor: '#1976d2' },
+              color: 'white',
+              textTransform: 'none',
+              fontWeight: 'normal',
+              px: 3
+            }}
+          >
+            Guardar Cambios
+          </Button>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default Settings;

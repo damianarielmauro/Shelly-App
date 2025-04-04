@@ -137,39 +137,37 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
     // Iniciar el servicio de actualización periódica
     iniciarActualizacionPeriodica();
 
-    const fetchDispositivos = async () => {
-      try {
-        // Obtener dispositivos con sus consumos del servicio centralizado
-        const data = await obtenerDispositivosConConsumo();
-        
-        // Ordenar los dispositivos como antes
-        const sortedData = data.sort((a, b) => {
-          if (a.habitacion_id && !b.habitacion_id) return 1;
-          if (!a.habitacion_id && b.habitacion_id) return -1;
-          return a.nombre.localeCompare(b.nombre);
-        });
-        
-        // Forzar manualmente algunos dispositivos como online y otros offline para probar
-        const datosModificados = sortedData.map((dispositivo, index) => {
-          // Hacemos que los dispositivos con índice par sean online y los impares offline
-          const isOnline = index % 2 === 0;
-          const estado = isOnline ? (Math.random() > 0.5 ? 1 : 0) : 0; // Si está online, algunos encendidos otros apagados
-          return {
-            ...dispositivo,
-            online: isOnline,
-            estado: estado
-          };
-        });
-        
-        setDispositivos(datosModificados);
-        setContadorAsignados(data.filter((d) => d.habitacion_id).length);
-        setContadorSinAsignar(data.filter((d) => !d.habitacion_id).length);
-      } catch (error) {
-        console.error('Error al obtener los dispositivos:', error);
-      }
-    };
+const fetchDispositivos = async () => {
+  try {
+    // Obtener dispositivos con sus consumos del servicio centralizado
+    const data = await obtenerDispositivosConConsumo();
+    
+    // Ordenar los dispositivos como antes
+    const sortedData = data.sort((a, b) => {
+      if (a.habitacion_id && !b.habitacion_id) return 1;
+      if (!a.habitacion_id && b.habitacion_id) return -1;
+      return a.nombre.localeCompare(b.nombre);
+    });
+    
+    // Asignar estados según si están online u offline
+    const datosModificados = sortedData.map((dispositivo, index) => {
+      const isOnline = index % 2 === 0; // Simulación de qué dispositivos están online
+      return {
+        ...dispositivo,
+        online: isOnline,
+        estado: isOnline ? 1 : null // Online → Encendido (1), Offline → Estado desconocido (null)
+      };
+    });
 
-    fetchDispositivos();
+    setDispositivos(datosModificados);
+    setContadorAsignados(data.filter((d) => d.habitacion_id).length);
+    setContadorSinAsignar(data.filter((d) => !d.habitacion_id).length);
+  } catch (error) {
+    console.error('Error al obtener los dispositivos:', error);
+  }
+};
+
+fetchDispositivos();
 
     // Suscribirse a actualizaciones de dispositivos
     const unsuscribir = suscribirseADispositivosActualizados(async () => {

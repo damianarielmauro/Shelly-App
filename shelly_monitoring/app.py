@@ -11,6 +11,7 @@ import time
 from threading import Thread
 import functools
 from shelly_interface import ShellyInterface
+from routes_firmware import firmware_bp
 
 # Inicializar interfaz Shelly
 shelly_interface = ShellyInterface()
@@ -50,6 +51,10 @@ roles_permissions = {
     ],
     'user': ['view_devices', 'toggle_device', 'view_rooms']
 }
+
+# Registrar blueprint para la gestión de firmware
+app.register_blueprint(firmware_bp)
+
 
 # Middleware para proteger rutas
 def require_jwt(f):

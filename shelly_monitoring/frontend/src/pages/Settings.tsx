@@ -1,115 +1,192 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Tab, Typography } from '@mui/material';
-import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { useLocation } from 'react-router-dom';
-import Header from '../components/Header';
-import RoomsManagement from '../components/RoomsManagement';
-import UsersManagement from '../components/UsersManagement';
-import DevicesManagement from '../components/DevicesManagement';
+import Discovery from '../components/Discovery';
+import UsersManagement from '../pages/UsersManagement';
+import DeviceMatrix from '../components/DeviceMatrix';
 import FirmwareUpdatePanel from '../components/FirmwareUpdatePanel';
+import { Tabs, Tab, Box, Button, CircularProgress } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import EditIcon from '@mui/icons-material/Edit';
+import { useNavigate } from 'react-router-dom';
+import { checkPermission } from '../services/auth';
 import { checkForFirmwareUpdates } from '../services/firmwareService';
-import { FirmwareUpdate } from '../types/firmware';
 
-const Settings: React.FC = () => {
-  const location = useLocation();
-  const initialTab = location.state?.activeTab || 'HABITACIONES';
-  const [tab, setTab] = useState(initialTab);
-  const [firmwareUpdates, setFirmwareUpdates] = useState<FirmwareUpdate[]>([]);
+// Estilos de barra de desplazamiento consistentes para toda la aplicación
+const scrollbarStyle = {
+  '&::-webkit-scrollbar': {
+    width: '6px',
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: '#000', // Fondo negro
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#2391FF', // Color estandarizado para el "thumb"
+    borderRadius: '3px', // Bordes redondeados para el thumb
+  },
+  // Firefox scrollbar
+  scrollbarWidth: 'thin',
+  scrollbarColor: '#2391FF #000', // thumb y track
+};
+
+interface SettingsProps {
+  user: {
+    permissions: string[];
+    role?: string; // Añadido role como opcional para compatibilidad
+  };
+}
+
+const Settings: React.FC<SettingsProps> = ({ user }) => {
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [editMode, setEditMode] = useState(false);
+  const [selectedDevices, setSelectedDevices] = useState<number[]>([]);
+  const [showRoomDialog, setShowRoomDialog] = useState(false);
+  const [firmwareUpdates, setFirmwareUpdates] = useState<any[]>([]);
+  const [loadingUpdates, setLoadingUpdates] = useState<boolean>(false);
+  const navigate = useNavigate();
   
-  useEffect(() => {
-    const fetchUpdates = async () => {
-      try {
-        const updates = await checkForFirmwareUpdates();
-        setFirmwareUpdates(updates);
-      } catch (error) {
-        console.error('Error al verificar actualizaciones de firmware:', error);
-      }
-    };
-    
-    fetchUpdates();
-  }, []);
+  // Verificar si el usuario es admin
+  const isAdmin = user.role === 'admin' || user.permissions?.includes('admin');
 
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
-    setTab(newValue);
+  // Cargar actualizaciones de firmware disponibles cuando se selecciona la pestaña correspondiente
+  useEffect(() => {
+    if (selectedTab === 3 && isAdmin) {
+      setLoadingUpdates(true);
+      checkForFirmwareUpdates()
+        .then(updates => {
+          // Transformar los datos al formato que espera FirmwareUpdatePanel
+          const firmwareUpdatesFormatted = updates
+            .filter(update => update.hasUpdate)
+            .map(update => ({
+              modelId: update.deviceId.split('-')[0], // Asumimos que el modelo es la primera parte del deviceId
+              modelName: update.deviceName,
+              currentVersion: update.currentVersion,
+              newVersion: update.newVersion || '',
+              releaseDate: update.lastCheck.split('T')[0], // Formateamos la fecha
+              deviceCount: 1, // Inicialmente contamos 1 por dispositivo
+              releaseNotes: 'Notas de versión no disponibles' // Valor por defecto
+            }));
+
+          // Agrupar por modelo para contar dispositivos correctamente
+          const modelsMap = new Map();
+          firmwareUpdatesFormatted.forEach(update => {
+            if (modelsMap.has(update.modelId)) {
+              const existingUpdate = modelsMap.get(update.modelId);
+              existingUpdate.deviceCount += 1;
+            } else {
+              modelsMap.set(update.modelId, { ...update });
+            }
+          });
+
+          setFirmwareUpdates(Array.from(modelsMap.values()));
+        })
+        .catch(error => {
+          console.error('Error cargando actualizaciones de firmware:', error);
+          setFirmwareUpdates([]);
+        })
+        .finally(() => {
+          setLoadingUpdates(false);
+        });
+    }
+  }, [selectedTab, isAdmin]);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedTab(newValue);
+  };
+
+  const handleHomeClick = () => {
+    navigate('/dashboard');
+  };
+
+  const handleEditClick = () => {
+    setEditMode(!editMode);
+    // Al salir del modo edición, limpiar dispositivos seleccionados
+    if (editMode) {
+      setSelectedDevices([]);
+    }
+  };
+
+  const handleShowRoomDialog = () => {
+    setShowRoomDialog(true);
+  };
+
+  const handleSelectedDevicesChange = (devices: number[]) => {
+    setSelectedDevices(devices);
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', bgcolor: '#000' }}>
-      <Header title="Configuración" />
-      <Box sx={{ flex: 1, m: 2, display: 'flex', flexDirection: 'column' }}>
-        <TabContext value={tab}>
-          <Box sx={{ borderBottom: 1, borderColor: '#333' }}>
-            <TabList 
-              onChange={handleTabChange}
+    <Box sx={{ backgroundColor: 'black', color: 'white', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0 }}>
+        <Tabs value={selectedTab} onChange={handleTabChange} aria-label="settings-tabs" sx={{ color: 'white', fontSize: '1.25rem' }}>
+          <Tab label="Dispositivos" sx={{ color: 'white', fontWeight: selectedTab === 0 ? 'bold' : 'normal' }} />
+          <Tab label="Descubrir Dispositivos" sx={{ color: 'white', fontWeight: selectedTab === 1 ? 'bold' : 'normal' }} />
+          <Tab label="Usuarios y Perfiles" sx={{ color: 'white', fontWeight: selectedTab === 2 ? 'bold' : 'normal' }} />
+          {/* Mostrar el tab de Firmware solo para administradores */}
+          {isAdmin && (
+            <Tab label="Actualizar Firmware" sx={{ color: 'white', fontWeight: selectedTab === 3 ? 'bold' : 'normal' }} />
+          )}
+        </Tabs>
+        <Box display="flex" alignItems="center">
+          {/* Botón ASIGNAR HABITACIÓN, aparece condicionalmente */}
+          {selectedTab === 0 && editMode && selectedDevices.length > 0 && (
+            <Button
+              variant="contained"
+              onClick={handleShowRoomDialog}
               sx={{
-                '& .MuiTab-root': {
-                  color: 'white',
-                  '&.Mui-selected': {
-                    color: '#2391FF',
-                  },
-                },
-                '& .MuiTabs-indicator': {
-                  backgroundColor: '#2391FF',
+                backgroundColor: '#2391FF',
+                color: 'black',
+                fontWeight: 'bold',
+                fontSize: '0.75rem',
+                height: '25px',
+                mr: 2,
+                textTransform: 'none',
+                '&:hover': {
+                  backgroundColor: '#18b2e1',
                 }
               }}
             >
-              <Tab label="HABITACIONES" value="HABITACIONES" />
-              <Tab 
-                label={
-                  <Box display="flex" alignItems="center">
-                    DISPOSITIVOS
-                    {firmwareUpdates.length > 0 && (
-                      <Box
-                        component="span"
-                        sx={{
-                          ml: 1,
-                          backgroundColor: '#2391FF',
-                          color: 'black',
-                          fontSize: '0.7rem',
-                          fontWeight: 'bold',
-                          borderRadius: '50%',
-                          width: '20px',
-                          height: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                      >
-                        {firmwareUpdates.length}
-                      </Box>
-                    )}
-                  </Box>
-                } 
-                value="DISPOSITIVOS" 
-              />
-              <Tab label="USUARIOS" value="USUARIOS" />
-            </TabList>
+              Asignar a Habitación
+            </Button>
+          )}
+          {selectedTab === 0 && (
+            <EditIcon 
+              sx={{ 
+                color: editMode ? '#2391FF' : 'white', 
+                cursor: 'pointer', 
+                marginRight: '18px' 
+              }} 
+              onClick={handleEditClick} 
+            />
+          )}
+          <HomeIcon sx={{ color: 'white', cursor: 'pointer', marginRight: '18px' }} onClick={handleHomeClick} />
+        </Box>
+      </Box>
+      <Box sx={{ borderBottom: 1, borderColor: '#2391FF', width: '100%', flexShrink: 0 }} />
+      <Box sx={{ 
+        flexGrow: 1, 
+        overflow: 'auto',
+        ...scrollbarStyle
+      }}>
+        {selectedTab === 0 && checkPermission(user, 'view_devices') && (
+          <DeviceMatrix 
+            user={user} 
+            editMode={editMode}
+            onSelectedItemsChange={handleSelectedDevicesChange}
+            showRoomDialog={showRoomDialog}
+            setShowRoomDialog={setShowRoomDialog}
+          />
+        )}
+        {selectedTab === 1 && checkPermission(user, 'discover_devices') && <Discovery user={user} />}
+        {selectedTab === 2 && checkPermission(user, 'manage_users') && <UsersManagement user={user} />}
+        {selectedTab === 3 && isAdmin && (
+          <Box sx={{ p: 2 }}>
+            {loadingUpdates ? (
+              <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+                <CircularProgress sx={{ color: '#2391FF' }} />
+              </Box>
+            ) : (
+              <FirmwareUpdatePanel updates={firmwareUpdates} />
+            )}
           </Box>
-
-          <TabPanel value="HABITACIONES" sx={{ p: 0, mt: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <RoomsManagement />
-          </TabPanel>
-          <TabPanel value="DISPOSITIVOS" sx={{ p: 0, mt: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ bgcolor: '#151515', borderRadius: '10px', overflow: 'hidden', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <Typography variant="h6" sx={{ p: 2, borderBottom: '1px solid #333', color: 'white' }}>
-                Gestión de Dispositivos
-              </Typography>
-              
-              {/* Si hay actualizaciones, mostrarlas primero */}
-              {firmwareUpdates.length > 0 && (
-                <Box sx={{ backgroundColor: '#111', borderBottom: '1px solid #333' }}>
-                  <FirmwareUpdatePanel updates={firmwareUpdates} />
-                </Box>
-              )}
-              
-              {/* Componente de gestión de dispositivos existente */}
-              <DevicesManagement />
-            </Box>
-          </TabPanel>
-          <TabPanel value="USUARIOS" sx={{ p: 0, mt: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <UsersManagement />
-          </TabPanel>
-        </TabContext>
+        )}
       </Box>
     </Box>
   );
