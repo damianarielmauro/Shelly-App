@@ -1,4 +1,5 @@
-damian@app-shelly:/opt/shelly_monitoring/frontend/src$ tree -L 4 -I "__pycache__|venv|build|dist|node_modules|public"
+damian@app-shelly:/opt/shelly_monitoring/frontend/src$ tree -L 4 -I "__pycache__|venv|build|dist|node_modules|public|pictures|utils|t
+ypes"
 .
 ├── App.css
 ├── App.tsx
@@ -23,27 +24,17 @@ damian@app-shelly:/opt/shelly_monitoring/frontend/src$ tree -L 4 -I "__pycache__
 │   ├── Dashboard.tsx.fimware
 │   ├── Login.tsx
 │   ├── Settings.tsx
-│   ├── Settings.tsx.firmware
 │   ├── Statistics.tsx
 │   └── UsersManagement.tsx
 ├── react-app-env.d.ts
-├── reemplazar.sh
 ├── reportWebVitals.ts
 ├── services
 │   ├── api.ts
 │   ├── auth.ts
 │   ├── consumptionService.ts
 │   ├── firmwareService.ts
-│   ├── firmwareService.ts.old
 │   ├── shellyService.ts
 │   └── sse.ts
-├── setupTests.ts
 ├── styles
 │   └── custom.css
-├── theme.ts
-├── types
-│   └── firmware.ts
-└── utils
-    └── versionUtils.ts
-
-7 directories, 39 files
+└── theme.ts

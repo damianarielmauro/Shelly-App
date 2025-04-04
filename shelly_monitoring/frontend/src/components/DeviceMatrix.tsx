@@ -3,17 +3,17 @@ import {
   Box, Typography, Card, Checkbox, Button, Dialog, DialogTitle, 
   DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio,
   IconButton, CircularProgress, Menu, MenuItem, Popover, List,
-  ListItemText, ListItemButton, Checkbox as FilterCheckbox, TextField, InputAdornment
+  ListItemText, ListItemButton, Checkbox as FilterCheckbox, TextField, InputAdornment,
+  Tooltip
 } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
 import SearchIcon from '@mui/icons-material/Search';
 import SortIcon from '@mui/icons-material/Sort';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
 import { getDispositivos, getHabitaciones, asignarHabitacion, toggleDevice } from '../services/api';
 import {
   DispositivoConConsumo,
@@ -180,8 +180,8 @@ const PowerButton = memo(({ isOn, isLoading, onClick, deviceId }: {
 const DeviceTypeImage = memo(({ tipo }: { tipo: string }) => {
   const imageSource = deviceTypeImages[tipo] || defaultImage;
   
-  // Aumentamos el tamaño del círculo y la imagen en un 15%
-  const circleSize = 37; // 32 + 15% = ~37
+  // Aumentamos el tamaño del círculo y la imagen un 10% más (de 37px a 41px)
+  const circleSize = 41;
   
   return (
     <Box
@@ -231,9 +231,15 @@ const DeviceCard = memo(({
   const consumoColor = getColorForConsumo(dispositivo.consumo);
   const isOnline = Boolean(dispositivo.online);
   const isLoading = loadingDevices[dispositivo.id] || false;
+  const isAssigned = Boolean(dispositivo.habitacion_id);
 
-  // Aumentamos el padding izquierdo para acomodar el círculo más grande
-  const paddingLeft = 45; // Ajustado para el círculo más grande
+  // Aumentamos el padding izquierdo para dar más espacio entre el círculo y el texto
+  const paddingLeft = 55;
+  
+  // Calcular el centro horizontal de la tarjeta para los íconos
+  const cardCenterX = 120; // La tarjeta es de 240px, así que el centro está en 120px
+  const iconSize = 12; // Tamaño aproximado de los iconos
+  const iconSpacing = 8; // Espacio entre los iconos
 
   return (
     <Card
@@ -249,28 +255,76 @@ const DeviceCard = memo(({
         position: 'relative',
       }}
     >
-      {!isOnline && (
-        <CloudOffIcon
-          sx={{
-            position: 'absolute',
-            top: '2px',
-            right: '6px',
-            color: '#ff4444',
-            fontSize: '0.5rem'
+      {/* CAMBIO: Ahora X (sin habitación) va a la izquierda del centro */}
+      {!isAssigned && (
+        <Tooltip 
+          title="Sin habitación" 
+          arrow 
+          placement="top"
+          componentsProps={{
+            tooltip: {
+              sx: {
+                bgcolor: '#333',
+                color: 'white',
+                fontSize: '0.7rem',
+                boxShadow: '0px 2px 8px rgba(0,0,0,0.6)',
+                borderRadius: '4px',
+                padding: '4px 8px',
+              }
+            },
+            arrow: {
+              sx: {
+                color: '#333'
+              }
+            }
           }}
-        />
+        >
+          <CloseIcon
+            sx={{
+              position: 'absolute',
+              bottom: '3px',
+              left: `${cardCenterX - iconSize - (iconSpacing/2)}px`, // A la izquierda del centro
+              color: '#ff4444',
+              fontSize: '0.75rem'
+            }}
+          />
+        </Tooltip>
       )}
       
-      {dispositivo.habitacion_id && (
-        <CheckCircleIcon
-          sx={{
-            position: 'absolute',
-            bottom: '2px',
-            right: '6px',
-            color: '#00FF00',
-            fontSize: '0.5rem'
+      {/* CAMBIO: Ahora nube (offline) va a la derecha del centro */}
+      {!isOnline && (
+        <Tooltip 
+          title="Offline" 
+          arrow 
+          placement="top"
+          componentsProps={{
+            tooltip: {
+              sx: {
+                bgcolor: '#333',
+                color: 'white',
+                fontSize: '0.7rem',
+                boxShadow: '0px 2px 8px rgba(0,0,0,0.6)',
+                borderRadius: '4px',
+                padding: '4px 8px',
+              }
+            },
+            arrow: {
+              sx: {
+                color: '#333'
+              }
+            }
           }}
-        />
+        >
+          <CloudOffIcon
+            sx={{
+              position: 'absolute',
+              bottom: '3px',
+              left: `${cardCenterX + (iconSpacing/2)}px`, // A la derecha del centro
+              color: '#ff4444',
+              fontSize: '0.75rem'
+            }}
+          />
+        </Tooltip>
       )}
       
       {isEditing && (
@@ -292,32 +346,35 @@ const DeviceCard = memo(({
         />
       )}
       
+      {/* Imagen del tipo de dispositivo al lado izquierdo */}
       <Box sx={{ 
         position: 'absolute',
         left: '8px',
-        top: '7px',  // Ajustado para el círculo más grande
+        top: '5px', // Ajustado para el círculo más grande
       }}>
         <DeviceTypeImage tipo={dispositivo.tipo} />
       </Box>
       
+      {/* Nombre del dispositivo - Alineado a la izquierda después del círculo, con más espacio */}
       <Typography
         variant="body2"
         sx={{
           fontSize: '0.6rem',
           fontWeight: 'bold',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'flex-start', // Alineado a la izquierda
           alignItems: 'center',
-          height: '50%',
-          mb: 0.5,
-          position: 'relative', 
-          paddingLeft: `${paddingLeft}px`, // Espacio para la imagen del tipo (agrandada)
-          paddingRight: '40px', // Espacio para el botón
+          height: '40%',
+          position: 'absolute',
+          top: '8px',
+          left: `${paddingLeft}px`, // Más espacio entre círculo y texto
+          right: '40px', // Espacio para el botón
         }}
       >
         {dispositivo.nombre}
       </Typography>
       
+      {/* Botón de encendido/apagado - sigue en la misma posición */}
       {!isEditing && isOnline && (
         <Box sx={{ 
           position: 'absolute',
@@ -333,27 +390,32 @@ const DeviceCard = memo(({
         </Box>
       )}
       
-      <Box 
-        display="flex" 
-        alignItems="center" 
-        justifyContent="center"
-        sx={{
-          paddingLeft: `${paddingLeft}px`, // Espacio para la imagen del tipo (agrandada)
-          paddingRight: '40px',
-        }}
-      >
-        <BoltIcon sx={{ fontSize: '0.75rem', color: consumoColor, mr: 0.5 }} />
-        <Typography
-          variant="body2"
+      {/* CAMBIO: Información de consumo - Solo se muestra si el dispositivo está online */}
+      {isOnline && (
+        <Box 
+          display="flex" 
+          alignItems="center" 
+          justifyContent="flex-start"
           sx={{
-            fontSize: '0.6rem',
-            fontWeight: 'bold',
-            color: consumoColor,
+            position: 'absolute',
+            bottom: '8px',
+            left: `${paddingLeft}px`, // Mismo alineamiento que el nombre
+            right: '40px',
           }}
         >
-          {formattedConsumo}
-        </Typography>
-      </Box>
+          <BoltIcon sx={{ fontSize: '0.75rem', color: consumoColor, mr: 0.5 }} />
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: '0.6rem',
+              fontWeight: 'bold',
+              color: consumoColor,
+            }}
+          >
+            {formattedConsumo}
+          </Typography>
+        </Box>
+      )}
     </Card>
   );
 });
@@ -509,8 +571,19 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
         setTodosModelos(modelos);
         
         const total = data.length;
+        
+        // Modificar 5 dispositivos sin habitación asignada para que sean offline
         const datosModificados = data.map((dispositivo, index) => {
-          const isOnline = index < (total - 8);
+          // Los primeros 5 dispositivos sin habitación asignada estarán offline
+          let isOffline = false;
+          if (!dispositivo.habitacion_id) {
+            isOffline = index < 5; // Los primeros 5 sin habitación
+          } else {
+            // Para los dispositivos con habitación asignada, solo algunos estarán offline
+            isOffline = index > (total - 5); // Los últimos 5 dispositivos
+          }
+          
+          const isOnline = !isOffline;
           const estado = isOnline ? 1 : 0;
           
           return {
