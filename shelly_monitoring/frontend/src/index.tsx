@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
@@ -12,6 +12,8 @@ const Main: React.FC = () => {
   const [deleteType, setDeleteType] = useState<string>('');
   const [user, setUser] = useState<any>(null);
 
+  // Ya no inicializamos DeviceStateService aquí, se hace en App.tsx
+  
   const handleDeleteOptionSelect = (type: string) => {
     setDeleteType(type);
   };

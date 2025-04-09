@@ -8,6 +8,9 @@ import os
 import logging
 import subprocess
 import time
+import psycopg2
+import psycopg2.extras
+import json
 from threading import Thread
 import functools
 from shelly_interface import ShellyInterface
@@ -15,7 +18,6 @@ from routes_firmware import firmware_bp
 
 # Inicializar interfaz Shelly
 shelly_interface = ShellyInterface()
-
 
 # Configuración del backend Flask
 app = Flask(__name__)
@@ -29,12 +31,22 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://shelly_user:shelly_pass@lo
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Conexión directa para algunas operaciones de BD
+def get_db_connection():
+    return psycopg2.connect(
+        host="localhost",
+        port=5432,
+        dbname="shelly_db",
+        user="shelly_user",
+        password="shelly_pass"
+    )
+
 # Configuración de logs
 LOG_PATH = "/opt/shelly_monitoring/backend.log"
 logging.basicConfig(
     filename=LOG_PATH, 
     level=logging.DEBUG, 
-    format="%(asctime)s - %(levelname)s - %(message)s"  # Asegúrate de que el formato sea correcto
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logging.getLogger().setLevel(logging.DEBUG)
 logging.info("🔧 Backend Flask iniciado.")
@@ -137,7 +149,7 @@ class Dispositivos(db.Model):
     tipo = db.Column(db.String(50), nullable=False)
     habitacion_id = db.Column(db.Integer, db.ForeignKey('habitaciones.id'), nullable=True)
     ultimo_consumo = db.Column(db.Float, default=0)
-    estado = db.Column(db.Boolean, default=False)
+    estado = db.Column(db.Boolean, default=False)  # Cambiado a Boolean para compatibilidad
     orden = db.Column(db.Integer, default=0)  # Añadida columna orden para dispositivos
 
 class UserRoomPermission(db.Model):
@@ -694,7 +706,6 @@ def test_connection():
     return jsonify({"message": "Connection successful"}), 200
 
 
-
 # === Endpoints para la integración con Shelly.ioAdapter ===
 
 @app.route('/api/shelly/devices', methods=['GET'])
@@ -727,7 +738,7 @@ def get_shelly_device_info(device_id):
 
 @app.route('/api/shelly/devices/<device_id>/status', methods=['GET'])
 @require_jwt
-def get_shelly_device_status(device_id):
+def get_adapter_device_status(device_id):
     """Obtiene el estado actual de un dispositivo Shelly"""
     device_status = shelly_interface.get_device_status(device_id)
     if device_status:
@@ -853,13 +864,61 @@ def sync_shelly_devices():
             "message": f"Error durante la sincronización: {str(e)}"
         }), 500
 
+@app.route('/api/shelly/state/<ip>', methods=['GET'])
+@require_jwt
+def get_device_state(ip):
+    """
+    Obtiene el estado actual de un dispositivo Shelly desde la base de datos
+    """
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute("SELECT estado, ultimo_consumo FROM dispositivos WHERE ip = %s", (ip,))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        
+        if result is not None:  # Si encontramos el dispositivo
+            # Crear una respuesta simplificada con el estado booleano y consumo
+            response = {
+                "on": result['estado'],
+                "power": result['ultimo_consumo']
+            }
+            return jsonify(response)
+        else:
+            return jsonify({"error": "Dispositivo no encontrado o sin datos"}), 404
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error al obtener estado: {str(e)}"}), 500
 
+@app.route('/api/shelly/control/<ip>', methods=['POST'])
+@require_jwt
+@require_permission('control_devices')
+def control_device(ip):
+    """
+    Controla un dispositivo Shelly (enciende/apaga)
+    """
+    try:
+        data = request.json
+        on = data.get('on')
+        brightness = data.get('brightness')
+        
+        # Actualizamos la base de datos con el nuevo estado booleano
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE dispositivos SET estado = %s WHERE ip = %s",
+            (bool(on), ip)  # Usar un booleano en lugar de JSON
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error al controlar dispositivo: {str(e)}"}), 500
 
-
-
-
-# Iniciar backend con HTTPS
 if __name__ == '__main__':
+    # Configurar SSL
     ssl_cert = "/etc/ssl/certs/shelly_monitoring.pem"
     ssl_key = "/etc/ssl/private/shelly_monitoring.key"
 
@@ -869,4 +928,5 @@ if __name__ == '__main__':
 
     logging.info(f"📢 Iniciando servidor en 0.0.0.0:8000 con SSL habilitado.")
     context = (ssl_cert, ssl_key)
+    
     app.run(host="0.0.0.0", port=8000, ssl_context=context)

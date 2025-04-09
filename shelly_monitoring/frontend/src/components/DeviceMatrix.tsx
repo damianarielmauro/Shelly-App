@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, memo } from 'react';
+import React, { useEffect, useState, useCallback, memo, useMemo, useRef } from 'react';
 import { 
   Box, Typography, Card, Checkbox, Button, Dialog, DialogTitle, 
   DialogContent, DialogActions, RadioGroup, FormControlLabel, Radio,
@@ -6,6 +6,8 @@ import {
   ListItemText, ListItemButton, Checkbox as FilterCheckbox, TextField, InputAdornment,
   Tooltip
 } from '@mui/material';
+import { FixedSizeGrid as Grid } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import BoltIcon from '@mui/icons-material/Bolt';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
@@ -14,15 +16,12 @@ import CheckIcon from '@mui/icons-material/Check';
 import SearchIcon from '@mui/icons-material/Search';
 import SortIcon from '@mui/icons-material/Sort';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { getDispositivos, getHabitaciones, asignarHabitacion, toggleDevice } from '../services/api';
-import {
-  DispositivoConConsumo,
-  obtenerDispositivosConConsumo,
-  formatearConsumo,
-  getColorForConsumo,
-  iniciarActualizacionPeriodica,
-  suscribirseADispositivosActualizados
-} from '../services/consumptionService';
+import { getHabitaciones, asignarHabitacion } from '../services/api';
+import { formatearConsumo, getColorForConsumo } from '../services/consumptionService';
+
+// Importar sistema de eventos y servicio
+import { eventBus } from '../services/EventBus';
+import { DeviceStateService, Dispositivo } from '../services/DeviceStateService';
 
 // Importamos todas las imágenes disponibles en la carpeta pictures
 import dimmer2Image from '../pictures/DIMMER2.png';
@@ -48,6 +47,20 @@ const deviceTypeImages: {[key: string]: string} = {
 
 // Usamos plus1Image como imagen por defecto si no tenemos una específica
 const defaultImage = plus1Image;
+
+// Dimensiones de tarjeta (incluyendo el aumento del 10%)
+const CARD_WIDTH = 264; // 240px + 10%
+const CARD_HEIGHT = 55; // 50px + 10%
+const CARD_MARGIN = 4; // 0.5 * 8px (el valor del 'gap' en Material UI)
+const TOTAL_CARD_WIDTH = CARD_WIDTH + (CARD_MARGIN * 2);
+const TOTAL_CARD_HEIGHT = CARD_HEIGHT + (CARD_MARGIN * 2);
+
+// Tamaños para el botón y el círculo (con el aumento adicional del 10%)
+const POWER_BUTTON_SIZE = 39; // 35px + 10% (redondeando)
+const CIRCLE_SIZE = 45;       // 41px + 10% (redondeando)
+
+// CAMBIO 1: Aumentar el tiempo de animación para hacer la transición más visible
+const ANIMATION_DURATION = 0.3; // Cambiado de 0.05s a 0.3s
 
 // Definimos los tipos de ordenación
 type SortCriterion = 'consumo-mayor' | 'consumo-menor' | 'habitacion' | 'modelo' | 'nombre';
@@ -92,11 +105,11 @@ const globalStyles = `
   }
   
   .power-ring-on {
-    animation: ringAnimationOn 0.15s ease-in-out forwards;
+    animation: ringAnimationOn ${ANIMATION_DURATION}s ease-in-out forwards;
   }
   
   .power-ring-off {
-    animation: ringAnimationOff 0.15s ease-in-out forwards;
+    animation: ringAnimationOff ${ANIMATION_DURATION}s ease-in-out forwards;
   }
 
   ${scrollbarStyle}
@@ -104,6 +117,12 @@ const globalStyles = `
   /* Aplicar a los popovers de Material UI */
   .MuiPopover-paper {
     ${scrollbarStyle}
+  }
+
+  /* Optimización para las tarjetas */
+  .device-card {
+    contain: content;
+    will-change: transform;
   }
 `;
 
@@ -121,74 +140,87 @@ const PowerButton = memo(({ isOn, isLoading, onClick, deviceId }: {
   }, [deviceId, onClick]);
 
   return (
-    <IconButton
-      onClick={handleClick}
-      disabled={isLoading}
-      size="small"
+    <Box
       sx={{
         position: 'relative',
-        width: 32,
-        height: 32,
-        borderRadius: '50%',
-        backgroundColor: isOn ? 'white' : '#383838',
-        '&:hover': {
-          backgroundColor: isOn ? '#f5f5f5' : '#404040',
-        },
-        p: 0,
-        boxShadow: 'none',
-        transition: 'none',
+        width: POWER_BUTTON_SIZE,
+        height: POWER_BUTTON_SIZE,
       }}
     >
-      {isLoading ? (
+      {/* Indicador de carga superpuesto usando opacidad */}
+      {isLoading && (
         <CircularProgress
-          size={24}
+          size={POWER_BUTTON_SIZE}
           sx={{
             color: '#2391FF',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            zIndex: 2,
           }}
         />
-      ) : (
-        <>
-          <PowerSettingsNewIcon
-            sx={{
-              fontSize: '1rem',
-              color: isOn ? '#2391FF' : 'white',
-              transition: 'color 0.15s ease-in-out',
-            }}
-          />
-          
-          <Box
-            className={isOn ? 'power-ring-on' : 'power-ring-off'}
-            sx={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%',
-              border: isOn 
-                ? '4px solid #2391FF'
-                : '2px solid white',
-              boxShadow: 'none',
-              transition: 'none',
-            }}
-          />
-        </>
       )}
-    </IconButton>
+      
+      {/* El botón siempre está presente, solo cambia su opacidad */}
+      <IconButton
+        onClick={handleClick}
+        disabled={isLoading}
+        size="small"
+        sx={{
+          position: 'relative',
+          width: POWER_BUTTON_SIZE,
+          height: POWER_BUTTON_SIZE,
+          borderRadius: '50%',
+          backgroundColor: isOn ? 'white' : '#383838',
+          '&:hover': {
+            backgroundColor: isOn ? '#f5f5f5' : '#404040',
+          },
+          p: 0,
+          boxShadow: 'none',
+          transition: 'none',
+          opacity: isLoading ? 0.3 : 1, // Cambia opacidad durante la carga
+        }}
+      >
+        <PowerSettingsNewIcon
+          sx={{
+            fontSize: '1.2rem',
+            color: isOn ? '#2391FF' : 'white',
+            transition: `color ${ANIMATION_DURATION}s ease-in-out`,
+          }}
+        />
+        
+        <Box
+          className={isOn ? 'power-ring-on' : 'power-ring-off'}
+          sx={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            border: isOn 
+              ? '4px solid #2391FF'
+              : '2px solid white',
+            boxShadow: 'none',
+            transition: 'none',
+          }}
+        />
+      </IconButton>
+    </Box>
   );
 });
 
 // Componente para mostrar la imagen del tipo de dispositivo - Optimizado con memo
 const DeviceTypeImage = memo(({ tipo }: { tipo: string }) => {
-  const imageSource = deviceTypeImages[tipo] || defaultImage;
-  
-  // Aumentamos el tamaño del círculo y la imagen un 10% más (de 37px a 41px)
-  const circleSize = 41;
+  // Usamos useMemo para evitar recalcular la imagen en cada render
+  const imageSource = useMemo(() => {
+    return deviceTypeImages[tipo] || defaultImage;
+  }, [tipo]);
   
   return (
     <Box
       sx={{
         position: 'relative',
-        width: circleSize,
-        height: circleSize,
+        width: CIRCLE_SIZE, // Aumentado un 10% adicional
+        height: CIRCLE_SIZE, // Aumentado un 10% adicional
         borderRadius: '50%',
         overflow: 'hidden',
         display: 'flex',
@@ -210,213 +242,340 @@ const DeviceTypeImage = memo(({ tipo }: { tipo: string }) => {
   );
 });
 
-// Componente para cada tarjeta de dispositivo - Optimizado con memo
+// Componente para cada tarjeta de dispositivo - Optimizado con un memo avanzado
 const DeviceCard = memo(({ 
   dispositivo, 
   isEditing, 
   isSelected, 
   onToggleDevice, 
   onSelect,
-  loadingDevices
+  loadingDevices,
+  style
 }: {
-  dispositivo: DispositivoConConsumo;
+  dispositivo: Dispositivo;
   isEditing: boolean;
   isSelected: boolean;
   onToggleDevice: (id: number) => void;
   onSelect: (id: number) => void;
   loadingDevices: {[key: number]: boolean};
+  style?: React.CSSProperties; // Para virtualización
 }) => {
-  // Memoizar cálculos frecuentes
-  const formattedConsumo = formatearConsumo(dispositivo.consumo);
-  const consumoColor = getColorForConsumo(dispositivo.consumo);
+  // Memoizamos los cálculos frecuentes para evitar recalculos innecesarios
+  const formattedConsumo = useMemo(() => formatearConsumo(dispositivo.consumo), [dispositivo.consumo]);
+  const consumoColor = useMemo(() => getColorForConsumo(dispositivo.consumo), [dispositivo.consumo]);
   const isOnline = Boolean(dispositivo.online);
   const isLoading = loadingDevices[dispositivo.id] || false;
   const isAssigned = Boolean(dispositivo.habitacion_id);
+  const isOn = Boolean(dispositivo.estado);
 
-  // Aumentamos el padding izquierdo para dar más espacio entre el círculo y el texto
-  const paddingLeft = 55;
+  // Ajustamos el padding izquierdo para acomodar el círculo más grande
+  const paddingLeft = 65; // Aumentado para dar espacio al círculo más grande
   
   // Calcular el centro horizontal de la tarjeta para los íconos
-  const cardCenterX = 120; // La tarjeta es de 240px, así que el centro está en 120px
+  const cardCenterX = CARD_WIDTH / 2; // Centro de la tarjeta 
   const iconSize = 12; // Tamaño aproximado de los iconos
   const iconSpacing = 8; // Espacio entre los iconos
 
+  // Memoizamos el callback para evitar re-renders innecesarios
+  const handleSelect = useCallback(() => {
+    onSelect(dispositivo.id);
+  }, [dispositivo.id, onSelect]);
+
   return (
-    <Card
-      sx={{
-        m: 0.5,
-        p: 1.5,
-        backgroundColor: '#2F3235',
-        color: 'white',
-        width: '240px',
-        height: '50px',
-        textAlign: 'center',
-        borderRadius: '8px',
-        position: 'relative',
-      }}
-    >
-      {/* CAMBIO: Ahora X (sin habitación) va a la izquierda del centro */}
-      {!isAssigned && (
-        <Tooltip 
-          title="Sin habitación" 
-          arrow 
-          placement="top"
-          componentsProps={{
-            tooltip: {
-              sx: {
-                bgcolor: '#333',
-                color: 'white',
-                fontSize: '0.7rem',
-                boxShadow: '0px 2px 8px rgba(0,0,0,0.6)',
-                borderRadius: '4px',
-                padding: '4px 8px',
-              }
-            },
-            arrow: {
-              sx: {
-                color: '#333'
-              }
-            }
-          }}
-        >
-          <CloseIcon
-            sx={{
-              position: 'absolute',
-              bottom: '3px',
-              left: `${cardCenterX - iconSize - (iconSpacing/2)}px`, // A la izquierda del centro
-              color: '#ff4444',
-              fontSize: '0.75rem'
-            }}
-          />
-        </Tooltip>
-      )}
-      
-      {/* CAMBIO: Ahora nube (offline) va a la derecha del centro */}
-      {!isOnline && (
-        <Tooltip 
-          title="Offline" 
-          arrow 
-          placement="top"
-          componentsProps={{
-            tooltip: {
-              sx: {
-                bgcolor: '#333',
-                color: 'white',
-                fontSize: '0.7rem',
-                boxShadow: '0px 2px 8px rgba(0,0,0,0.6)',
-                borderRadius: '4px',
-                padding: '4px 8px',
-              }
-            },
-            arrow: {
-              sx: {
-                color: '#333'
-              }
-            }
-          }}
-        >
-          <CloudOffIcon
-            sx={{
-              position: 'absolute',
-              bottom: '3px',
-              left: `${cardCenterX + (iconSpacing/2)}px`, // A la derecha del centro
-              color: '#ff4444',
-              fontSize: '0.75rem'
-            }}
-          />
-        </Tooltip>
-      )}
-      
-      {isEditing && (
-        <Checkbox
-          checked={isSelected}
-          onChange={() => onSelect(dispositivo.id)}
-          sx={{
-            position: 'absolute',
-            bottom: '-5px',
-            right: '-5px',
-            color: 'red',
-            '& .MuiSvgIcon-root': {
-              color: isSelected ? 'red' : 'red',
-            },
-            '&.Mui-checked': {
-              backgroundColor: 'none',
-            },
-          }}
-        />
-      )}
-      
-      {/* Imagen del tipo de dispositivo al lado izquierdo */}
-      <Box sx={{ 
-        position: 'absolute',
-        left: '8px',
-        top: '5px', // Ajustado para el círculo más grande
-      }}>
-        <DeviceTypeImage tipo={dispositivo.tipo} />
-      </Box>
-      
-      {/* Nombre del dispositivo - Alineado a la izquierda después del círculo, con más espacio */}
-      <Typography
-        variant="body2"
+    <div style={{
+      ...style,
+      padding: CARD_MARGIN,
+      boxSizing: 'border-box',
+      willChange: 'transform',
+    }}>
+      <Card
+        className="device-card"
         sx={{
-          fontSize: '0.6rem',
-          fontWeight: 'bold',
-          display: 'flex',
-          justifyContent: 'flex-start', // Alineado a la izquierda
-          alignItems: 'center',
-          height: '40%',
-          position: 'absolute',
-          top: '8px',
-          left: `${paddingLeft}px`, // Más espacio entre círculo y texto
-          right: '40px', // Espacio para el botón
+          backgroundColor: '#2F3235',
+          color: 'white',
+          width: CARD_WIDTH,
+          height: CARD_HEIGHT,
+          textAlign: 'center',
+          borderRadius: '8px',
+          position: 'relative',
+          p: 1.5,
         }}
       >
-        {dispositivo.nombre}
-      </Typography>
-      
-      {/* Botón de encendido/apagado - sigue en la misma posición */}
-      {!isEditing && isOnline && (
-        <Box sx={{ 
-          position: 'absolute',
-          right: '8px',
-          top: '10px',
-        }}>
-          <PowerButton 
-            isOn={Boolean(dispositivo.estado)} 
-            isLoading={isLoading}
-            onClick={onToggleDevice}
-            deviceId={dispositivo.id}
-          />
-        </Box>
-      )}
-      
-      {/* CAMBIO: Información de consumo - Solo se muestra si el dispositivo está online */}
-      {isOnline && (
-        <Box 
-          display="flex" 
-          alignItems="center" 
-          justifyContent="flex-start"
-          sx={{
-            position: 'absolute',
-            bottom: '8px',
-            left: `${paddingLeft}px`, // Mismo alineamiento que el nombre
-            right: '40px',
-          }}
-        >
-          <BoltIcon sx={{ fontSize: '0.75rem', color: consumoColor, mr: 0.5 }} />
-          <Typography
-            variant="body2"
-            sx={{
-              fontSize: '0.6rem',
-              fontWeight: 'bold',
-              color: consumoColor,
+        {/* CAMBIO: Ahora X (sin habitación) va a la izquierda del centro */}
+        {!isAssigned && (
+          <Tooltip 
+            title="Sin habitación" 
+            arrow 
+            placement="top"
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  bgcolor: '#333',
+                  color: 'white',
+                  fontSize: '0.7rem',
+                  boxShadow: '0px 2px 8px rgba(0,0,0,0.6)',
+                  borderRadius: '4px',
+                  padding: '4px 8px',
+                }
+              },
+              arrow: {
+                sx: {
+                  color: '#333'
+                }
+              }
             }}
           >
-            {formattedConsumo}
-          </Typography>
+            <CloseIcon
+              sx={{
+                position: 'absolute',
+                bottom: '4px',
+                left: `${cardCenterX - iconSize - (iconSpacing/2)}px`,
+                color: '#ff4444',
+                fontSize: '0.75rem'
+              }}
+            />
+          </Tooltip>
+        )}
+        
+        {/* CAMBIO: Ahora nube (offline) va a la derecha del centro */}
+        {!isOnline && (
+          <Tooltip 
+            title="Offline" 
+            arrow 
+            placement="top"
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  bgcolor: '#333',
+                  color: 'white',
+                  fontSize: '0.7rem',
+                  boxShadow: '0px 2px 8px rgba(0,0,0,0.6)',
+                  borderRadius: '4px',
+                  padding: '4px 8px',
+                }
+              },
+              arrow: {
+                sx: {
+                  color: '#333'
+                }
+              }
+            }}
+          >
+            <CloudOffIcon
+              sx={{
+                position: 'absolute',
+                bottom: '4px',
+                left: `${cardCenterX + (iconSpacing/2)}px`,
+                color: '#ff4444',
+                fontSize: '0.75rem'
+              }}
+            />
+          </Tooltip>
+        )}
+        
+        {isEditing && (
+          <Checkbox
+            checked={isSelected}
+            onChange={handleSelect}
+            sx={{
+              position: 'absolute',
+              bottom: '-5px',
+              right: '-5px',
+              color: 'red',
+              '& .MuiSvgIcon-root': {
+                color: isSelected ? 'red' : 'red',
+              },
+              '&.Mui-checked': {
+                backgroundColor: 'none',
+              },
+            }}
+          />
+        )}
+        
+        {/* Imagen del tipo de dispositivo al lado izquierdo - Reposicionada para el círculo más grande */}
+        <Box sx={{ 
+          position: 'absolute',
+          left: '8px', // Ajustado para mantener el mismo margen visual
+          top: '5px', // Ajustado para centrar en la tarjeta
+        }}>
+          <DeviceTypeImage tipo={dispositivo.tipo} />
         </Box>
-      )}
-    </Card>
+        
+        {/* Nombre del dispositivo - Ajustado para dar más espacio al círculo más grande */}
+        <Typography
+          variant="body2"
+          sx={{
+            fontSize: '0.65rem',
+            fontWeight: 'bold',
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            height: '40%',
+            position: 'absolute',
+            top: '10px',
+            left: `${paddingLeft}px`, // Aumentado para dar espacio al círculo más grande
+            right: '45px', // Espacio adicional para el botón más grande
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {dispositivo.nombre}
+        </Typography>
+        
+        {/* Botón de encendido/apagado - Reposicionado para el botón más grande */}
+        {!isEditing && isOnline && (
+          <Box sx={{ 
+            position: 'absolute',
+            right: '9px', // Ajustado para el botón más grande
+            top: '8px', // Ajustado para el botón más grande
+          }}>
+            <PowerButton 
+              isOn={isOn} 
+              isLoading={isLoading}
+              onClick={onToggleDevice}
+              deviceId={dispositivo.id}
+            />
+          </Box>
+        )}
+        
+        {/* Información de consumo - Solo se muestra si el dispositivo está online */}
+        {isOnline && (
+          <Box 
+            display="flex" 
+            alignItems="center" 
+            justifyContent="flex-start"
+            sx={{
+              position: 'absolute',
+              bottom: '10px',
+              left: `${paddingLeft}px`, // Aumentado para alinear con el nombre
+              right: '40px',
+            }}
+          >
+            <BoltIcon sx={{ fontSize: '0.75rem', color: consumoColor, mr: 0.5 }} />
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: '0.65rem',
+                fontWeight: 'bold',
+                color: consumoColor,
+              }}
+            >
+              {formattedConsumo}
+            </Typography>
+          </Box>
+        )}
+      </Card>
+    </div>
+  );
+}, (prevProps, nextProps) => {
+  // Implementamos un comparador de igualdad personalizado para DeviceCard
+  // Solo re-renderizamos si uno de estos valores ha cambiado
+  return (
+    prevProps.dispositivo.id === nextProps.dispositivo.id &&
+    prevProps.dispositivo.estado === nextProps.dispositivo.estado &&
+    prevProps.dispositivo.consumo === nextProps.dispositivo.consumo &&
+    prevProps.isEditing === nextProps.isEditing &&
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.loadingDevices[prevProps.dispositivo.id] === nextProps.loadingDevices[nextProps.dispositivo.id] &&
+    JSON.stringify(prevProps.style) === JSON.stringify(nextProps.style)
+  );
+});
+
+// Componente para la matriz virtualizada con optimizaciones adicionales
+const VirtualizedDeviceMatrix = memo(({ 
+  dispositivosFiltrados,
+  editMode,
+  selectedItems,
+  loadingDevices,
+  onToggleDevice,
+  onSelect
+}: {
+  dispositivosFiltrados: Dispositivo[];
+  editMode: boolean;
+  selectedItems: number[];
+  loadingDevices: {[key: number]: boolean};
+  onToggleDevice: (id: number) => void;
+  onSelect: (id: number) => void;
+}) => {
+  // Usamos una clave que solo cambia cuando cambia la lista de IDs, no todo el array
+  const gridKey = useMemo(() => {
+    return dispositivosFiltrados.map(d => d.id).join(',');
+  }, [dispositivosFiltrados]);
+
+  // Hacemos el renderCell como función estable
+  const renderCell = useCallback(({ columnIndex, rowIndex, style, data }: any) => {
+    const index = rowIndex * data.columnCount + columnIndex;
+    if (index >= data.items.length) {
+      return null; // No renderizar si estamos fuera del rango
+    }
+    const dispositivo = data.items[index];
+    return (
+      <DeviceCard
+        key={dispositivo.id}
+        dispositivo={dispositivo}
+        isEditing={data.editMode}
+        isSelected={data.selectedItems.includes(dispositivo.id)}
+        onToggleDevice={data.onToggleDevice}
+        onSelect={data.onSelect}
+        loadingDevices={data.loadingDevices}
+        style={style}
+      />
+    );
+  }, []);
+  
+  // Aseguramos que los datos para la grilla solo cambien cuando es necesario
+  const itemData = useMemo(() => ({
+    items: dispositivosFiltrados,
+    editMode,
+    selectedItems,
+    loadingDevices,
+    onToggleDevice,
+    onSelect
+  }), [dispositivosFiltrados, editMode, selectedItems, loadingDevices, onToggleDevice, onSelect]);
+
+  return (
+    <div style={{ width: '100%', height: '100%' }}>
+      <AutoSizer>
+        {({ height, width }) => {
+          // Calculamos cuántas tarjetas caben por fila
+          const columnCount = Math.max(Math.floor(width / TOTAL_CARD_WIDTH), 1);
+          // Calculamos cuántas filas necesitamos
+          const rowCount = Math.ceil(dispositivosFiltrados.length / columnCount);
+          
+          // CAMBIO 2: Añadir margen izquierdo igual al espacio entre tarjetas
+          const leftMargin = CARD_MARGIN;
+          
+          return (
+            <div style={{ paddingLeft: leftMargin }}>
+              <Grid
+                key={gridKey} // Usamos la clave para forzar recreación solo cuando cambia la lista
+                columnCount={columnCount}
+                columnWidth={TOTAL_CARD_WIDTH}
+                height={height}
+                rowCount={rowCount}
+                rowHeight={TOTAL_CARD_HEIGHT}
+                width={width - leftMargin} // Ajustar el ancho para compensar el padding
+                style={{ overflowX: 'hidden' }}
+                itemData={{
+                  items: dispositivosFiltrados,
+                  columnCount,
+                  editMode,
+                  selectedItems,
+                  loadingDevices,
+                  onToggleDevice,
+                  onSelect
+                }}
+                overscanRowCount={2} // Renderizar más filas para scroll suave
+                overscanColumnCount={2} // Renderizar más columnas para scroll horizontal
+              >
+                {renderCell}
+              </Grid>
+            </div>
+          );
+        }}
+      </AutoSizer>
+    </div>
   );
 });
 
@@ -438,8 +597,8 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
   setShowRoomDialog 
 }) => {
   // Estados principales
-  const [dispositivos, setDispositivos] = useState<DispositivoConConsumo[]>([]);
-  const [dispositivosFiltrados, setDispositivosFiltrados] = useState<DispositivoConConsumo[]>([]);
+  const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
+  const [dispositivosFiltrados, setDispositivosFiltrados] = useState<Dispositivo[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [habitaciones, setHabitaciones] = useState<any[]>([]);
@@ -465,8 +624,92 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
   const [todasHabitaciones, setTodasHabitaciones] = useState<{id: number, nombre: string}[]>([]);
   const [todosModelos, setTodosModelos] = useState<string[]>([]);
 
+  // Usar ref para tracking de montaje del componente (NUEVA)
+  const isMounted = useRef(true);
+  // ID única para esta instancia (NUEVA)
+  const [instanceId] = useState(() => `matrix_${Date.now()}`);
+
+  // Efecto para suscribirse a eventos
+  useEffect(() => {
+    console.log(`[${instanceId}] DeviceMatrix: Inicializando suscripciones a eventos`);
+    isMounted.current = true; // Marcar componente como montado
+    
+    // Suscribirse a cambios de estado de dispositivos
+    const unsubStateChanged = eventBus.on('device:state-changed', (deviceId, newState, source) => {
+      if (!isMounted.current) return;
+      
+      console.log(`[${instanceId}] DeviceMatrix: Dispositivo ${deviceId} cambió a estado ${newState} (fuente: ${source})`);
+      setDispositivos(prev => 
+        prev.map(disp => disp.id === deviceId 
+          ? { ...disp, estado: newState, online: true } 
+          : disp
+        )
+      );
+    });
+    
+    // Suscribirse a actualizaciones de consumo
+    const unsubConsumoUpdated = eventBus.on('device:consumo-updated', (deviceId, consumo) => {
+      if (!isMounted.current) return;
+      
+      setDispositivos(prev => 
+        prev.map(disp => disp.id === deviceId 
+          ? { ...disp, consumo } 
+          : disp
+        )
+      );
+    });
+    
+    // Suscribirse a cambios de estado online/offline
+    const unsubOnlineStatus = eventBus.on('device:online-status-changed', (deviceId, isOnline) => {
+      if (!isMounted.current) return;
+      
+      setDispositivos(prev => 
+        prev.map(disp => disp.id === deviceId 
+          ? { ...disp, online: isOnline } 
+          : disp
+        )
+      );
+    });
+    
+    // Suscribirse a inicio/fin de operaciones para mostrar indicadores de carga
+    const unsubOpStarted = eventBus.on('operation:started', (deviceId, operation) => {
+      if (!isMounted.current) return;
+      
+      if (operation === 'toggle') {
+        console.log(`[${instanceId}] Iniciando operación ${operation} para dispositivo ${deviceId}`);
+        setLoadingDevices(prev => ({ ...prev, [deviceId]: true }));
+      }
+    });
+    
+    const unsubOpEnded = eventBus.on('operation:ended', (deviceId, operation) => {
+      if (!isMounted.current) return;
+      
+      if (operation === 'toggle') {
+        console.log(`[${instanceId}] Finalizando operación ${operation} para dispositivo ${deviceId}`);
+        // Usar timeout para dar tiempo a la UI para actualizarse
+        setTimeout(() => {
+          if (isMounted.current) {
+            setLoadingDevices(prev => ({ ...prev, [deviceId]: false }));
+          }
+        }, 300);
+      }
+    });
+    
+    return () => {
+      // Limpiar suscripciones al desmontar
+      console.log(`[${instanceId}] DeviceMatrix: Limpiando suscripciones a eventos`);
+      isMounted.current = false;
+      unsubStateChanged();
+      unsubConsumoUpdated();
+      unsubOnlineStatus();
+      unsubOpStarted();
+      unsubOpEnded();
+      setLoadingDevices({});
+    };
+  }, [instanceId]);
+
   // Optimizaciones con useCallback para funciones que no cambian con frecuencia
-  const ordenarDispositivos = useCallback((dispositivos: DispositivoConConsumo[], criterio: SortCriterion) => {
+  const ordenarDispositivos = useCallback((dispositivos: Dispositivo[], criterio: SortCriterion) => {
     const dispositivosOrdenados = [...dispositivos];
     
     switch (criterio) {
@@ -505,7 +748,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
     }
   }, [todasHabitaciones]);
   
-  const aplicarFiltros = useCallback((dispositivos: DispositivoConConsumo[]) => {
+  const aplicarFiltros = useCallback((dispositivos: Dispositivo[]) => {
     // Performance: Evitar trabajo innecesario si no hay dispositivos
     if (!dispositivos.length) return [];
     
@@ -555,79 +798,67 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
 
   // Efecto para obtener los dispositivos y configurar todo al inicio
   useEffect(() => {
-    iniciarActualizacionPeriodica();
-
-    const fetchDispositivos = async () => {
+    if (!isMounted.current) return;
+    
+    // Cargar dispositivos desde el nuevo servicio
+    const fetchData = async () => {
       try {
-        const data = await obtenerDispositivosConConsumo();
+        console.log(`[${instanceId}] DeviceMatrix: Cargando dispositivos desde servicio centralizado`);
+        
+        // Obtener habitaciones para filtros
         const habitacionesData = await getHabitaciones();
+        if (!isMounted.current) return;
         setTodasHabitaciones(habitacionesData);
         
+        // Usar el servicio centralizado para obtener todos los dispositivos
+        const devices = await DeviceStateService.loadInitialDevices();
+        if (!isMounted.current) return;
+        
+        // Extraer modelos para filtros
         const tiposSet = new Set<string>();
-        data.forEach(d => {
+        devices.forEach(d => {
           if (d.tipo) tiposSet.add(d.tipo);
         });
         const modelos: string[] = Array.from(tiposSet);
         setTodosModelos(modelos);
         
-        const total = data.length;
-        
-        // Modificar 5 dispositivos sin habitación asignada para que sean offline
-        const datosModificados = data.map((dispositivo, index) => {
-          // Los primeros 5 dispositivos sin habitación asignada estarán offline
-          let isOffline = false;
-          if (!dispositivo.habitacion_id) {
-            isOffline = index < 5; // Los primeros 5 sin habitación
-          } else {
-            // Para los dispositivos con habitación asignada, solo algunos estarán offline
-            isOffline = index > (total - 5); // Los últimos 5 dispositivos
-          }
-          
-          const isOnline = !isOffline;
-          const estado = isOnline ? 1 : 0;
-          
-          return {
-            ...dispositivo,
-            online: isOnline,
-            estado: estado
-          };
-        });
-        
-        setDispositivos(datosModificados);
-        setContadorAsignados(data.filter((d) => d.habitacion_id).length);
-        setContadorSinAsignar(data.filter((d) => !d.habitacion_id).length);
+        // Actualizar contadores y dispositivos
+        setDispositivos(devices);
+                
+        setContadorAsignados(devices.filter((d: Dispositivo) => d.habitacion_id).length);
+        setContadorSinAsignar(devices.filter((d: Dispositivo) => !d.habitacion_id).length);
+
       } catch (error) {
-        console.error('Error al obtener los dispositivos:', error);
+        console.error(`[${instanceId}] Error al obtener los dispositivos:`, error);
       }
     };
 
-    fetchDispositivos();
+    // Cargar datos iniciales
+    fetchData();
 
-    // Solo actualizar consumos, no perder filtros ni ordenamientos
-    const unsuscribir = suscribirseADispositivosActualizados(async () => {
-      const newData = await obtenerDispositivosConConsumo();
+    // Suscribirse a eventos de carga de dispositivos
+    const unsubDevicesLoaded = eventBus.on('devices:loaded', (devices) => {
+      if (!isMounted.current) return;
       
-      setDispositivos(prevDispositivos => {
-        // Solo actualizar consumo, manteniendo todos los demás estados
-        const updatedDispositivos = prevDispositivos.map(disp => {
-          const dispActualizado = newData.find(d => d.id === disp.id);
-          if (dispActualizado) {
-            return {
-              ...disp,
-              consumo: dispActualizado.consumo 
-            };
-          }
-          return disp;
-        });
-        
-        return updatedDispositivos;
+      console.log(`[${instanceId}] DeviceMatrix: Actualizando desde evento devices:loaded global`);
+      setDispositivos(devices);
+      setContadorAsignados(devices.filter((d: Dispositivo) => d.habitacion_id).length);
+      setContadorSinAsignar(devices.filter((d: Dispositivo) => !d.habitacion_id).length);
+      
+      // Extraer modelos para filtros
+      const tiposSet = new Set<string>();
+      devices.forEach((d: Dispositivo) => {
+        if (d.tipo) tiposSet.add(d.tipo);
       });
+      const modelos: string[] = Array.from(tiposSet);
+      setTodosModelos(modelos);
     });
 
+    // Limpiar suscripción al desmontar
     return () => {
-      unsuscribir();
+      unsubDevicesLoaded();
     };
-  }, []);
+  }, [instanceId]);
 
   // Aplicar filtros cuando cambien los criterios o los dispositivos
   useEffect(() => {
@@ -710,28 +941,38 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
     setSearchText(event.target.value);
   }, []);
 
-  const handleToggleDevice = useCallback(async (deviceId: number) => {
-    try {
-      setLoadingDevices(prev => ({ ...prev, [deviceId]: true }));
-      await toggleDevice(deviceId);
-      
-      setDispositivos(prevDispositivos => {
-        return prevDispositivos.map(disp => {
-          if (disp.id === deviceId) {
-            return { 
-              ...disp, 
-              estado: disp.estado ? 0 : 1
-            };
-          }
-          return disp;
-        });
-      });
-    } catch (error) {
-      console.error('Error al cambiar estado del dispositivo:', error);
-    } finally {
-      setLoadingDevices(prev => ({ ...prev, [deviceId]: false }));
-    }
-  }, []);
+  // CORRECCIÓN: Función handleToggleDevice mejorada para evitar rebotes
+
+const handleToggleDevice = useCallback((deviceId: number) => {
+  // Evitar operaciones si el componente está desmontado
+  if (!isMounted.current) return;
+  
+  // Evitar doble click mientras está cargando
+  if (loadingDevices[deviceId]) {
+    console.log(`[${instanceId}] Ignorando click en dispositivo ${deviceId}, ya está cargando`);
+    return;
+  }
+  
+  console.log(`[${instanceId}] Enviando toggle para dispositivo ${deviceId}`);
+  
+  // IMPORTANTE: Activar indicador de carga INMEDIATAMENTE para feedback visual
+  setLoadingDevices(prev => ({ ...prev, [deviceId]: true }));
+  
+  // Llamar al servicio sin esperar la promesa para evitar congelación de UI
+  DeviceStateService.toggleDevice(deviceId)
+    .catch(error => {
+      console.error(`[${instanceId}] Error toggling device ${deviceId}:`, error);
+    })
+    .finally(() => {
+      // Aseguramos que el indicador de carga se desactive después de un tiempo
+      setTimeout(() => {
+        if (isMounted.current) {
+          setLoadingDevices(prev => ({ ...prev, [deviceId]: false }));
+        }
+      }, 500);
+    });
+}, [instanceId, loadingDevices]);
+
 
   const handleCheckboxChange = useCallback((id: number) => {
     setSelectedItems(prevSelected => {
@@ -768,8 +1009,10 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
   }, []);
 
   const handleAssign = useCallback(async () => {
+    if (!isMounted.current) return;
+    
     try {
-      const habitacionId = selectedHabitacion === "null" ? null : parseInt(selectedHabitacion as string);
+      const habitacionId = selectedHabitacion === "null" ? null : parseInt(selectedHabitacion);
       await asignarHabitacion(selectedItems, habitacionId);
       setSelectedItems([]);
       setOpen(false);
@@ -778,33 +1021,19 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
         setShowRoomDialog(false);
       }
       
-      const data = await obtenerDispositivosConConsumo(true);
+      // Después de asignar, refrescar dispositivos
+      await DeviceStateService.loadInitialDevices();
       
-      const datosModificados = data.map((dispositivo) => {
-        const dispPrevio = dispositivos.find(d => d.id === dispositivo.id);
-        
-        if (dispPrevio) {
-          return {
-            ...dispositivo,
-            online: dispPrevio.online,
-            estado: dispPrevio.estado
-          };
-        }
-        
-        return {
-          ...dispositivo,
-          online: true,
-          estado: 1
-        };
-      });
+      if (!isMounted.current) return;
       
-      setDispositivos(datosModificados);
-      setContadorAsignados(datosModificados.filter((d) => d.habitacion_id).length);
-      setContadorSinAsignar(datosModificados.filter((d) => !d.habitacion_id).length);
+      // Actualizar contadores locales
+      const updatedDevices = DeviceStateService.getAllDevices();
+      setContadorAsignados(updatedDevices.filter(d => d.habitacion_id).length);
+      setContadorSinAsignar(updatedDevices.filter(d => !d.habitacion_id).length);
     } catch (error) {
-      console.error('Error al asignar habitación:', error);
+      console.error(`[${instanceId}] Error al asignar habitación:`, error);
     }
-  }, [dispositivos, selectedHabitacion, selectedItems, setShowRoomDialog]);
+  }, [selectedHabitacion, selectedItems, setShowRoomDialog, instanceId]);
 
   // Efecto para controlar el diálogo desde el componente padre
   useEffect(() => {
@@ -825,6 +1054,7 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
       <style>{globalStyles}</style>
       
       <Box
+        data-instance-id={instanceId} // Para debugging
         display="flex"
         flexDirection="column"
         sx={{
@@ -1059,23 +1289,37 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
           />
         </Box>
         
-        {/* Área de contenido con scroll */}
+        {/* Contador de dispositivos - Movido fuera del área de scroll para evitar repintados */}
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          sx={{ mb: 2, pr: 4 }}
+        >
+          <Typography variant="body1" sx={{ color: '#00FF00' }}>
+            Asignados: {contadorAsignados}
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'white', mx: 1 }}>
+            - Sin Asignar: {contadorSinAsignar}
+          </Typography>
+          <Typography variant="body1" sx={{ color: '#2391FF', fontWeight: 'bold' }}>
+            - Totales: {dispositivos.length}
+          </Typography>
+          {dispositivosFiltrados.length !== dispositivos.length && (
+            <Typography variant="body1" sx={{ color: 'orange', ml: 1 }}>
+              - Filtrados: {dispositivosFiltrados.length}
+            </Typography>
+          )}
+        </Box>
+        
+        {/* Área de contenido con scroll - Ahora con virtualización */}
         <Box
           sx={{
-            overflowY: 'scroll',
             flex: 1,
-            '&::-webkit-scrollbar': {
-              width: '6px',
-            },
-            '&::-webkit-scrollbar-track': {
-              backgroundColor: 'black',
-            },
-            '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#2391FF',
-            },
+            overflow: 'hidden', // Para no tener doble scroll
+            height: 'calc(100% - 70px)' // Restar altura del contador y margen
           }}
         >
-          {/* Popover para filtro por habitación */}
+          {/* Área de filtros - Popover para filtro por habitación */}
           <Popover
             open={Boolean(filterAnchorEl) && filterMenuType === 'habitacion'}
             anchorEl={filterAnchorEl}
@@ -1279,46 +1523,15 @@ const DeviceMatrix: React.FC<DeviceMatrixProps> = ({
             </List>
           </Popover>
 
-          {/* Contador de dispositivos */}
-          <Box
-            display="flex"
-            justifyContent="flex-end"
-            sx={{ mb: 2, pr: 4 }}
-          >
-            <Typography variant="body1" sx={{ color: '#00FF00' }}>
-              Asignados: {contadorAsignados}
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'white', mx: 1 }}>
-              - Sin Asignar: {contadorSinAsignar}
-            </Typography>
-            <Typography variant="body1" sx={{ color: '#2391FF', fontWeight: 'bold' }}>
-              - Totales: {dispositivos.length}
-            </Typography>
-            {dispositivosFiltrados.length !== dispositivos.length && (
-              <Typography variant="body1" sx={{ color: 'orange', ml: 1 }}>
-                - Filtrados: {dispositivosFiltrados.length}
-              </Typography>
-            )}
-          </Box>
-          
-          {/* Matriz de dispositivos - Optimizada con componente memoizado */}
-          <Box
-            display="flex"
-            flexWrap="wrap"
-            gap={0.5}
-          >
-            {dispositivosFiltrados.map((dispositivo) => (
-              <DeviceCard
-                key={dispositivo.id}
-                dispositivo={dispositivo}
-                isEditing={editMode}
-                isSelected={selectedItems.includes(dispositivo.id)}
-                onToggleDevice={handleToggleDevice}
-                onSelect={handleCheckboxChange}
-                loadingDevices={loadingDevices}
-              />
-            ))}
-          </Box>
+          {/* Matriz de dispositivos - Ahora virtualizada */}
+          <VirtualizedDeviceMatrix
+            dispositivosFiltrados={dispositivosFiltrados}
+            editMode={editMode}
+            selectedItems={selectedItems}
+            loadingDevices={loadingDevices}
+            onToggleDevice={handleToggleDevice}
+            onSelect={handleCheckboxChange}
+          />
         </Box>
         
         {/* Diálogo con el mismo estilo de UsersManagement.tsx */}

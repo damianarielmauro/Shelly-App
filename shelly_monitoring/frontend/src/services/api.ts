@@ -40,6 +40,14 @@ export const getDispositivos = async (): Promise<any> => {
   }
 };
 
+// Función de compatibilidad - NUEVA
+// Esta función es para compatibilidad con código que pueda estar llamando a '/devices' 
+// en lugar de '/dispositivos'
+export const getAllDevices = async (): Promise<any> => {
+  console.log('Llamando a getAllDevices - redirigiendo a getDispositivos');
+  return getDispositivos();
+};
+
 export const toggleDevice = async (deviceId: number): Promise<any> => {
   try {
     const response = await api.post(`/toggle_device/${deviceId}`);
@@ -115,6 +123,13 @@ export const asignarHabitacion = async (deviceIds: number[], habitacionId: numbe
 export const getDispositivosByHabitacion = async (habitacionId: number): Promise<any> => {
   const response = await api.get(`/habitaciones/${habitacionId}/dispositivos`);
   return response.data;
+};
+
+// Función de compatibilidad - NUEVA
+// Para cualquier código que esté usando getDevicesByRoom
+export const getDevicesByRoom = async (habitacionId: number): Promise<any> => {
+  console.log('Llamando a getDevicesByRoom - redirigiendo a getDispositivosByHabitacion');
+  return getDispositivosByHabitacion(habitacionId);
 };
 
 // Actualizar orden de dispositivos dentro de una habitación

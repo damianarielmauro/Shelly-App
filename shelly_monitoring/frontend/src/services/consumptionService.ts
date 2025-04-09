@@ -584,8 +584,11 @@ export const suscribirseADispositivosHabitacionActualizados = (habitacionId: num
   return () => consumptionEmitter.off(EVENTOS.DISPOSITIVOS_HABITACION_ACTUALIZADOS, callbackWrapper);
 };
 
-// Función para formatear valores de consumo
-export const formatearConsumo = (consumo: number): string => {
+// Función para formatear valores de consumo - MODIFICADA PARA ACEPTAR VALOR OPCIONAL
+export const formatearConsumo = (consumo?: number): string => {
+  // Si el consumo es undefined o null, devolver "0 W"
+  if (consumo === undefined || consumo === null) return '0 W';
+  
   const absConsumo = Math.abs(consumo);
   
   if (absConsumo < 1000) {
@@ -595,7 +598,10 @@ export const formatearConsumo = (consumo: number): string => {
   }
 };
 
-// Función para determinar el color según el valor de consumo
-export const getColorForConsumo = (consumo: number): string => {
+// Función para determinar el color según el valor de consumo - MODIFICADA PARA ACEPTAR VALOR OPCIONAL
+export const getColorForConsumo = (consumo?: number): string => {
+  // Si el consumo es undefined o null, devolver un color neutral
+  if (consumo === undefined || consumo === null) return '#888888';
+  
   return consumo >= 0 ? '#2391FF' : '#00ff00'; // Azul claro para consumo, verde para generación
 };

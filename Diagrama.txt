@@ -3,7 +3,8 @@
 +-------------------+     HTTPS/443     +--------------------------------+
 |                   |<----------------->|                                |
 |     USUARIOS      |                   |             NGINX              |
-|  (Navegadores Web)|                   |      (Proxy Reverso con SSL)   |
+|  (Navegadores     |                   |                                |
+|    Websocket)     |                   |      (Proxy Reverso con SSL)   |
 |                   |                   |           Lenguaje: C          |
 +-------------------+                   +--------------------------------+
                                                        ^ ^

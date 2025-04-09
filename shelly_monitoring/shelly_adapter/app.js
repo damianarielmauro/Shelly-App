@@ -1,7 +1,6 @@
 const express = require('express');
 const axios = require('axios');
 const mqtt = require('mqtt');
-const coap = require('coap');
 const mdns = require('mdns');
 
 const app = express();

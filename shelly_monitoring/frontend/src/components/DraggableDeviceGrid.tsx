@@ -5,15 +5,21 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import EditIcon from '@mui/icons-material/Edit';
 import BoltIcon from '@mui/icons-material/Bolt';
 import { 
-  DispositivoConConsumo,
   formatearConsumo,
   getColorForConsumo
 } from '../services/consumptionService';
+import { Dispositivo } from '../services/DeviceStateService';
 
+// Extendemos el tipo Dispositivo para incluir la propiedad orden
+interface DispositivoConOrden extends Dispositivo {
+  orden?: number;
+}
+
+// Modificado para usar DispositivoConOrden
 interface DraggableDeviceGridProps {
-  dispositivos: DispositivoConConsumo[];
+  dispositivos: Dispositivo[];
   editMode: boolean;
-  onReorder: (newOrder: DispositivoConConsumo[]) => void;
+  onReorder: (newOrder: Dispositivo[]) => void;
 }
 
 const DraggableDeviceGrid: React.FC<DraggableDeviceGridProps> = ({
@@ -23,17 +29,21 @@ const DraggableDeviceGrid: React.FC<DraggableDeviceGridProps> = ({
 }) => {
   const [renamingId, setRenamingId] = useState<number | null>(null);
   const [newName, setNewName] = useState<string>('');
-  const [orderedDevices, setOrderedDevices] = useState<DispositivoConConsumo[]>([]);
+  const [orderedDevices, setOrderedDevices] = useState<DispositivoConOrden[]>([]);
 
   // Ordenar dispositivos por el campo orden si existe
   useEffect(() => {
+    // Tratar los dispositivos como DispositivoConOrden
     const sorted = [...dispositivos].sort((a, b) => {
-      if (a.orden !== undefined && b.orden !== undefined) {
-        return a.orden - b.orden;
+      const aOrden = (a as DispositivoConOrden).orden;
+      const bOrden = (b as DispositivoConOrden).orden;
+      
+      if (aOrden !== undefined && bOrden !== undefined) {
+        return aOrden - bOrden;
       }
       return 0;
     });
-    setOrderedDevices(sorted);
+    setOrderedDevices(sorted as DispositivoConOrden[]);
   }, [dispositivos]);
 
   const handleDragEnd = (result: DropResult) => {
@@ -45,7 +55,7 @@ const DraggableDeviceGrid: React.FC<DraggableDeviceGridProps> = ({
     items.splice(result.destination.index, 0, reorderedItem);
     
     // Actualizar orden
-    const newItems = items.map((item, index) => ({
+    const newItems = items.map((item: DispositivoConOrden, index: number) => ({
       ...item,
       orden: index
     }));
@@ -63,7 +73,7 @@ const DraggableDeviceGrid: React.FC<DraggableDeviceGridProps> = ({
     // En una implementación completa, aquí iría una llamada API para renombrar
     // Por ahora solo actualizamos el estado local
     if (newName.trim() !== '') {
-      const updatedDevices = orderedDevices.map(device =>
+      const updatedDevices = orderedDevices.map((device: DispositivoConOrden) =>
         device.id === id ? { ...device, nombre: newName.trim() } : device
       );
       setOrderedDevices(updatedDevices);
@@ -93,7 +103,7 @@ const DraggableDeviceGrid: React.FC<DraggableDeviceGridProps> = ({
             }}
             className={snapshot.isDraggingOver ? 'droppable-area active' : ''}
           >
-            {orderedDevices.map((dispositivo, index) => {
+            {orderedDevices.map((dispositivo: DispositivoConOrden, index: number) => {
               const consumoFormateado = formatearConsumo(dispositivo.consumo);
               const consumoColor = getColorForConsumo(dispositivo.consumo);
               

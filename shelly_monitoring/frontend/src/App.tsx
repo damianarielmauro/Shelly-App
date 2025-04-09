@@ -11,6 +11,7 @@ import { CssBaseline } from '@mui/material';
 import theme from './theme';
 import { isLoggedIn, getUser, setAuthToken } from './services/auth';
 import TabManager from './components/TabManager'; // Importar TabManager
+import { DeviceStateService } from './services/DeviceStateService'; // Importamos el servicio
 
 interface PrivateRouteProps {
   element: React.ComponentType<any>;
@@ -60,6 +61,19 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = (props) => {
+  // Inicialización del sistema de eventos central
+  useEffect(() => {
+    console.log('Inicializando sistema de eventos de dispositivos');
+    // Iniciar el sistema de eventos con polling cada 30 segundos
+    const cleanup = DeviceStateService.initializeEventSystem(30000);
+    
+    // Limpiar recursos al desmontar
+    return () => {
+      console.log('Limpiando sistema de eventos de dispositivos');
+      cleanup();
+    };
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
