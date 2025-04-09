@@ -1,0 +1,69 @@
+damian@app-shelly:~/Shelly-App$ tree -L 6 -I "__pycache__|venv|build|dist|node_modules|public|pictures|utils|types"
+.
+├── Diagrama.txt
+├── Frontend_tree.txt
+└── shelly_monitoring
+    ├── app.py
+    ├── backend.log
+    ├── descubrir_shelly.py
+    ├── frontend
+    │   ├── config-overrides.js
+    │   ├── package.json
+    │   ├── package-lock.json
+    │   ├── README.md
+    │   ├── src
+    │   │   ├── App.css
+    │   │   ├── App.tsx
+    │   │   ├── components
+    │   │   │   ├── DeviceList.tsx
+    │   │   │   ├── DeviceMatrix.tsx
+    │   │   │   ├── Discovery.tsx
+    │   │   │   ├── DraggableDeviceGrid.tsx
+    │   │   │   ├── DraggableRoomGrid.tsx
+    │   │   │   ├── DraggableTabManager.tsx
+    │   │   │   ├── FirmwareUpdateAlert.tsx
+    │   │   │   ├── FirmwareUpdatePanel.tsx
+    │   │   │   ├── RoomDeviceMatrix.tsx
+    │   │   │   ├── RoomMatrix.tsx
+    │   │   │   ├── shared
+    │   │   │   │   ├── DeviceCard.tsx
+    │   │   │   │   ├── DeviceTypeImage.tsx
+    │   │   │   │   └── PowerButton.tsx
+    │   │   │   └── TabManager.tsx
+    │   │   ├── index.css
+    │   │   ├── index.tsx
+    │   │   ├── logo.svg
+    │   │   ├── pages
+    │   │   │   ├── Consumption.tsx
+    │   │   │   ├── Dashboard.tsx
+    │   │   │   ├── Login.tsx
+    │   │   │   ├── Settings.tsx
+    │   │   │   ├── Statistics.tsx
+    │   │   │   └── UsersManagement.tsx
+    │   │   ├── react-app-env.d.ts
+    │   │   ├── reportWebVitals.ts
+    │   │   ├── services
+    │   │   │   ├── api.ts
+    │   │   │   ├── auth.ts
+    │   │   │   ├── consumptionService.ts
+    │   │   │   ├── DeviceStateService.ts
+    │   │   │   ├── EventBus.ts
+    │   │   │   ├── firmwareService.ts
+    │   │   │   ├── shellyService.ts
+    │   │   │   ├── sse.ts
+    │   │   │   └── WebSocketService.ts
+    │   │   ├── styles
+    │   │   │   ├── custom.css
+    │   │   │   └── deviceStyles.ts
+    │   │   └── theme.ts
+    │   └── tsconfig.json
+    ├── package-lock.json
+    ├── requirements.txt
+    ├── routes_firmware.py
+    ├── setup_shelly_adapter.sh
+    ├── shelly_adapter
+    │   ├── app.js
+    │   ├── package.json
+    │   └── package-lock.json
+    ├── shelly_interface.py
+    └── wsgi.py
