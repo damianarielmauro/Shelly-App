@@ -1,7 +1,7 @@
 damian@app-shelly:~/Shelly-App$ tree -L 6 -I "__pycache__|venv|build|dist|node_modules|public|pictures|utils|types"
 .
 ├── Diagrama.txt
-├── Frontend_tree.txt
+├── Project_Tree.txt
 └── shelly_monitoring
     ├── app.py
     ├── backend.log
@@ -67,3 +67,5 @@ damian@app-shelly:~/Shelly-App$ tree -L 6 -I "__pycache__|venv|build|dist|node_m
     │   └── package-lock.json
     ├── shelly_interface.py
     └── wsgi.py
+
+10 directories, 58 files
