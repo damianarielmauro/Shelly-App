@@ -13,7 +13,7 @@ import TabManager from '../components/TabManager';
 import DeviceList from '../components/DeviceList';
 import DraggableTabManager from '../components/DraggableTabManager';
 import DraggableRoomGrid from '../components/DraggableRoomGrid';
-import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros, getHabitaciones, updateTableroName, updateOrdenTableros, updateOrdenHabitaciones, renameHabitacion, cambiarTableroHabitacion, createTablero, createHabitacion } from '../services/api';
+import { getHabitacionesByTablero, deleteTablero, deleteHabitacion, getTableros, getHabitaciones, updateTableroName, updateOrdenTableros, updateOrdenHabitaciones, renameHabitacion, cambiarTableroHabitacion, createTablero, createHabitacion, renameDispositivo, deleteDispositivo } from '../services/api';
 import { checkPermission, setAuthToken } from '../services/auth';
 
 // Estilos de barra de desplazamiento consistentes para toda la aplicación
@@ -267,7 +267,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     setSettingsMenuAnchorEl(null);
   };
 
-  // Nueva función para confirmar el borrado
+  // Función para confirmar el borrado
   const handleDeleteConfirm = async () => {
     if (!itemToDelete) return;
     
@@ -295,6 +295,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         if (tableros[selectedTab]?.id === id && tableros.length > 1) {
           setSelectedTab(selectedTab === 0 ? 0 : selectedTab - 1);
         }
+      } else if (type === 'Dispositivo') {
+        // Nueva función para eliminar dispositivos
+        await deleteDispositivo(id);
+        // No necesitamos actualizar el estado local ya que se manejará a través de eventos
       }
       
       setDeleteDialogOpen(false);
@@ -329,13 +333,35 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     }
   };
 
-  // Nueva función para mostrar diálogo de confirmación de borrado
+  // Función para mostrar diálogo de confirmación de borrado
   const handleShowDeleteConfirm = (id: number, type: string) => {
     setItemToDelete({ id, type });
     setDeleteDialogOpen(true);
   };
 
-  // Nuevas funciones para manejar operaciones de drag & drop y renombrado
+  // Función para renombrar dispositivos (NUEVA)
+  const handleRenameDispositivo = async (id: number, newName: string) => {
+    try {
+      if (!newName.trim()) {
+        setErrorMessage('El nombre no puede estar vacío.');
+        setErrorDialogOpen(true);
+        return;
+      }
+      
+      console.log('Renombrando dispositivo:', id, 'nuevo nombre:', newName);
+      const response = await renameDispositivo(id, newName);
+      console.log('Respuesta de API al renombrar dispositivo:', response);
+      
+      // No necesitamos actualizar el estado local, ya que esto se manejará a través de eventos
+    } catch (error: any) {
+      console.error('Error renaming dispositivo:', error);
+      const errorDetails = error?.response?.data?.error || 'Error al renombrar el dispositivo. Por favor, inténtelo de nuevo.';
+      setErrorMessage(errorDetails);
+      setErrorDialogOpen(true);
+    }
+  };
+
+  // Funciones para manejar operaciones de drag & drop y renombrado
   const handleRenameTablero = async (id: number, newName: string) => {
     try {
       if (!newName.trim()) {
@@ -684,6 +710,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
               setRoomMatrixView={setRoomMatrixView}
               selectedHabitacion={selectedHabitacion}
               setSelectedHabitacion={setSelectedHabitacion}
+              onRenameDispositivo={handleRenameDispositivo}
+              onDeleteDispositivo={handleShowDeleteConfirm}
             />
           )}
         </Box>
@@ -889,7 +917,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           <Typography sx={{ color: 'white' }}>
             {itemToDelete?.type === 'Tablero' 
               ? '¿Está seguro de que desea eliminar este tablero? Esta acción no se puede deshacer.'
-              : '¿Está seguro de que desea eliminar esta habitación? Esta acción no se puede deshacer.'
+              : itemToDelete?.type === 'Habitación'
+                ? '¿Está seguro de que desea eliminar esta habitación? Esta acción no se puede deshacer.'
+                : '¿Está seguro de que desea eliminar este dispositivo? Esta acción no se puede deshacer.'
             }
           </Typography>
         </DialogContent>

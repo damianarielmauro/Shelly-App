@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Box, Typography, Card, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, Card, IconButton, TextField, Tooltip } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import BoltIcon from '@mui/icons-material/Bolt';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { formatearConsumo, getColorForConsumo, HabitacionConConsumo } from '../services/consumptionService';
 
 // Interfaz para Tablero
@@ -24,12 +26,11 @@ interface DraggableRoomGridProps {
   editMode: boolean;
   onReorder: (newOrder: Habitacion[]) => void;
   onRoomClick?: (habitacionId: number) => void;
-  // Propiedades adicionales que se están pasando desde el componente padre
   tableros?: Tablero[];
   currentTableroId?: number;
   onRename?: (id: number, newName: string) => Promise<void>;
   onChangeTablero?: (habitacionId: number, tableroId: number) => Promise<void>;
-  onDelete?: (id: number, type: string) => void; // Actualizamos para que coincida con handleShowDeleteConfirm
+  onDelete?: (id: number, type: string) => void;
 }
 
 const DraggableRoomGrid: React.FC<DraggableRoomGridProps> = ({
@@ -37,8 +38,6 @@ const DraggableRoomGrid: React.FC<DraggableRoomGridProps> = ({
   editMode,
   onReorder,
   onRoomClick,
-  // No usamos estas propiedades en este componente,
-  // pero las añadimos para evitar el error de TypeScript
   tableros,
   currentTableroId,
   onRename,
@@ -46,6 +45,8 @@ const DraggableRoomGrid: React.FC<DraggableRoomGridProps> = ({
   onDelete,
 }) => {
   const [orderedRooms, setOrderedRooms] = useState<HabitacionConConsumo[]>([]);
+  const [renamingId, setRenamingId] = useState<number | null>(null);
+  const [newName, setNewName] = useState<string>('');
 
   // Ordenar habitaciones por el campo orden si existe
   useEffect(() => {
@@ -83,6 +84,36 @@ const DraggableRoomGrid: React.FC<DraggableRoomGridProps> = ({
     }));
     
     onReorder(habitacionesActualizadas);
+  };
+
+  // Funciones para editar el nombre
+  const startRenaming = (id: number, currentName: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setRenamingId(id);
+    setNewName(currentName);
+  };
+  
+  const handleRename = async (id: number) => {
+    if (newName.trim() !== '' && onRename) {
+      try {
+        await onRename(id, newName.trim());
+        // Actualizar localmente
+        setOrderedRooms(prev => 
+          prev.map(room => room.id === id ? { ...room, nombre: newName.trim() } : room)
+        );
+      } catch (error) {
+        console.error('Error al renombrar habitación:', error);
+      }
+      setRenamingId(null);
+    }
+  };
+
+  // Función para eliminar habitación
+  const handleDeleteClick = (id: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (onDelete) {
+      onDelete(id, 'Habitación');
+    }
   };
 
   return (
@@ -163,23 +194,65 @@ const DraggableRoomGrid: React.FC<DraggableRoomGridProps> = ({
                                 <DragIndicatorIcon fontSize="small" sx={{ color: 'rgba(255,255,255,0.7)' }} />
                               </div>
                             </Tooltip>
+                            
+                            {/* Botones de Editar y Eliminar - AÑADIDOS */}
+                            <Box sx={{ display: 'flex' }}>
+                              <Tooltip title="Renombrar">
+                                <IconButton
+                                  size="small"
+                                  onClick={(e) => startRenaming(habitacion.id, habitacion.nombre, e)}
+                                  sx={{ color: 'rgba(255,255,255,0.7)', padding: '2px' }}
+                                >
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Eliminar">
+                                <IconButton
+                                  size="small"
+                                  onClick={(e) => handleDeleteClick(habitacion.id, e)}
+                                  sx={{ color: 'rgba(255,0,0,0.7)', padding: '2px' }}
+                                >
+                                  <DeleteIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            </Box>
                           </Box>
                         )}
 
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontSize: '0.6rem',
-                            fontWeight: 'bold',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            height: '50%',
-                            mb: 0.5,
-                          }}
-                        >
-                          {habitacion.nombre}
-                        </Typography>
+                        {renamingId === habitacion.id ? (
+                          <TextField
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            onBlur={() => handleRename(habitacion.id)}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') handleRename(habitacion.id);
+                            }}
+                            autoFocus
+                            size="small"
+                            variant="standard"
+                            sx={{
+                              input: { color: 'white', textAlign: 'center' },
+                              width: '100%',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="rename-input"
+                          />
+                        ) : (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              fontSize: '0.6rem',
+                              fontWeight: 'bold',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              height: '50%',
+                              mb: 0.5,
+                            }}
+                          >
+                            {habitacion.nombre}
+                          </Typography>
+                        )}
                         
                         <Box display="flex" alignItems="center" justifyContent="center">
                           <BoltIcon sx={{ 

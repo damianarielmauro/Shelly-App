@@ -59,6 +59,40 @@ export const toggleDevice = async (deviceId: number): Promise<any> => {
   }
 };
 
+/**
+ * Eliminar un dispositivo
+ * @param id ID del dispositivo a eliminar
+ * @returns Respuesta de la API
+ */
+export const deleteDispositivo = async (id: number): Promise<any> => {
+  try {
+    const response = await api.delete(`/dispositivos/${id}`);
+    console.log('deleteDispositivo response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('deleteDispositivo error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Renombrar un dispositivo
+ * @param id ID del dispositivo a renombrar
+ * @param nombre Nuevo nombre para el dispositivo
+ * @returns Respuesta de la API
+ */
+export const renameDispositivo = async (id: number, nombre: string): Promise<any> => {
+  try {
+    console.log(`Enviando petición para renombrar dispositivo ${id} a "${nombre}"`);
+    const response = await api.put(`/dispositivos/${id}/renombrar`, { nombre });
+    console.log('renameDispositivo response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('renameDispositivo error:', error);
+    throw error;
+  }
+};
+
 // Habitaciones
 export const getHabitaciones = async (): Promise<any> => {
   try {

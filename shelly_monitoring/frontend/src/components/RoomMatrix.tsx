@@ -18,6 +18,9 @@ interface RoomMatrixProps {
   setRoomMatrixView: React.Dispatch<React.SetStateAction<boolean>>;
   selectedHabitacion: number | null;
   setSelectedHabitacion: React.Dispatch<React.SetStateAction<number | null>>;
+  // Añadimos propiedades para renombrar y eliminar dispositivos
+  onRenameDispositivo?: (id: number, newName: string) => Promise<void>;
+  onDeleteDispositivo?: (id: number, type: string) => void;
 }
 
 const RoomMatrix: React.FC<RoomMatrixProps> = ({
@@ -26,7 +29,9 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
   roomMatrixView,
   setRoomMatrixView,
   selectedHabitacion,
-  setSelectedHabitacion
+  setSelectedHabitacion,
+  onRenameDispositivo,
+  onDeleteDispositivo
 }) => {
   // Estado para almacenar las habitaciones con sus consumos actualizados
   const [habitacionesConConsumo, setHabitacionesConConsumo] = useState<HabitacionConConsumo[]>([]);
@@ -136,8 +141,14 @@ const RoomMatrix: React.FC<RoomMatrixProps> = ({
         })
       ) : (
         // Mostrar dispositivos de la habitación seleccionada
+        // Pasamos las propiedades para renombrar y eliminar dispositivos
         selectedHabitacion !== null && (
-          <RoomDeviceMatrix habitacionId={selectedHabitacion} editMode={editMode} />
+          <RoomDeviceMatrix 
+            habitacionId={selectedHabitacion} 
+            editMode={editMode}
+            onRenameDispositivo={onRenameDispositivo}
+            onDeleteDispositivo={onDeleteDispositivo}
+          />
         )
       )}
     </Box>

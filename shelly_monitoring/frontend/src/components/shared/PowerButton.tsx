@@ -27,19 +27,10 @@ const PowerButton: React.FC<PowerButtonProps> = React.memo(({
   onClick, 
   deviceId 
 }) => {
-  // Estado para animación de feedback al clic
-  const [isPressed, setIsPressed] = useState(false);
-  
   // Handler optimizado con useCallback
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    
-    // Dar feedback visual al usuario
-    setIsPressed(true);
-    setTimeout(() => setIsPressed(false), 150);
-    
-    // Llamar al callback de toggle
     onClick(deviceId);
   }, [deviceId, onClick]);
 
@@ -51,7 +42,7 @@ const PowerButton: React.FC<PowerButtonProps> = React.memo(({
         height: POWER_BUTTON_SIZE,
       }}
     >
-      {/* Indicador de carga que se muestra sobre el botón */}
+      {/* Indicador de carga superpuesto usando opacidad */}
       {isLoading && (
         <CircularProgress
           size={POWER_BUTTON_SIZE}
@@ -65,7 +56,7 @@ const PowerButton: React.FC<PowerButtonProps> = React.memo(({
         />
       )}
       
-      {/* El botón de encendido/apagado */}
+      {/* El botón siempre está presente, solo cambia su opacidad */}
       <IconButton
         onClick={handleClick}
         disabled={isLoading}
@@ -81,12 +72,8 @@ const PowerButton: React.FC<PowerButtonProps> = React.memo(({
           },
           p: 0,
           boxShadow: 'none',
-          // Combinar las dos propiedades transition en una sola
-          transition: isPressed 
-            ? 'transform 0.1s ease, opacity 0.3s' 
-            : 'transform 0.2s ease-out, opacity 0.3s',
-          opacity: isLoading ? 0.3 : 1,
-          transform: isPressed ? 'scale(0.94)' : 'scale(1)',
+          transition: 'none',
+          opacity: isLoading ? 0.3 : 1, // Cambia opacidad durante la carga
         }}
       >
         <PowerSettingsNewIcon
@@ -97,7 +84,6 @@ const PowerButton: React.FC<PowerButtonProps> = React.memo(({
           }}
         />
         
-        {/* Anillo decorativo que cambia según el estado */}
         <Box
           className={isOn ? 'power-ring-on' : 'power-ring-off'}
           sx={{
@@ -109,7 +95,7 @@ const PowerButton: React.FC<PowerButtonProps> = React.memo(({
               ? '4px solid #2391FF'
               : '2px solid white',
             boxShadow: 'none',
-            transition: 'border 0.2s ease-out',
+            transition: 'none',
           }}
         />
       </IconButton>

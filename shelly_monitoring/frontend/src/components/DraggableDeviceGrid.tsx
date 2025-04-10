@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import { Box, Typography, Card, IconButton, TextField, Tooltip } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import BoltIcon from '@mui/icons-material/Bolt';
 import { 
   formatearConsumo,
@@ -15,17 +16,21 @@ interface DispositivoConOrden extends Dispositivo {
   orden?: number;
 }
 
-// Modificado para usar DispositivoConOrden
+// Modificado para incluir funciones de edición y eliminación
 interface DraggableDeviceGridProps {
   dispositivos: Dispositivo[];
   editMode: boolean;
   onReorder: (newOrder: Dispositivo[]) => void;
+  onRename?: (id: number, newName: string) => Promise<void>; // Añadida
+  onDelete?: (id: number, type: string) => void; // Añadida
 }
 
 const DraggableDeviceGrid: React.FC<DraggableDeviceGridProps> = ({
   dispositivos,
   editMode,
   onReorder,
+  onRename,
+  onDelete,
 }) => {
   const [renamingId, setRenamingId] = useState<number | null>(null);
   const [newName, setNewName] = useState<string>('');
@@ -64,20 +69,40 @@ const DraggableDeviceGrid: React.FC<DraggableDeviceGridProps> = ({
     onReorder(newItems);
   };
 
-  const startRenaming = (id: number, currentName: string) => {
+  const startRenaming = (id: number, currentName: string, event: React.MouseEvent) => {
+    event.stopPropagation();
     setRenamingId(id);
     setNewName(currentName);
   };
 
-  const handleRename = (id: number) => {
-    // En una implementación completa, aquí iría una llamada API para renombrar
-    // Por ahora solo actualizamos el estado local
+  const handleRename = async (id: number) => {
     if (newName.trim() !== '') {
-      const updatedDevices = orderedDevices.map((device: DispositivoConOrden) =>
-        device.id === id ? { ...device, nombre: newName.trim() } : device
-      );
-      setOrderedDevices(updatedDevices);
+      if (onRename) {
+        try {
+          await onRename(id, newName.trim());
+          // Actualizar localmente
+          setOrderedDevices(prev => 
+            prev.map(device => device.id === id ? { ...device, nombre: newName.trim() } : device)
+          );
+        } catch (error) {
+          console.error('Error al renombrar dispositivo:', error);
+        }
+      } else {
+        // Actualización local si no hay función externa
+        const updatedDevices = orderedDevices.map((device: DispositivoConOrden) =>
+          device.id === id ? { ...device, nombre: newName.trim() } : device
+        );
+        setOrderedDevices(updatedDevices);
+      }
       setRenamingId(null);
+    }
+  };
+
+  // Función para eliminar dispositivo
+  const handleDeleteClick = (id: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (onDelete) {
+      onDelete(id, 'Dispositivo');
     }
   };
 
@@ -159,22 +184,29 @@ const DraggableDeviceGrid: React.FC<DraggableDeviceGridProps> = ({
                               </div>
                             </Tooltip>
                             
-                            {/* Ícono de edición (derecha) - desactivado por ahora */}
-                            {/* 
-                            <Tooltip title="Renombrar">
-                              <IconButton
-                                size="small"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  startRenaming(dispositivo.id, dispositivo.nombre);
-                                }}
-                                sx={{ color: 'rgba(255,255,255,0.7)', padding: '0' }}
-                                className="rename-button"
-                              >
-                                <EditIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                            */}
+                            {/* Botones de Editar y Eliminar - ACTIVADOS */}
+                            <Box sx={{ display: 'flex' }}>
+                              <Tooltip title="Renombrar">
+                                <IconButton
+                                  size="small"
+                                  onClick={(e) => startRenaming(dispositivo.id, dispositivo.nombre, e)}
+                                  sx={{ color: 'rgba(255,255,255,0.7)', padding: '2px' }}
+                                >
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              {onDelete && (
+                                <Tooltip title="Eliminar">
+                                  <IconButton
+                                    size="small"
+                                    onClick={(e) => handleDeleteClick(dispositivo.id, e)}
+                                    sx={{ color: 'rgba(255,0,0,0.7)', padding: '2px' }}
+                                  >
+                                    <DeleteIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
+                            </Box>
                           </Box>
                         )}
 
