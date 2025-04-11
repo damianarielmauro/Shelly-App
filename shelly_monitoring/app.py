@@ -67,6 +67,26 @@ roles_permissions = {
 # Registrar blueprint para la gestión de firmware
 app.register_blueprint(firmware_bp)
 
+# Configurar manejador de eventos para actualizaciones de dispositivos
+def handle_device_update(device):
+    device_id = device.get('id')
+    if device_id:
+        # Actualizar estado en la base de datos
+        db_device = Dispositivos.query.filter_by(id=device_id).first()
+        if db_device:
+            db_device.estado = device.get('state', False)
+            db_device.ultimo_consumo = device.get('meters', [{}])[0].get('power', 0)
+            db.session.commit()
+            
+            # Emitir evento por Socket.IO
+            socketio.emit('device_update', {
+                'id': device_id,
+                'state': device.get('state', False),
+                'power': device.get('meters', [{}])[0].get('power', 0)
+            })
+
+# Registrar el manejador de eventos
+shelly_interface.add_event_listener('deviceUpdate', handle_device_update)
 
 # Middleware para proteger rutas
 def require_jwt(f):
@@ -215,8 +235,39 @@ def get_role_permissions(role):
 @app.route('/api/dispositivos', methods=['GET'])
 @require_jwt
 def get_dispositivos():
-    dispositivos = Dispositivos.query.all()
-    return jsonify([{ "id": d.id, "nombre": d.nombre, "ip": d.ip, "tipo": d.tipo, "habitacion_id": d.habitacion_id, "ultimo_consumo": d.ultimo_consumo, "estado": d.estado, "orden": d.orden } for d in dispositivos])
+    # Obtener dispositivos de la base de datos
+    db_devices = Dispositivos.query.all()
+    
+    # Obtener estado actual de los dispositivos
+    current_devices = shelly_interface.get_devices()
+    current_states = {d['id']: d for d in current_devices}
+    
+    # Combinar información
+    result = []
+    for db_device in db_devices:
+        device_info = {
+            "id": db_device.id,
+            "nombre": db_device.nombre,
+            "ip": db_device.ip,
+            "tipo": db_device.tipo,
+            "habitacion_id": db_device.habitacion_id,
+            "ultimo_consumo": db_device.ultimo_consumo,
+            "estado": db_device.estado,
+            "orden": db_device.orden
+        }
+        
+        # Agregar información actual si está disponible
+        if db_device.ip in current_states:
+            current = current_states[db_device.ip]
+            device_info.update({
+                "online": current.get('online', True),
+                "fw_version": current.get('fw_version'),
+                "meters": current.get('meters', [])
+            })
+        
+        result.append(device_info)
+    
+    return jsonify(result)
 
 # API: Cambiar estado de un dispositivo
 @app.route('/api/toggle_device/<int:device_id>', methods=['POST'])
@@ -224,10 +275,19 @@ def get_dispositivos():
 def toggle_device(device_id):
     device = Dispositivos.query.get(device_id)
     if device:
-        device.estado = not device.estado
-        db.session.commit()
-        socketio.emit('update_device', {"id": device.id, "estado": device.estado})
-        return jsonify({"message": "Estado cambiado"}), 200
+        # Obtener el estado actual
+        current_state = device.estado
+        
+        # Controlar el dispositivo a través del adaptador
+        success = shelly_interface.control_device(device.ip, 0, not current_state)
+        
+        if success:
+            device.estado = not current_state
+            db.session.commit()
+            socketio.emit('update_device', {"id": device.id, "estado": device.estado})
+            return jsonify({"message": "Estado cambiado"}), 200
+        else:
+            return jsonify({"error": "Error al controlar el dispositivo"}), 500
     return jsonify({"error": "Dispositivo no encontrado"}), 404
 
 # API: Obtener habitaciones con permisos del usuario

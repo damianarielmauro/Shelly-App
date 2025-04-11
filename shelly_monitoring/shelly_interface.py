@@ -2,6 +2,8 @@ import requests
 import json
 import logging
 from typing import Dict, List, Any, Optional, Union
+from threading import Thread
+import time
 
 # Configurar el logger
 logging.basicConfig(level=logging.INFO)
@@ -19,6 +21,9 @@ class ShellyInterface:
             adapter_url: URL donde está corriendo el adaptador Shelly.ioAdapter
         """
         self.adapter_url = adapter_url
+        self.devices = {}
+        self.event_listeners = []
+        self._start_event_listener()
         logger.info(f"ShellyInterface inicializado con URL: {adapter_url}")
 
     def _make_request(self, endpoint: str, method: str = "GET", data: dict = None) -> Union[Dict, List, None]:
@@ -55,6 +60,55 @@ class ShellyInterface:
         except json.JSONDecodeError as e:
             logger.error(f"Error decodificando respuesta JSON: {e}")
             return None
+
+    def _start_event_listener(self):
+        """
+        Inicia un thread para escuchar eventos del adaptador
+        """
+        def event_listener():
+            while True:
+                try:
+                    response = requests.get(f"{self.adapter_url}/api/v1/devices")
+                    if response.status_code == 200:
+                        devices = response.json()
+                        for device in devices:
+                            device_id = device.get('id')
+                            if device_id:
+                                old_device = self.devices.get(device_id)
+                                if old_device != device:
+                                    self.devices[device_id] = device
+                                    self._notify_listeners('deviceUpdate', device)
+                except Exception as e:
+                    logger.error(f"Error en el event listener: {e}")
+                time.sleep(1)
+
+        thread = Thread(target=event_listener, daemon=True)
+        thread.start()
+
+    def add_event_listener(self, event_type: str, callback):
+        """
+        Agrega un listener para eventos del adaptador
+
+        Args:
+            event_type: Tipo de evento a escuchar
+            callback: Función a llamar cuando ocurra el evento
+        """
+        self.event_listeners.append((event_type, callback))
+
+    def _notify_listeners(self, event_type: str, data: Any):
+        """
+        Notifica a todos los listeners registrados para un tipo de evento
+
+        Args:
+            event_type: Tipo de evento
+            data: Datos del evento
+        """
+        for listener_type, callback in self.event_listeners:
+            if listener_type == event_type:
+                try:
+                    callback(data)
+                except Exception as e:
+                    logger.error(f"Error en event listener: {e}")
 
     def get_devices(self) -> List[Dict[str, Any]]:
         """
