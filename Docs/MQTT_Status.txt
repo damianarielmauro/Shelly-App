@@ -1,0 +1,76 @@
+Aquí está la lista actualizada con el estado real de cada componente:
+
+Arquitectura Principal (shelly_adapter_rest.js): ✅
+Clase principal ShellyAdapter funcionando ✅
+Las tres interfaces están activas:
+MQTT (Puerto 1883) ✅
+CoAP (Puerto 5683) ✅
+API REST (Puerto 8087) ✅
+
+Servidor MQTT: ✅
+Escucha en puerto 1883 ✅
+Maneja dispositivos Shelly Gen 2 ✅
+
+Funcionalidades:
+Autenticación de clientes ✅ (restaurada y verificada)
+Suscripción a tópicos ✅
+Procesa mensajes de estado ✅
+Actualiza el estado de los dispositivos ✅
+
+Servidor CoAP: ✅
+Escucha en puerto 5683 ✅
+Maneja dispositivos Shelly Gen 1 ✅
+Vimos mensajes del dispositivo SHDM-2 ✅
+
+API REST: ✅ (parcialmente)
+Escucha en puerto 8087 ✅
+
+Endpoints:
+GET /api/v1/devices ✅
+POST /api/v1/discover ✅
+GET /api/v1/devices/:id ✅
+GET /api/v1/devices/:id/status ✅
+POST /api/v1/devices/:id/relay/:channel ❓
+GET /api/v1/devices/:id/firmware ❌
+POST /api/v1/devices/:id/firmware/update ❌
+Gestión de Dispositivos: ✅
+Mantiene mapa de dispositivos ✅
+
+Almacena correctamente:
+ID único ✅
+Tipo (gen1 o gen2) ✅
+Estado de conexión ✅
+Datos de estado (voltaje, corriente, potencia, etc.) ✅
+Manejo de Mensajes: ✅
+
+Para MQTT:
+Procesa mensajes JSON ✅
+Maneja diferentes tipos de payloads ✅
+Actualiza estado de dispositivos ✅
+
+Para CoAP:
+Procesa mensajes ✅
+Actualiza estado de dispositivos Gen 1 ✅
+
+Características de Seguridad: ✅
+Autenticación MQTT ✅ (restaurada y verificada)
+CORS habilitado ✅
+Manejo de errores implementado ✅
+
+Integración con Sistema: ✅
+Se ejecuta como servicio systemd ✅
+Logs a través de journald ✅
+Configuración mediante archivo de servicio ✅
+Funcionalidades Adicionales: ❓ (mayormente no probadas)
+Monitoreo de energía ✅ (solo datos en tiempo real)
+
+Control de relés ❓
+
+Actualización de firmware ❌
+
+Descubrimiento automático ✅
+
+Estructura del Proyecto: ✅
+Módulo principal funcionando ✅
+Dependencias instaladas y funcionando ✅
+
